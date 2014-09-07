@@ -25,23 +25,27 @@ WinEDS Reporting Tool
 This section contains a description of the output format of a TXT export
 from the WinEDS Reporting Tool.
 
-The file seems to be UTF-8 encoded.
+The fqile seems to be UTF-8 encoded.
 
-Here is a sample line of a sample output file (the strings of several
-spaces between columns were replaced by strings of two spaces):
+Here are a few sample lines from an actual output file (the strings of
+several spaces between columns were replaced by strings of two spaces):
 
+    0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
+    ...
+    0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
+    ...
     0175098110100082  State Proposition 42  Yes  Pct 1101  CALIFORNIA
 
-For description purposes, we rewrite this as follows:
+For description purposes, we rewrite the last line as follows:
 
     0AAACCCPPPPTTTTT  CONTEST  CHOICE  PRECINCT_NAME  CONTEST_AREA
 
 Here is a key (with values for the example above in parentheses):
 
-* AAA = Contest ID (`175` or 175 for "State Proposition 42")
-* CCC = Choice ID (`098` or 98 for "Yes" [on 42])
-* PPPP = Precinct ID (`1101` for "Pct 1101")
-* TTTTT = Choice total (`00082` for 82)
+* `  AAA` = Contest ID (`175` or 175 for "State Proposition 42")
+* `  CCC` = Choice ID (`098` or 98 for "Yes" [on 42])
+* ` PPPP` = Precinct ID (`1101` for "Pct 1101")
+* `TTTTT` = Choice total (`00082` for 82)
 
 
 [dominion]: http://www.dominionvoting.com/
