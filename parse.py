@@ -16,27 +16,28 @@ splitter = re.compile(r'\s{2,}')
 class Contest(object):
 
     def __init__(self, name, area):
+        self.choices = {}
+        self.precincts = {}
         self.name = name
         self.area = area
-        self.precincts = {}
 
     def __repr__(self):
-        return ("Contest(name=%r, area=%r, precincts=%d)" %
-                (self.name, self.area, len(self.precincts)))
+        return ("Contest(name=%r, area=%r, precincts=%d, choices=%d)" %
+                (self.name, self.area, len(self.precincts), len(self.choices)))
 
-def parse_line(line_no, precincts, contests, line):
+def parse_line(contests, choices, precincts, line_no, line):
     # Split on strings of whitespace with 2 or more characters.
     # This is necessary since field values can contain spaces.
     fields = splitter.split(line.strip())
     try:
-        data, new_contest, choice, precinct, area = fields
+        data, new_contest, new_choice, precinct, area = fields
     except ValueError:
         # This can occur for summary lines like the following that lack an area:
         # 0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
         # 0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
         fields.append(None)
         try:
-            data, new_contest, choice, precinct, area = fields
+            data, new_contest, new_choice, precinct, area = fields
         except ValueError:
             raise Exception("error unpacking line %d: %r" % (line_no, fields))
 
@@ -67,6 +68,21 @@ def parse_line(line_no, precincts, contests, line):
         contest = Contest(name=new_contest, area=area)
         contests[contest_id] = contest
 
+    # The "REGISTERED VOTERS - TOTAL" and "BALLOTS CAST - TOTAL" contests
+    # both have choice ID 1, so skip them and don't store them as choices.
+    if area is not None:
+        try:
+            choice = choices[choice_id]
+            try:
+                assert choice == (contest_id, new_choice)
+            except AssertionError:
+                raise Exception("choice mismatch for choice ID %d: %r != %r" %
+                                (choice_id, choice, (contest_id, new_choice)))
+        except KeyError:
+            choice = (contest_id, new_choice)
+            choices[choice_id] = choice
+        contest.choices[choice_id] = True
+
     contest.precincts[precinct_id] = True
 
 
@@ -82,18 +98,31 @@ def main(argv):
     contests = {}
     # A dict of precinct ID to precinct name.
     precincts = {}
+    # A dict of choice ID to (contest_id, choice name).
+    choices = {}
 
     with open(input_path, 'rb') as f:
         for line_no, line in enumerate(iter(f), start=1):
-            parse_line(line_no, precincts, contests, line)
+            parse_line(contests, choices, precincts, line_no, line)
 
     elapsed = timeit.default_timer() - start_time
 
     contest_ids = contests.keys()
     contest_ids.sort()
+    print "Contests:"
     for cid in contest_ids:
         print cid, contests[cid]
+    print
 
+    choice_ids = choices.keys()
+    choice_ids.sort()
+    print "Choices:"
+    for cid in choice_ids:
+        print "%r: %r" % (cid, choices[cid])
+    print
+
+    print "parsed: %d contests" % len(contests)
+    print "parsed: %d choices" % len(choices)
     print "parsed: %d precincts" % len(precincts)
     print "parsed: %d lines" % line_no
     print "elapsed: %.4f seconds" % elapsed
