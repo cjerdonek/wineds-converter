@@ -21,12 +21,12 @@ For description purposes, we rewrite this as follows:
 
     0AAACCCPPPPTTTTT  CONTEST  CHOICE  PRECINCT_NAME  CONTEST_AREA
 
-Here is a key:
+Here is a key (with values for the example above in parentheses):
 
-* AAA = Contest ID? (175 here, representing "State Proposition 42")
-* CCC = Choice ID? (098 here, representing "Yes" [on 42, specifically])
-* PPPP = Precinct ID (1101 here, representing "Pct 1101")
-* TTTTT = Choice total (00082 here)
+* AAA = Contest ID? (175, representing "State Proposition 42")
+* CCC = Choice ID? (098, representing "Yes" [on 42, specifically])
+* PPPP = Precinct ID (1101, representing "Pct 1101")
+* TTTTT = Choice total (00082)
 
 
 [dominion]: http://www.dominionvoting.com/
