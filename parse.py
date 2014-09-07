@@ -18,23 +18,25 @@ class Contest(object):
     def __init__(self, name, area):
         self.name = name
         self.area = area
+        self.precincts = {}
 
     def __repr__(self):
-        return "Contest(name=%r, area=%r)" % (self.name, self.area)
+        return ("Contest(name=%r, area=%r, precincts=%d)" %
+                (self.name, self.area, len(self.precincts)))
 
 def parse_line(line_no, precincts, contests, line):
     # Split on strings of whitespace with 2 or more characters.
     # This is necessary since field values can contain spaces.
     fields = splitter.split(line.strip())
     try:
-        data, contest, choice, precinct, area = fields
+        data, new_contest, choice, precinct, area = fields
     except ValueError:
         # This can occur for summary lines like the following that lack an area:
         # 0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
         # 0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
         fields.append(None)
         try:
-            data, contest, choice, precinct, area = fields
+            data, new_contest, choice, precinct, area = fields
         except ValueError:
             raise Exception("error unpacking line %d: %r" % (line_no, fields))
 
@@ -58,11 +60,15 @@ def parse_line(line_no, precincts, contests, line):
         precincts[precinct_id] = precinct
 
     try:
-        old_contest = contests[contest_id]
-        assert old_contest.name == contest
-        assert old_contest.area == area
+        contest = contests[contest_id]
+        assert new_contest == contest.name
+        assert area == contest.area
     except KeyError:
-        contests[contest_id] = Contest(name=contest, area=area)
+        contest = Contest(name=new_contest, area=area)
+        contests[contest_id] = contest
+
+    contest.precincts[precinct_id] = True
+
 
 def main(argv):
     try:
