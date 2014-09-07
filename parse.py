@@ -22,7 +22,7 @@ class Contest(object):
     def __repr__(self):
         return "Contest(name=%r, area=%r)" % (self.name, self.area)
 
-def parse_line(line_no, election, line):
+def parse_line(line_no, precincts, contests, line):
     # Split on strings of whitespace with 2 or more characters.
     # This is necessary since field values can contain spaces.
     fields = splitter.split(line.strip())
@@ -52,13 +52,17 @@ def parse_line(line_no, election, line):
     choice_total = int(data[11:16])
 
     try:
-        old_contest = election[contest_id]
+        old_precinct = precincts[precinct_id]
+        assert old_precinct == precinct
+    except KeyError:
+        precincts[precinct_id] = precinct
+
+    try:
+        old_contest = contests[contest_id]
         assert old_contest.name == contest
         assert old_contest.area == area
     except KeyError:
-        election[contest_id] = Contest(name=contest, area=area)
-
-    return fields
+        contests[contest_id] = Contest(name=contest, area=area)
 
 def main(argv):
     try:
@@ -68,20 +72,23 @@ def main(argv):
 
     start_time = timeit.default_timer()
 
-    # A dict of contest ID to contest data.
-    election = {}
+    # A dict of contest ID to Contest object.
+    contests = {}
+    # A dict of precinct ID to precinct name.
+    precincts = {}
 
     with open(input_path, 'rb') as f:
         for line_no, line in enumerate(iter(f), start=1):
-            data = parse_line(line_no, election, line)
+            parse_line(line_no, precincts, contests, line)
 
     elapsed = timeit.default_timer() - start_time
 
-    contest_ids = election.keys()
+    contest_ids = contests.keys()
     contest_ids.sort()
     for cid in contest_ids:
-        print cid, election[cid]
+        print cid, contests[cid]
 
+    print "parsed: %d precincts" % len(precincts)
     print "parsed: %d lines" % line_no
     print "elapsed: %.4f seconds" % elapsed
 
