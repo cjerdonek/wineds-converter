@@ -13,6 +13,15 @@ import timeit
 
 splitter = re.compile(r'\s{2,}')
 
+class Contest(object):
+
+    def __init__(self, name, area):
+        self.name = name
+        self.area = area
+
+    def __repr__(self):
+        return "Contest(name=%r, area=%r)" % (self.name, self.area)
+
 def parse_line(line_no, election, line):
     # Split on strings of whitespace with 2 or more characters.
     # This is necessary since field values can contain spaces.
@@ -43,9 +52,11 @@ def parse_line(line_no, election, line):
     choice_total = int(data[11:16])
 
     try:
-        assert election[contest_id] == contest
+        old_contest = election[contest_id]
+        assert old_contest.name == contest
+        assert old_contest.area == area
     except KeyError:
-        election[contest_id] = contest
+        election[contest_id] = Contest(name=contest, area=area)
 
     return fields
 
