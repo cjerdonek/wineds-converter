@@ -13,11 +13,21 @@ import timeit
 
 splitter = re.compile(r'\s{2,}')
 
-def parse_line(line):
+def parse_line(line_no, election, line):
     # Split on strings of whitespace with 2 or more characters.
     # This is necessary since field values can contain spaces.
     fields = splitter.split(line.strip())
-    f = fields[0]
+    try:
+        data, contest, choice, precinct, area = fields
+    except ValueError:
+        # This can occur for summary lines like the following that lack an area:
+        # 0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
+        # 0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
+        fields.append(None)
+        try:
+            data, contest, choice, precinct, area = fields
+        except ValueError:
+            raise Exception("error unpacking line %d: %r" % (line_no, fields))
 
     # 0AAACCCPPPPTTTTT
     #
@@ -25,12 +35,17 @@ def parse_line(line):
     # CCC   = choice_id
     # PPPP  = precinct_id
     # TTTTT = choice_total
-    assert len(f) == 16
-    assert f[0] == '0'
-    contest_id = int(f[1:4])
-    choice_id = int(f[4:7])
-    precinct_id = int(f[7:11])
-    choice_total = int(f[11:16])
+    assert len(data) == 16
+    assert data[0] == '0'
+    contest_id = int(data[1:4])
+    choice_id = int(data[4:7])
+    precinct_id = int(data[7:11])
+    choice_total = int(data[11:16])
+
+    try:
+        assert election[contest_id] == contest
+    except KeyError:
+        election[contest_id] = contest
 
     return fields
 
@@ -40,14 +55,23 @@ def main(argv):
     except IndexError:
         raise Exception("PATH not provided on command-line")
 
-    with open(input_path, 'rb') as f:
-        start_time = timeit.default_timer()
-        for i, line in enumerate(iter(f), start=1):
-            data = parse_line(line)
-        elapsed = timeit.default_timer() - start_time
+    start_time = timeit.default_timer()
 
-    print data
-    print "parsed: %d lines" % i
+    # A dict of contest ID to contest data.
+    election = {}
+
+    with open(input_path, 'rb') as f:
+        for line_no, line in enumerate(iter(f), start=1):
+            data = parse_line(line_no, election, line)
+
+    elapsed = timeit.default_timer() - start_time
+
+    contest_ids = election.keys()
+    contest_ids.sort()
+    for cid in contest_ids:
+        print cid, election[cid]
+
+    print "parsed: %d lines" % line_no
     print "elapsed: %.4f seconds" % elapsed
 
 if __name__ == "__main__":
