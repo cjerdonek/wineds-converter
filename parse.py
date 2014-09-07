@@ -7,6 +7,7 @@ PATH is a path to a WinEDS Reporting Tool output file.
 
 """
 
+import codecs
 import re
 import sys
 import timeit
@@ -101,7 +102,7 @@ def main(argv):
     # A dict of choice ID to (contest_id, choice name).
     choices = {}
 
-    with open(input_path, 'rb') as f:
+    with codecs.open(input_path, "r", encoding="utf-8") as f:
         for line_no, line in enumerate(iter(f), start=1):
             parse_line(contests, choices, precincts, line_no, line)
 
@@ -114,11 +115,10 @@ def main(argv):
         print cid, contests[cid]
     print
 
-    choice_ids = choices.keys()
-    choice_ids.sort()
     print "Choices:"
-    for cid in choice_ids:
-        print "%r: %r" % (cid, choices[cid])
+    for cid in sorted(choices):
+        choice = choices[cid]
+        print "%r: %s, %s" % (cid, choice[0], choice[1])
     print
 
     print "parsed: %d contests" % len(contests)

@@ -12,6 +12,8 @@ WinEDS Reporting Tool
 This section contains a description of the output format of a TXT export
 from the WinEDS Reporting Tool.
 
+The file seems to be UTF-8 encoded.
+
 Here is a sample line of a sample output file (the strings of several
 spaces between columns were replaced by strings of two spaces):
 
