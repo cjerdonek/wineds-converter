@@ -16,7 +16,23 @@ splitter = re.compile(r'\s{2,}')
 def parse_line(line):
     # Split on strings of whitespace with 2 or more characters.
     # This is necessary since field values can contain spaces.
-    return splitter.split(line.strip())
+    fields = splitter.split(line.strip())
+    f = fields[0]
+
+    # 0AAACCCPPPPTTTTT
+    #
+    # AAA   = contest_id
+    # CCC   = choice_id
+    # PPPP  = precinct_id
+    # TTTTT = choice_total
+    assert len(f) == 16
+    assert f[0] == '0'
+    contest_id = int(f[1:4])
+    choice_id = int(f[4:7])
+    precinct_id = int(f[7:11])
+    choice_total = int(f[11:16])
+
+    return fields
 
 def main(argv):
     try:
@@ -30,6 +46,7 @@ def main(argv):
             data = parse_line(line)
         elapsed = timeit.default_timer() - start_time
 
+    print data
     print "parsed: %d lines" % i
     print "elapsed: %.4f seconds" % elapsed
 
