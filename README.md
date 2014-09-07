@@ -6,6 +6,19 @@ simpler format.  WinEDS is an election management system owned by
 [Dominion Voting Systems][dominion].
 
 
+New Format
+----------
+
+This section documents the new format.
+
+Here is an example of what the file looks like (tab-delimited):
+
+    SAN FRANCISCO PRIMARY ELECTION JUNE 3, 2014
+
+    State Treasurer - CALIFORNIA
+    PRECINCT	ELLEN H. BROWN	GREG CONLON	JOHN CHIANG
+
+
 WinEDS Reporting Tool
 ---------------------
 
@@ -25,10 +38,10 @@ For description purposes, we rewrite this as follows:
 
 Here is a key (with values for the example above in parentheses):
 
-* AAA = Contest ID? (175, representing "State Proposition 42")
-* CCC = Choice ID? (098, representing "Yes" [on 42, specifically])
-* PPPP = Precinct ID (1101, representing "Pct 1101")
-* TTTTT = Choice total (00082)
+* AAA = Contest ID (`175` or 175 for "State Proposition 42")
+* CCC = Choice ID (`098` or 98 for "Yes" [on 42])
+* PPPP = Precinct ID (`1101` for "Pct 1101")
+* TTTTT = Choice total (`00082` for 82)
 
 
 [dominion]: http://www.dominionvoting.com/
