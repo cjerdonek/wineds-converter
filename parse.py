@@ -12,11 +12,14 @@ import re
 import sys
 import timeit
 
-splitter = re.compile(r'\s{2,}')
+# We split on strings of whitespace having 2 or more characters.  This is
+# necessary since field values can contain spaces (e.g. candidate names).
+SPLITTER = re.compile(r'\s{2,}')
 
 class Contest(object):
 
     def __init__(self, name, area):
+        # Change these to choice_ids and precinct_ids.
         self.choices = {}
         self.precincts = {}
         self.name = name
@@ -26,10 +29,12 @@ class Contest(object):
         return ("Contest(name=%r, area=%r, precincts=%d, choices=%d)" %
                 (self.name, self.area, len(self.precincts), len(self.choices)))
 
+def split_line(line):
+    """Return a list of field values in the line."""
+    return SPLITTER.split(line.strip())
+
 def parse_line(contests, choices, precincts, line_no, line):
-    # Split on strings of whitespace with 2 or more characters.
-    # This is necessary since field values can contain spaces.
-    fields = splitter.split(line.strip())
+    fields = split_line(line)
     try:
         data, new_contest, new_choice, precinct, area = fields
     except ValueError:
@@ -86,6 +91,53 @@ def parse_line(contests, choices, precincts, line_no, line):
 
     contest.precincts[precinct_id] = True
 
+
+def parse_election_metadata(path):
+    pass
+
+def parse(path):
+    """
+    We parse and process the file in two passes to simplify the logic
+    and make the code easier to understand.
+
+    In the first pass, we read all the election "metadata" (contests,
+    choices, precincts, etc) and validate the integer ID's, etc, to
+    make sure that all of our assumptions about the file format are
+    correct.
+
+    After the first pass, we build an object structure in which to
+    store values.  Essentially, this is a large tree-like dictionary
+    of contests and vote totals per precinct for each contest.
+
+    Then we parse the file a second time, but without doing any validation.
+    We simply read the vote totals and insert them into the object
+    structure.
+
+    """
+    with codecs.open(input_path, "r", encoding="utf-8") as f:
+        for line_no, line in enumerate(iter(f), start=1):
+            data = split_line(line)[0]
+
+def init_results(contests):
+    """
+    Returns a tree-like results dictionary:
+
+    totals:
+        contest_id:
+            precinct_id:
+                choice_id:
+                    vote_total
+
+    """
+    totals = {}
+    for contest_id, contest in contests.iteritems():
+        contest_totals = {}
+        totals[contest_id] = contest_totals
+        for precinct_id in contest.precincts:
+            precinct_totals = {}
+            contest_totals[precinct_id] = precinct_totals
+            for choice_id in contest.choices:
+                precinct_totals[choice_id] = 0
 
 def main(argv):
     try:
