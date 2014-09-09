@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 """
-Usage: python parse.py PATH
+Usage: python3 parse.py PATH
 
 PATH is a path to a WinEDS Reporting Tool output file.
+
+**Note: this script is written for Python 3.**
 
 """
 
@@ -140,7 +142,7 @@ def parse_election_info(path):
         for line_no, line in enumerate(iter(f), start=1):
             parse_line(contests, choices, precincts, line_no, line)
 
-    print "parsed: %d lines" % line_no
+    print("parsed: %d lines" % line_no)
 
     return info
 
@@ -198,29 +200,29 @@ def main(argv):
     info = parse_election_info(input_path)
     elapsed = timeit.default_timer() - start_time
 
-    print "parsed election: %r" % info
+    print("parsed election: %r" % info)
 
     choices = info.choices
     contests = info.contests
     precincts = info.precincts
 
-    print "Contests:"
+    print("Contests:")
     for cid in sorted(contests):
         contest = contests[cid]
-        print cid, contests[cid]
+        print(cid, contests[cid])
     print
 
-    print "Choices:"
+    print("Choices:")
     for cid in sorted(choices):
         choice = choices[cid]
-        print "%r: %s, %s" % (cid, choice[0], choice[1])
-    print
+        print("%r: %s, %s" % (cid, choice[0], choice[1]))
+    print()
 
     # TODO: use logging.
-    print "parsed: %d contests" % len(contests)
-    print "parsed: %d choices" % len(choices)
-    print "parsed: %d precincts" % len(precincts)
-    print "elapsed: %.4f seconds" % elapsed
+    print("parsed: %d contests" % len(contests))
+    print("parsed: %d choices" % len(choices))
+    print("parsed: %d precincts" % len(precincts))
+    print("elapsed: %.4f seconds" % elapsed)
 
 if __name__ == "__main__":
     main(sys.argv)

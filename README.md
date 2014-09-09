@@ -1,8 +1,8 @@
 WinEDS Converter
 ================
 
-This repository contains a script to convert WinEDS 4.0 output into a
-simpler format.  WinEDS is an election management system owned by
+This repository contains a Python 3 script to convert WinEDS 4.0 output
+into a simpler format.  WinEDS is an election management system owned by
 [Dominion Voting Systems][dominion].
 
 
