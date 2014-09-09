@@ -29,17 +29,19 @@ def time_it():
     start_time = timeit.default_timer()
     yield
     elapsed = timeit.default_timer() - start_time
-    print("elapsed: %.4f seconds" % elapsed)
+    log("elapsed: %.4f seconds" % elapsed)
 
 
 # TODO: use Python's logging module.
-def log(s):
+def log(s=None):
     """Write to stderr."""
+    if s is None:
+        s = ""
     print(s, file=sys.stderr)
 
 
 def exit_with_error(msg):
-    print(msg)
+    log(msg)
     exit(1)
 
 
@@ -101,7 +103,7 @@ def iter_lines(path):
     with codecs.open(path, "r", encoding="utf-8") as f:
         for line_no, line in enumerate(iter(f), start=1):
             yield line_no, line
-    print("parsed: %d lines" % line_no)
+    log("parsed: %d lines" % line_no)
 
 
 def parse_line_info(contests, choices, precincts, line_no, line):
@@ -250,7 +252,24 @@ def parse(path, info):
 
 
 def write_results(f, info):
-    print(info.name, file=f)
+    """Write the election results to the given file."""
+
+    def write(s=""):
+        print(s, file=f)
+
+    contests = info.contests
+    choices = info.choices
+
+    write(info.name)
+    write()
+    for contest_id in sorted(contests.keys()):
+        contest = contests[contest_id]
+        write("%s - %s" % (contest.name, contest.area))
+        contest_choice_ids = sorted(contest.choice_ids)
+        columns = [choices[choice_id][1] for choice_id in contest_choice_ids]
+        columns.insert(0, "PRECINCT")
+        write(",".join(columns))
+        write()
 
 
 def inner_main(argv):
@@ -263,28 +282,28 @@ def inner_main(argv):
     info = ElectionInfo(name)
     parse(input_path, info)
 
-    print("parsed election: %r" % info)
+    log("parsed election: %r" % info)
 
     choices = info.choices
     contests = info.contests
     precincts = info.precincts
 
-    print("Contests:")
+    log("Contests:")
     for cid in sorted(contests):
         contest = contests[cid]
-        print(cid, contests[cid])
-    print
+        log("%s %s" % (cid, contests[cid]))
+    log()
 
-    print("Choices:")
+    log("Choices:")
     for cid in sorted(choices):
         choice = choices[cid]
-        print("%r: %s, %s" % (cid, choice[0], choice[1]))
-    print()
+        log("%r: %s, %s" % (cid, choice[0], choice[1]))
+    log()
 
     # TODO: use logging.
-    print("parsed: %d contests" % len(contests))
-    print("parsed: %d choices" % len(choices))
-    print("parsed: %d precincts" % len(precincts))
+    log("parsed: %d contests" % len(contests))
+    log("parsed: %d choices" % len(choices))
+    log("parsed: %d precincts" % len(precincts))
 
     output_file = sys.stdout
     write_results(output_file, info)
