@@ -193,28 +193,34 @@ def parse_election_info(path, info):
     return info
 
 
-def init_results(info):
+def init_results(election_info):
     """
     Return a tree-like results dictionary.
 
-    Returns:
-      results: a dict mapping contest_id to contest_results.
+    Arguments:
+      election_info: an ElectionInfo object.
 
-    contest_results: a dict mapping precinct_id to contest_precinct_results.
+    Returns a results dict, where we have the following:
 
-    contest_precinct_results: a dict mapping choice_id to an integer vote
-        total for the choice in that precinct for that contest.
+      results[contest_id] -> contest_results
+      contest_results[precinct_id] -> contest_precinct_results
+      contest_precinct_results[choice_id] -> vote_total
+
+    In particular, the following will give the vote total in a precinct:
+
+      results[contest_id][precinct_id][choice_id]
 
     """
     results = {}
-    for contest_id, contest_info in info.contests.items():
+    for contest_id, contest_info in election_info.contests.items():
         contest_results = {}
         results[contest_id] = contest_results
-        for precinct_id in contest.precinct_ids:
-            precinct_totals = {}
-            contest_totals[precinct_id] = precinct_totals
-            for choice_id in contest.choice_ids:
-                precinct_totals[choice_id] = 0
+        for precinct_id in contest_info.precinct_ids:
+            cp_results = {}  # stands for contest_precinct_results
+            contest_results[precinct_id] = cp_results
+            for choice_id in contest_info.choice_ids:
+                cp_results[choice_id] = 0
+    return results
 
 
 def parse_results(path):
@@ -226,32 +232,36 @@ def parse_results(path):
 
 def parse(path, info):
     """
-    Return an ElectionInfo object.
-
-    We parse and process the file in two passes to simplify the logic
-    and make the code easier to understand.
-
-    In the first pass, we read all the election "metadata" (contests,
-    choices, precincts, etc) and validate the integer ID's, etc, to
-    make sure that all of our assumptions about the file format are
-    correct.
-
-    After the first pass, we build an object structure in which to
-    store values.  Essentially, this is a large tree-like dictionary
-    of contests and vote totals per precinct for each contest.
-
-    Then we parse the file a second time, but without doing any validation.
-    We simply read the vote totals and insert them into the object
-    structure.
+    Modify the ElectionInfo object in place and return a results dict.
 
     """
+    # We parse and process the file in two passes to simplify the logic
+    # and make the code easier to understand.
+    #
+    # In the first pass, we read all the election "metadata" (contests,
+    # choices, precincts, etc) and validate the integer ID's, etc, to
+    # make sure that all of our assumptions about the file format are
+    # correct.
+    #
+    # After the first pass, we build an object structure in which to
+    # store values.  Essentially, this is a large tree-like dictionary
+    # of contests and vote totals per precinct for each contest.
+    #
+    # Then we parse the file a second time, but without doing any
+    # validation.  We simply read the vote totals and insert them into
+    # the object structure.
     parse_election_info(path, info)
+    results = init_results(info)
 
-    # TODO: also return a results object.
-    return info
+    return results
 
 
 class Writer(object):
+
+    """
+    Responsible for writing output to a file.
+
+    """
 
     def __init__(self, file):
         self.file = file
@@ -259,27 +269,27 @@ class Writer(object):
     def write(self, s=""):
         print(s, file=self.file)
 
-    def write_contest(self, precincts, choices, contest):
+    def write_contest(self, precincts, choices, contest_info, contest_results):
         """
         Arguments:
           precincts: the ElectionInfo.precincts dict.
           choices: the ElectionInfo.choices dict.
-          contest: a ContestInfo object.
+          contest_info: a ContestInfo object.
 
         """
-        self.write("%s - %s" % (contest.name, contest.area))
-        contest_choice_ids = sorted(contest.choice_ids)
+        self.write("%s - %s" % (contest_info.name, contest_info.area))
+        contest_choice_ids = sorted(contest_info.choice_ids)
         # Collect the choice names.
         columns = [choices[choice_id][1] for choice_id in contest_choice_ids]
         columns.insert(0, "PRECINCT")
         columns.insert(1, "PRECINCT ID")
         self.write(",".join(columns))
-        precinct_ids = sorted(contest.precinct_ids)
+        precinct_ids = sorted(contest_info.precinct_ids)
         for precinct_id in precinct_ids:
             columns = [precincts[precinct_id], str(precinct_id)]
             self.write(",".join(columns))
 
-    def write_results(self, info):
+    def write_results(self, info, results):
         """Write the election results to the given file."""
 
         choices = info.choices
@@ -290,7 +300,8 @@ class Writer(object):
         self.write()
         for contest_id in sorted(contests.keys()):
             contest_info = contests[contest_id]
-            self.write_contest(precincts, choices, contest_info)
+            contest_results = results[contest_id]
+            self.write_contest(precincts, choices, contest_info, contest_results)
             self.write()
 
 
@@ -302,7 +313,7 @@ def inner_main(argv):
         exit_with_error("You must provide two values: NAME and PATH.")
 
     info = ElectionInfo(name)
-    parse(input_path, info)
+    results = parse(input_path, info)
 
     log("parsed election: %r" % info)
 
@@ -328,7 +339,7 @@ def inner_main(argv):
     log("parsed: %d precincts" % len(precincts))
 
     writer = Writer(file=sys.stdout)
-    writer.write_results(info)
+    writer.write_results(info, results)
 
 
 def main(argv):
