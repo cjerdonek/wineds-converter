@@ -12,22 +12,52 @@ import re
 import sys
 import timeit
 
+
 # We split on strings of whitespace having 2 or more characters.  This is
 # necessary since field values can contain spaces (e.g. candidate names).
 SPLITTER = re.compile(r'\s{2,}')
 
-class Contest(object):
+
+class ContestInfo(object):
+
+    """
+    TODO
+
+    """
 
     def __init__(self, name, area):
-        # Change these to choice_ids and precinct_ids.
+        # TODO: change these to choice_ids and precinct_ids.
         self.choices = {}
         self.precincts = {}
         self.name = name
         self.area = area
 
     def __repr__(self):
-        return ("Contest(name=%r, area=%r, precincts=%d, choices=%d)" %
+        return ("ContestInfo(name=%r, area=%r, precincts=%d, choices=%d)" %
                 (self.name, self.area, len(self.precincts), len(self.choices)))
+
+class ElectionInfo(object):
+
+    """
+    Encapsulates election metadata (but not results).
+
+    Attributes:
+
+      choices: a dict of integer choice ID to a 2-tuple of
+        (contest_id, choice name).
+      contests: a dict of integer contest ID to ContestInfo object.
+      precincts: a dict of integer precinct ID to precinct name.
+
+    """
+
+    def __init__(self):
+        self.choices = {}
+        self.contests = {}
+        self.precincts = {}
+
+    def __repr__(self):
+        return ("<ElectionInfo object: %d contests, %d choices, %d precincts>" %
+                (len(self.contests), len(self.choices), len(self.precincts)))
 
 def split_line(line):
     """Return a list of field values in the line."""
@@ -71,7 +101,7 @@ def parse_line(contests, choices, precincts, line_no, line):
         assert new_contest == contest.name
         assert area == contest.area
     except KeyError:
-        contest = Contest(name=new_contest, area=area)
+        contest = ContestInfo(name=new_contest, area=area)
         contests[contest_id] = contest
 
     # The "REGISTERED VOTERS - TOTAL" and "BALLOTS CAST - TOTAL" contests
@@ -91,9 +121,28 @@ def parse_line(contests, choices, precincts, line_no, line):
 
     contest.precincts[precinct_id] = True
 
+def parse_election_info(path):
+    """
+    Parse the given file, and return an ElectionInfo object.
 
-def parse_election_metadata(path):
-    pass
+    In addition to parsing the file, this function also performs
+    validation on the file to ensure that all of our assumptions about
+    the file format and data are correct.
+    """
+    info = ElectionInfo()
+
+    contests = info.contests
+    choices = info.choices
+    precincts = info.precincts
+
+    # TODO: DRY this up with the other parse function.
+    with codecs.open(path, "r", encoding="utf-8") as f:
+        for line_no, line in enumerate(iter(f), start=1):
+            parse_line(contests, choices, precincts, line_no, line)
+
+    print "parsed: %d lines" % line_no
+
+    return info
 
 def parse(path):
     """
@@ -146,24 +195,18 @@ def main(argv):
         raise Exception("PATH not provided on command-line")
 
     start_time = timeit.default_timer()
-
-    # A dict of contest ID to Contest object.
-    contests = {}
-    # A dict of precinct ID to precinct name.
-    precincts = {}
-    # A dict of choice ID to (contest_id, choice name).
-    choices = {}
-
-    with codecs.open(input_path, "r", encoding="utf-8") as f:
-        for line_no, line in enumerate(iter(f), start=1):
-            parse_line(contests, choices, precincts, line_no, line)
-
+    info = parse_election_info(input_path)
     elapsed = timeit.default_timer() - start_time
 
-    contest_ids = contests.keys()
-    contest_ids.sort()
+    print "parsed election: %r" % info
+
+    choices = info.choices
+    contests = info.contests
+    precincts = info.precincts
+
     print "Contests:"
-    for cid in contest_ids:
+    for cid in sorted(contests):
+        contest = contests[cid]
         print cid, contests[cid]
     print
 
@@ -173,10 +216,10 @@ def main(argv):
         print "%r: %s, %s" % (cid, choice[0], choice[1])
     print
 
+    # TODO: use logging.
     print "parsed: %d contests" % len(contests)
     print "parsed: %d choices" % len(choices)
     print "parsed: %d precincts" % len(precincts)
-    print "parsed: %d lines" % line_no
     print "elapsed: %.4f seconds" % elapsed
 
 if __name__ == "__main__":
