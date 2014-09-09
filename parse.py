@@ -20,12 +20,14 @@ import timeit
 # necessary since field values can contain spaces (e.g. candidate names).
 SPLITTER = re.compile(r'\s{2,}')
 
+
 @contextmanager
 def time_it():
     start_time = timeit.default_timer()
     yield
     elapsed = timeit.default_timer() - start_time
     print("elapsed: %.4f seconds" % elapsed)
+
 
 class ContestInfo(object):
 
@@ -68,9 +70,24 @@ class ElectionInfo(object):
         return ("<ElectionInfo object: %d contests, %d choices, %d precincts>" %
                 (len(self.contests), len(self.choices), len(self.precincts)))
 
+
 def split_line(line):
     """Return a list of field values in the line."""
     return SPLITTER.split(line.strip())
+
+
+def iter_lines(path):
+    """
+    Return an iterator over the lines of an input file.
+
+    Each iteration yields a 2-tuple: (line_no, line).
+
+    """
+    with codecs.open(path, "r", encoding="utf-8") as f:
+        for line_no, line in enumerate(iter(f), start=1):
+            yield line_no, line
+    print("parsed: %d lines" % line_no)
+
 
 def parse_line_info(contests, choices, precincts, line_no, line):
     """
@@ -136,16 +153,6 @@ def parse_line_info(contests, choices, precincts, line_no, line):
     # appears only once.
     contest.precincts[precinct_id] = True
 
-def input_lines(path):
-    """
-    Return an iterator over the lines of an input file.
-
-    Each iteration yields a 2-tuple: (line_no, line).
-
-    """
-    with codecs.open(path, "r", encoding="utf-8") as f:
-        for line_no, line in enumerate(iter(f), start=1):
-            yield line_no, line
 
 def parse_election_info(path):
     """
@@ -161,10 +168,8 @@ def parse_election_info(path):
     choices = info.choices
     precincts = info.precincts
 
-    for line_no, line in input_lines(path):
+    for line_no, line in iter_lines(path):
         parse_line_info(contests, choices, precincts, line_no, line)
-
-    print("parsed: %d lines" % line_no)
 
     for choice_id, (contest_id, choice_name) in choices.items():
         contest = contests[contest_id]
@@ -172,28 +177,6 @@ def parse_election_info(path):
 
     return info
 
-def parse(path):
-    """
-    We parse and process the file in two passes to simplify the logic
-    and make the code easier to understand.
-
-    In the first pass, we read all the election "metadata" (contests,
-    choices, precincts, etc) and validate the integer ID's, etc, to
-    make sure that all of our assumptions about the file format are
-    correct.
-
-    After the first pass, we build an object structure in which to
-    store values.  Essentially, this is a large tree-like dictionary
-    of contests and vote totals per precinct for each contest.
-
-    Then we parse the file a second time, but without doing any validation.
-    We simply read the vote totals and insert them into the object
-    structure.
-
-    """
-    with codecs.open(input_path, "r", encoding="utf-8") as f:
-        for line_no, line in enumerate(iter(f), start=1):
-            data = split_line(line)[0]
 
 def init_results(contests):
     """
@@ -216,14 +199,48 @@ def init_results(contests):
             for choice_id in contest.choice_ids:
                 precinct_totals[choice_id] = 0
 
+
+def parse_results(path):
+
+    with codecs.open(input_path, "r", encoding="utf-8") as f:
+        for line_no, line in enumerate(iter(f), start=1):
+            data = split_line(line)[0]
+
+
+def parse(path):
+    """
+    Return an ElectionInfo object.
+
+    We parse and process the file in two passes to simplify the logic
+    and make the code easier to understand.
+
+    In the first pass, we read all the election "metadata" (contests,
+    choices, precincts, etc) and validate the integer ID's, etc, to
+    make sure that all of our assumptions about the file format are
+    correct.
+
+    After the first pass, we build an object structure in which to
+    store values.  Essentially, this is a large tree-like dictionary
+    of contests and vote totals per precinct for each contest.
+
+    Then we parse the file a second time, but without doing any validation.
+    We simply read the vote totals and insert them into the object
+    structure.
+
+    """
+    info = parse_election_info(path)
+
+    # TODO: also return a results object.
+    return info
+
+
 def inner_main(argv):
     try:
         input_path = argv[1]
     except IndexError:
         raise Exception("PATH not provided on command-line")
 
-
-    info = parse_election_info(input_path)
+    info = parse(input_path)
 
     print("parsed election: %r" % info)
 
