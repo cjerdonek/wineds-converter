@@ -10,6 +10,7 @@ PATH is a path to a WinEDS Reporting Tool output file.
 """
 
 import codecs
+from contextlib import contextmanager
 import re
 import sys
 import timeit
@@ -19,6 +20,12 @@ import timeit
 # necessary since field values can contain spaces (e.g. candidate names).
 SPLITTER = re.compile(r'\s{2,}')
 
+@contextmanager
+def time_it():
+    start_time = timeit.default_timer()
+    yield
+    elapsed = timeit.default_timer() - start_time
+    print("elapsed: %.4f seconds" % elapsed)
 
 class ContestInfo(object):
 
@@ -125,6 +132,8 @@ def parse_line_info(contests, choices, precincts, line_no, line):
             choice = (contest_id, new_choice)
             choices[choice_id] = choice
 
+    # TODO: change precincts to a set and validate that each precinct
+    # appears only once.
     contest.precincts[precinct_id] = True
 
 def input_lines(path):
@@ -207,15 +216,14 @@ def init_results(contests):
             for choice_id in contest.choice_ids:
                 precinct_totals[choice_id] = 0
 
-def main(argv):
+def inner_main(argv):
     try:
         input_path = argv[1]
     except IndexError:
         raise Exception("PATH not provided on command-line")
 
-    start_time = timeit.default_timer()
+
     info = parse_election_info(input_path)
-    elapsed = timeit.default_timer() - start_time
 
     print("parsed election: %r" % info)
 
@@ -239,7 +247,12 @@ def main(argv):
     print("parsed: %d contests" % len(contests))
     print("parsed: %d choices" % len(choices))
     print("parsed: %d precincts" % len(precincts))
-    print("elapsed: %.4f seconds" % elapsed)
+
+
+def main(argv):
+    with time_it():
+        inner_main(argv)
+
 
 if __name__ == "__main__":
     main(sys.argv)
