@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 """
-Usage: python3 parse.py PATH
+Usage: python3 parse.py NAME PATH
 
-PATH is a path to a WinEDS Reporting Tool output file.
+NAME: the election name.
+
+PATH: path to a WinEDS Reporting Tool output file.  A relative path
+  will be interpreted as relative to the current working directory.
 
 **Note: this script is written for Python 3.**
 
@@ -29,23 +32,33 @@ def time_it():
     print("elapsed: %.4f seconds" % elapsed)
 
 
+# TODO: use Python's logging module.
+def log(s):
+    """Write to stderr."""
+    print(s, file=sys.stderr)
+
+
+def exit_with_error(msg):
+    print(msg)
+    exit(1)
+
+
 class ContestInfo(object):
 
     """
-    TODO
+    Encapsulates metadata about a contest (but not results).
 
     """
 
     def __init__(self, name, area):
         self.choice_ids = set()
-        # TODO: change this to precinct_ids.
-        self.precincts = {}
+        self.precinct_ids = set()
         self.name = name
         self.area = area
 
     def __repr__(self):
         return ("<ContestInfo object: name=%r, area=%r, %d precincts, %d choices)" %
-                (self.name, self.area, len(self.precincts), len(self.choice_ids)))
+                (self.name, self.area, len(self.precinct_ids), len(self.choice_ids)))
 
 class ElectionInfo(object):
 
@@ -56,15 +69,17 @@ class ElectionInfo(object):
 
       choices: a dict of integer choice ID to a 2-tuple of
         (contest_id, choice_name).
-      contests: a dict of integer contest ID to ContestInfo object.
+      contests: a dict of integer contest_id to ContestInfo object.
       precincts: a dict of integer precinct ID to precinct name.
 
     """
 
-    def __init__(self):
+    def __init__(self, name):
         self.choices = {}
         self.contests = {}
         self.precincts = {}
+
+        self.name = name
 
     def __repr__(self):
         return ("<ElectionInfo object: %d contests, %d choices, %d precincts>" %
@@ -151,10 +166,10 @@ def parse_line_info(contests, choices, precincts, line_no, line):
 
     # TODO: change precincts to a set and validate that each precinct
     # appears only once.
-    contest.precincts[precinct_id] = True
+    contest.precinct_ids.add(precinct_id)
 
 
-def parse_election_info(path):
+def parse_election_info(path, info):
     """
     Parse the given file, and return an ElectionInfo object.
 
@@ -162,8 +177,6 @@ def parse_election_info(path):
     validation on the file to ensure that all of our assumptions about
     the file format and data are correct.
     """
-    info = ElectionInfo()
-
     contests = info.contests
     choices = info.choices
     precincts = info.precincts
@@ -178,22 +191,24 @@ def parse_election_info(path):
     return info
 
 
-def init_results(contests):
+def init_results(info):
     """
-    Returns a tree-like results dictionary:
+    Return a tree-like results dictionary.
 
-    totals:
-        contest_id:
-            precinct_id:
-                choice_id:
-                    vote_total
+    Returns:
+      results: a dict mapping contest_id to contest_results.
+
+    contest_results: a dict mapping precinct_id to contest_precinct_results.
+
+    contest_precinct_results: a dict mapping choice_id to an integer vote
+        total for the choice in that precinct for that contest.
 
     """
-    totals = {}
-    for contest_id, contest in contests.iteritems():
-        contest_totals = {}
-        totals[contest_id] = contest_totals
-        for precinct_id in contest.precincts:
+    results = {}
+    for contest_id, contest_info in info.contests.items():
+        contest_results = {}
+        results[contest_id] = contest_results
+        for precinct_id in contest.precinct_ids:
             precinct_totals = {}
             contest_totals[precinct_id] = precinct_totals
             for choice_id in contest.choice_ids:
@@ -207,7 +222,7 @@ def parse_results(path):
             data = split_line(line)[0]
 
 
-def parse(path):
+def parse(path, info):
     """
     Return an ElectionInfo object.
 
@@ -228,19 +243,25 @@ def parse(path):
     structure.
 
     """
-    info = parse_election_info(path)
+    parse_election_info(path, info)
 
     # TODO: also return a results object.
     return info
 
 
+def write_results(f, info):
+    print(info.name, file=f)
+
+
 def inner_main(argv):
     try:
-        input_path = argv[1]
-    except IndexError:
-        raise Exception("PATH not provided on command-line")
+        # TODO: use argparse.
+        name, input_path = argv[1:]
+    except ValueError:
+        exit_with_error("You must provide two values: NAME and PATH.")
 
-    info = parse(input_path)
+    info = ElectionInfo(name)
+    parse(input_path, info)
 
     print("parsed election: %r" % info)
 
@@ -264,6 +285,9 @@ def inner_main(argv):
     print("parsed: %d contests" % len(contests))
     print("parsed: %d choices" % len(choices))
     print("parsed: %d precincts" % len(precincts))
+
+    output_file = sys.stdout
+    write_results(output_file, info)
 
 
 def main(argv):
