@@ -251,25 +251,47 @@ def parse(path, info):
     return info
 
 
-def write_results(f, info):
-    """Write the election results to the given file."""
+class Writer(object):
 
-    def write(s=""):
-        print(s, file=f)
+    def __init__(self, file):
+        self.file = file
 
-    contests = info.contests
-    choices = info.choices
+    def write(self, s=""):
+        print(s, file=self.file)
 
-    write(info.name)
-    write()
-    for contest_id in sorted(contests.keys()):
-        contest = contests[contest_id]
-        write("%s - %s" % (contest.name, contest.area))
+    def write_contest(self, precincts, choices, contest):
+        """
+        Arguments:
+          precincts: the ElectionInfo.precincts dict.
+          choices: the ElectionInfo.choices dict.
+          contest: a ContestInfo object.
+
+        """
+        self.write("%s - %s" % (contest.name, contest.area))
         contest_choice_ids = sorted(contest.choice_ids)
+        # Collect the choice names.
         columns = [choices[choice_id][1] for choice_id in contest_choice_ids]
         columns.insert(0, "PRECINCT")
-        write(",".join(columns))
-        write()
+        columns.insert(1, "PRECINCT ID")
+        self.write(",".join(columns))
+        precinct_ids = sorted(contest.precinct_ids)
+        for precinct_id in precinct_ids:
+            columns = [precincts[precinct_id], str(precinct_id)]
+            self.write(",".join(columns))
+
+    def write_results(self, info):
+        """Write the election results to the given file."""
+
+        choices = info.choices
+        contests = info.contests
+        precincts = info.precincts
+
+        self.write(info.name)
+        self.write()
+        for contest_id in sorted(contests.keys()):
+            contest_info = contests[contest_id]
+            self.write_contest(precincts, choices, contest_info)
+            self.write()
 
 
 def inner_main(argv):
@@ -305,8 +327,8 @@ def inner_main(argv):
     log("parsed: %d choices" % len(choices))
     log("parsed: %d precincts" % len(precincts))
 
-    output_file = sys.stdout
-    write_results(output_file, info)
+    writer = Writer(file=sys.stdout)
+    writer.write_results(info)
 
 
 def main(argv):
