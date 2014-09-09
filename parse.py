@@ -123,6 +123,17 @@ def parse_line(contests, choices, precincts, line_no, line):
 
     contest.precincts[precinct_id] = True
 
+def input_lines(path):
+    """
+    Return an iterator over the lines of an input file.
+
+    Each iteration yields a 2-tuple: (line_no, line).
+
+    """
+    with codecs.open(path, "r", encoding="utf-8") as f:
+        for line_no, line in enumerate(iter(f), start=1):
+            yield line_no, line
+
 def parse_election_info(path):
     """
     Parse the given file, and return an ElectionInfo object.
@@ -137,10 +148,8 @@ def parse_election_info(path):
     choices = info.choices
     precincts = info.precincts
 
-    # TODO: DRY this up with the other parse function.
-    with codecs.open(path, "r", encoding="utf-8") as f:
-        for line_no, line in enumerate(iter(f), start=1):
-            parse_line(contests, choices, precincts, line_no, line)
+    for line_no, line in input_lines(path):
+        parse_line(contests, choices, precincts, line_no, line)
 
     print("parsed: %d lines" % line_no)
 
