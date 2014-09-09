@@ -28,15 +28,15 @@ class ContestInfo(object):
     """
 
     def __init__(self, name, area):
-        # TODO: change these to choice_ids and precinct_ids.
-        self.choices = {}
+        self.choice_ids = set()
+        # TODO: change this to precinct_ids.
         self.precincts = {}
         self.name = name
         self.area = area
 
     def __repr__(self):
-        return ("ContestInfo(name=%r, area=%r, precincts=%d, choices=%d)" %
-                (self.name, self.area, len(self.precincts), len(self.choices)))
+        return ("<ContestInfo object: name=%r, area=%r, %d precincts, %d choices)" %
+                (self.name, self.area, len(self.precincts), len(self.choice_ids)))
 
 class ElectionInfo(object):
 
@@ -46,7 +46,7 @@ class ElectionInfo(object):
     Attributes:
 
       choices: a dict of integer choice ID to a 2-tuple of
-        (contest_id, choice name).
+        (contest_id, choice_name).
       contests: a dict of integer contest ID to ContestInfo object.
       precincts: a dict of integer precinct ID to precinct name.
 
@@ -65,7 +65,12 @@ def split_line(line):
     """Return a list of field values in the line."""
     return SPLITTER.split(line.strip())
 
-def parse_line(contests, choices, precincts, line_no, line):
+def parse_line_info(contests, choices, precincts, line_no, line):
+    """
+    This function does not populate contest.choice_ids for the objects
+    in contests.
+
+    """
     fields = split_line(line)
     try:
         data, new_contest, new_choice, precinct, area = fields
@@ -119,7 +124,6 @@ def parse_line(contests, choices, precincts, line_no, line):
         except KeyError:
             choice = (contest_id, new_choice)
             choices[choice_id] = choice
-        contest.choices[choice_id] = True
 
     contest.precincts[precinct_id] = True
 
@@ -149,9 +153,13 @@ def parse_election_info(path):
     precincts = info.precincts
 
     for line_no, line in input_lines(path):
-        parse_line(contests, choices, precincts, line_no, line)
+        parse_line_info(contests, choices, precincts, line_no, line)
 
     print("parsed: %d lines" % line_no)
+
+    for choice_id, (contest_id, choice_name) in choices.items():
+        contest = contests[contest_id]
+        contest.choice_ids.add(choice_id)
 
     return info
 
@@ -196,7 +204,7 @@ def init_results(contests):
         for precinct_id in contest.precincts:
             precinct_totals = {}
             contest_totals[precinct_id] = precinct_totals
-            for choice_id in contest.choices:
+            for choice_id in contest.choice_ids:
                 precinct_totals[choice_id] = 0
 
 def main(argv):
