@@ -71,7 +71,6 @@ class ContestInfo(object):
                 (self.name, self.area, len(self.precinct_ids), len(self.choice_ids)))
 
 
-# VotingPrecinctID,VotingPrecinctName,MailBallotPrecinct,BalType,Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
 class DistrictInfo(object):
 
     """
@@ -102,6 +101,8 @@ class ElectionInfo(object):
       choices: a dict of integer choice ID to a 2-tuple of
         (contest_id, choice_name).
       contests: a dict of integer contest_id to ContestInfo object.
+      neighborhoods: a dict mapping neighborhood string label to string name.
+        For example, "BAYVW/HTRSPT" maps to "BAYVIEW/HUNTERS POINT".
       precincts: a dict of integer precinct ID to precinct name.
 
     """
@@ -113,8 +114,9 @@ class ElectionInfo(object):
 
         """
         self.choices = {}
-        self.districts = district_info
         self.contests = {}
+        self.districts = district_info
+        self.neighborhoods = {}
         self.precincts = {}
 
         self.name = name
@@ -281,6 +283,9 @@ class Parser(object):
             for line_no, line in enumerate(iter(f), start=1):
                 self.line = line
                 self.line_no = line_no
+                # This yields no values because we set the information
+                # we need as instance attributes instead.  This is more
+                # convenient for things like our Parser exception handler.
                 yield
         log("parsed: %d lines" % line_no)
 
@@ -314,9 +319,36 @@ class DistrictInfoParser(Parser):
         """
         self.district_info = district_info
 
-    def parse_line(self, line):
-        parse_line_info(self.contests, self.choices, self.precincts, line)
+    def add_precinct(self, attr, precinct_id, value):
+        districts = getattr(self.district_info, attr)
+        try:
+            precinct_ids = districts[value]
+        except KeyError:
+            precinct_ids = set()
+            districts[value] = precinct_ids
+        precinct_ids.add(precinct_id)
 
+    # TODO: implement this.
+    def parse_line(self, line):
+        # VotingPrecinctID,VotingPrecinctName,MailBallotPrecinct,BalType,
+        # Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
+        values = line.strip().split(",")
+        precinct_id = values[0]
+        assm, bart, congr, nbhd, sen, supe = values[4:]
+
+        self.add_precinct('assembly', precinct_id, int(assm))
+        self.add_precinct('bart', precinct_id, int(bart))
+        self.add_precinct('congress', precinct_id, int(congr))
+        self.add_precinct('senate', precinct_id, int(sen))
+        self.add_precinct('supervisor', precinct_id, int(supe))
+
+        self.add_precinct('neighborhoods', precinct_id, nbhd)
+
+    def parse_body(self, path):
+        lines = self.iter_lines(path)
+        next(lines)  # Skip the header line.
+        for x in lines:
+            self.parse_line(self.line)
 
 class ElectionInfoParser(Parser):
 
@@ -409,7 +441,10 @@ def process_input(name, districts_path, wineds_path):
 
     """
     district_info = DistrictInfo()
+    parser = DistrictInfoParser(district_info)
+    parser.parse(districts_path)
 
+    log(repr(district_info.neighborhoods))
     # We parse the file in two passes to simplify the logic and make the
     # code easier to understand.
     #
