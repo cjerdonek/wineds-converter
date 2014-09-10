@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# **NOTE: THIS SCRIPT IS WRITTEN FOR PYTHON 3.**
+# **THIS SCRIPT IS WRITTEN FOR PYTHON 3.**
 #
+
 """\
 Usage: python3 parse.py NAME DISTRICTS_PATH RESULTS_PATH
 
@@ -72,6 +73,11 @@ class ContestInfo(object):
 
 # VotingPrecinctID,VotingPrecinctName,MailBallotPrecinct,BalType,Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
 class DistrictInfo(object):
+
+    """
+    Encapsulates what precincts are in what districts.
+
+    """
 
     def __init__(self):
         # These are all dicts mapping district number to set of precinct_ids.
@@ -254,39 +260,65 @@ def parse_line_info(contests, choices, precincts, line):
         choice = (contest_id, new_choice)
         choices[choice_id] = choice
 
-    # TODO: change precincts to a set and validate that each precinct
-    # appears only once.
+    # TODO: validate that each precinct appears only once.
     contest.precinct_ids.add(precinct_id)
-
-
-def iter_lines(path):
-    """
-    Return an iterator over the lines of an input file.
-
-    Each iteration yields a 2-tuple: (line_no, line).
-
-    """
-    log("parsing: %s" % path)
-    with codecs.open(path, "r", encoding="utf-8") as f:
-        for line_no, line in enumerate(iter(f), start=1):
-            yield line_no, line
-    log("parsed: %d lines" % line_no)
 
 
 class Parser(object):
 
+    line_no = 0
+    line = None
+
+    def iter_lines(self, path):
+        """
+        Return an iterator over the lines of an input file.
+
+        Each iteration yields a 2-tuple: (line_no, line).
+
+        """
+        log("parsing: %s" % path)
+        with codecs.open(path, "r", encoding="utf-8") as f:
+            for line_no, line in enumerate(iter(f), start=1):
+                self.line = line
+                self.line_no = line_no
+                yield
+        log("parsed: %d lines" % line_no)
+
     def parse_line(self, line):
         raise NotImplementedError()
 
+    def parse_body(self, path):
+        for x in self.iter_lines(path):
+            self.parse_line(self.line)
+
     def parse(self, path):
-        for line_no, line in iter_lines(path):
-            try:
-                self.parse_line(line)
-            except:
-                raise Exception("error while parsing line %d: %r" % (line_no, line))
+        try:
+            self.parse_body(path)
+        except:
+            raise Exception("error while parsing line %d: %r" %
+                            (self.line_no, self.line))
 
 
-class InfoParser(Parser):
+class DistrictInfoParser(Parser):
+
+    """
+    Parses a CSV file with information about precincts and districts.
+
+    """
+
+    def __init__(self, district_info):
+        """
+        Arguments:
+          info: a DistrictInfo object.
+
+        """
+        self.district_info = district_info
+
+    def parse_line(self, line):
+        parse_line_info(self.contests, self.choices, self.precincts, line)
+
+
+class ElectionInfoParser(Parser):
 
     """
     In addition to parsing the file, this class's parse() method also
@@ -358,7 +390,7 @@ def make_election_info(path, name, district_info):
 
     """
     info = ElectionInfo(name, district_info)
-    parser = InfoParser(info)
+    parser = ElectionInfoParser(info)
     parser.parse(path)
 
     choices = info.choices
