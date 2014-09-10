@@ -1,9 +1,9 @@
 WinEDS Converter
 ================
 
-This repository contains a Python 3 script to convert WinEDS 4.0 output
-into a simpler format.  WinEDS is an election management system owned by
-[Dominion Voting Systems][dominion].
+This repository contains an open-source Python 3 script to convert
+WinEDS 4.0 output into a simpler format.  WinEDS is an election
+management system owned by [Dominion Voting Systems][dominion].
 
 
 New Format
@@ -48,5 +48,19 @@ integers rather than strings.
 * `HHH` = Choice ID (`098` or 98 for "Yes" [on 42])
 * `PPPP` = Precinct ID (`1101` for "Pct 1101")
 * `TTTTT` = Vote total (`00082` for 82)
+
+
+License
+-------
+
+This project is licensed under the permissive BSD 3-clause license.
+See the [`LICENSE`](LICENSE) file for details.
+
+
+Author
+------
+
+Chris Jerdonek (<chris.jerdonek@gmail.com>)
+
 
 [dominion]: http://www.dominionvoting.com/
