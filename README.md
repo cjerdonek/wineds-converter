@@ -9,14 +9,24 @@ management system owned by [Dominion Voting Systems][dominion].
 New Format
 ----------
 
-This section documents the new format.
+This section documents the new output format.
 
-Here is an example of what the file looks like (tab-delimited):
+Here is a snippet of what the file looks like (comma-delimited):
 
-    SAN FRANCISCO PRIMARY ELECTION JUNE 3, 2014
 
-    State Treasurer - CALIFORNIA
-    PRECINCT	ELLEN H. BROWN	GREG CONLON	JOHN CHIANG
+    State Proposition 41 - CALIFORNIA
+    Precinct,Precinct ID,Registration,Ballots Cast,Yes,No
+    Pct 1101,1101,484,141,79,51
+    Pct 1102,1102,873,286,180,83
+    ...
+    Pct 9901 MB,9901,0,0,0,0
+    Pct 9902 MB,9902,0,0,0,0
+
+    Local Measure B - CITY/COUNTY OF SAN FRANCI
+    Precinct,Precinct ID,Registration,Ballots Cast,Yes,No
+    Pct 1101,1101,484,141,85,49
+    Pct 1102,1102,873,286,163,107
+    ...
 
 
 WinEDS Reporting Tool

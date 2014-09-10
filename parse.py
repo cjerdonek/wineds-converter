@@ -390,6 +390,9 @@ class ResultsWriter(object):
     def write_ln(self, s=""):
         print(s, file=self.file)
 
+    def write_values(values):
+        self.write_ln(",".join(values))
+
     def write_contest(self, precincts, choices, contest_info, contest_results):
         """
         Arguments:
@@ -410,7 +413,9 @@ class ResultsWriter(object):
         voted = results.voted
         precinct_ids = sorted(contest_info.precinct_ids)
         for pid in precinct_ids:
+            precinct_results = contest_results[pid]
             values = [precincts[pid], str(pid), str(registered[pid]), str(voted[pid])]
+            values += [str(precinct_results[cid]) for cid in contest_choice_ids]
             self.write_ln(",".join(values))
 
     def write(self):
