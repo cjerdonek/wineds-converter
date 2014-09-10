@@ -9,10 +9,11 @@ management system owned by [Dominion Voting Systems][dominion].
 New Format
 ----------
 
-This section documents the new output format.
+This section documents the new format (i.e. the destination or target
+format of the conversion).
 
-Here is a snippet of what the file looks like (comma-delimited):
-
+Here is a snippet of what a file in the new format looks like.  The
+column data is comma-delimited, and an empty line separates each contest.
 
     State Proposition 41 - CALIFORNIA
     Precinct,Precinct ID,Registration,Ballots Cast,Yes,No
@@ -29,11 +30,11 @@ Here is a snippet of what the file looks like (comma-delimited):
     ...
 
 
-WinEDS Reporting Tool
----------------------
+Source Format (WinEDS)
+----------------------
 
-This section contains a description of the output format of a TXT export
-from the WinEDS Reporting Tool.
+This section contains information about the output format of a TXT
+export from the WinEDS Reporting Tool.
 
 The file seems to be UTF-8 encoded.
 
