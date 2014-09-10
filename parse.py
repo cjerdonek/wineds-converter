@@ -243,26 +243,37 @@ def parse_line_info(contests, choices, precincts, line_no, line):
     contest.precinct_ids.add(precinct_id)
 
 
-def parse_election_info(path, info):
+class Parser(object):
+
+    def parse_line(self, line):
+        raise NotImplementedError()
+
+    def parse(self, path):
+        # TODO: remove line_no from the iterator?
+        for line_no, line in iter_lines(path):
+            self.parse_line(line_no, line)
+
+
+class InfoParser(Parser):
+
     """
-    Parse the given file, and return an ElectionInfo object.
-
-    In addition to parsing the file, this function also performs
-    validation on the file to ensure that all of our assumptions about
-    the file format and data are correct.
+    In addition to parsing the file, this class's parse() method also
+    performs validation on the file to ensure that all of our assumptions
+    about the file format and data are correct.
     """
-    contests = info.contests
-    choices = info.choices
-    precincts = info.precincts
 
-    for line_no, line in iter_lines(path):
-        parse_line_info(contests, choices, precincts, line_no, line)
+    def __init__(self, info):
+        """
+        Arguments:
+          info: an ElectionInfo object.
 
-    for choice_id, (contest_id, choice_name) in choices.items():
-        contest = contests[contest_id]
-        contest.choice_ids.add(choice_id)
+        """
+        self.contests = info.contests
+        self.choices = info.choices
+        self.precincts = info.precincts
 
-    return info
+    def parse_line(self, line_no, line):
+        parse_line_info(self.contests, self.choices, self.precincts, line_no, line)
 
 
 def parse_results(path, results):
@@ -286,6 +297,25 @@ def parse_results(path, results):
             exit_with_error(err)
 
 
+def make_election_info(path, name):
+    """
+    Parse the file, and create an ElectionInfo object.
+
+    """
+    info = ElectionInfo(name)
+    info_parser = InfoParser(info)
+    info_parser.parse(path)
+
+    choices = info.choices
+    contests = info.contests
+
+    for choice_id, (contest_id, choice_name) in choices.items():
+        contest = contests[contest_id]
+        contest.choice_ids.add(choice_id)
+
+    return info
+
+
 def process_input(path, name):
     """
     Modify the ElectionInfo object in place and return a results dict.
@@ -306,8 +336,9 @@ def process_input(path, name):
     # Then we parse the file a second time, but without doing any
     # validation.  We simply read the vote totals and insert them into
     # the object structure.
-    info = ElectionInfo(name)
-    parse_election_info(path, info)
+
+    # Pass #1
+    info = make_election_info(path, name)
 
     results = ElectionResults()
     init_results(info, results)
