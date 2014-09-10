@@ -1,0 +1,2 @@
+# For reading Excel files: https://pypi.python.org/pypi/xlrd
+xlrd==0.9.3
