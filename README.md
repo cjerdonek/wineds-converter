@@ -11,7 +11,8 @@ Setting up
 
 The script is written for Python 3 and was developed using Python 3.4.
 
-To install requirements, run the following from the repository root:
+To install third-party dependencies, run the following from the
+repository root:
 
     $ pip install -r requirements.txt
 
@@ -25,18 +26,18 @@ format of the conversion).
 Here is a snippet of what a file in the new format looks like.  The
 column data is comma-delimited, and an empty line separates each contest.
 
-    State Proposition 41 - CALIFORNIA
+    State Proposition 42 - CALIFORNIA
     Precinct,Precinct ID,Registration,Ballots Cast,Yes,No
-    Pct 1101,1101,484,141,79,51
-    Pct 1102,1102,873,286,180,83
+    Pct 1101,1101,484,141,82,42
+    Pct 1102,1102,873,286,188,67
     ...
     Pct 9901 MB,9901,0,0,0,0
     Pct 9902 MB,9902,0,0,0,0
 
-    Local Measure B - CITY/COUNTY OF SAN FRANCI
+    Local Measure A - CITY/COUNTY OF SAN FRANCI
     Precinct,Precinct ID,Registration,Ballots Cast,Yes,No
-    Pct 1101,1101,484,141,85,49
-    Pct 1102,1102,873,286,163,107
+    Pct 1101,1101,484,141,89,45
+    Pct 1102,1102,873,286,208,64
     ...
 
 
