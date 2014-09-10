@@ -62,6 +62,7 @@ class ContestInfo(object):
         return ("<ContestInfo object: name=%r, area=%r, %d precincts, %d choices)" %
                 (self.name, self.area, len(self.precinct_ids), len(self.choice_ids)))
 
+
 class ElectionInfo(object):
 
     """
@@ -88,9 +89,63 @@ class ElectionInfo(object):
                 (len(self.contests), len(self.choices), len(self.precincts)))
 
 
-def split_line(line):
-    """Return a list of field values in the line."""
-    return SPLITTER.split(line.strip())
+class ElectionResults(object):
+
+    """
+    Encapsulates election results (i.e. vote totals).
+
+    Attributes:
+
+      contests: a results dictionary, as described below.
+      registered: a dict mapping precinct_id to a registration count.
+      voted: a dict mapping precinct_id to a voter count.
+
+    The results dictionary is a tree-like structure as follows:
+
+      results[contest_id] -> contest_results
+      contest_results[precinct_id] -> contest_precinct_results
+      contest_precinct_results[choice_id] -> vote_total
+
+    In particular, to get a vote total for a contest in a precinct:
+
+      results[contest_id][precinct_id][choice_id]
+
+    """
+
+    def __init__(self):
+        self.contests = {}
+        self.registered = {}
+        self.voted = {}
+
+
+def init_results(info, results):
+    """
+    Initialize the results object by modifying it in place.
+
+    Arguments:
+      info: an ElectionInfo object.
+      results: an ElectionResults object.
+
+    """
+    contests = results.contests
+    registered = results.registered
+    voted = results.voted
+
+    for contest_id, contest_info in info.contests.items():
+        contest_results = {}
+        contests[contest_id] = contest_results
+        for precinct_id in contest_info.precinct_ids:
+            cp_results = {}  # stands for contest_precinct_results
+            contest_results[precinct_id] = cp_results
+            for choice_id in contest_info.choice_ids:
+                cp_results[choice_id] = 0
+
+    # Initialize the election-wide result attributes.
+    for precinct_id in info.precincts.keys():
+        registered[precinct_id] = 0
+        voted[precinct_id] = 0
+
+    return results
 
 
 def iter_lines(path):
@@ -104,6 +159,26 @@ def iter_lines(path):
         for line_no, line in enumerate(iter(f), start=1):
             yield line_no, line
     log("parsed: %d lines" % line_no)
+
+
+def split_line(line):
+    """Return a list of field values in the line."""
+    return SPLITTER.split(line.strip())
+
+
+def parse_data_chunk(chunk):
+    """Parse the 16-character string beginning each line."""
+    # 0AAACCCPPPPTTTTT
+    #
+    # AAA   = contest_id
+    # CCC   = choice_id
+    # PPPP  = precinct_id
+    # TTTTT = choice_total
+    contest_id = int(chunk[1:4])
+    choice_id = int(chunk[4:7])
+    precinct_id = int(chunk[7:11])
+    vote_total = int(chunk[11:16])
+    return choice_id, contest_id, precinct_id, vote_total
 
 
 def parse_line_info(contests, choices, precincts, line_no, line):
@@ -125,24 +200,24 @@ def parse_line_info(contests, choices, precincts, line_no, line):
         except ValueError:
             raise Exception("error unpacking line %d: %r" % (line_no, fields))
 
-    # 0AAACCCPPPPTTTTT
-    #
-    # AAA   = contest_id
-    # CCC   = choice_id
-    # PPPP  = precinct_id
-    # TTTTT = choice_total
     assert len(data) == 16
     assert data[0] == '0'
-    contest_id = int(data[1:4])
-    choice_id = int(data[4:7])
-    precinct_id = int(data[7:11])
-    choice_total = int(data[11:16])
+    choice_id, contest_id, precinct_id, vote_total = parse_data_chunk(data)
 
     try:
         old_precinct = precincts[precinct_id]
         assert old_precinct == precinct
     except KeyError:
         precincts[precinct_id] = precinct
+
+    # The contests with the following names are special cases that need
+    # to be treated differently:
+    #   "REGISTERED VOTERS - TOTAL"
+    #   "BALLOTS CAST - TOTAL"
+    if area is None:
+        assert choice_id in (0, 1)
+        # TODO: both have choice ID 1, so skip them and don't store them as choices.
+        return
 
     try:
         contest = contests[contest_id]
@@ -152,19 +227,16 @@ def parse_line_info(contests, choices, precincts, line_no, line):
         contest = ContestInfo(name=new_contest, area=area)
         contests[contest_id] = contest
 
-    # The "REGISTERED VOTERS - TOTAL" and "BALLOTS CAST - TOTAL" contests
-    # both have choice ID 1, so skip them and don't store them as choices.
-    if area is not None:
+    try:
+        choice = choices[choice_id]
         try:
-            choice = choices[choice_id]
-            try:
-                assert choice == (contest_id, new_choice)
-            except AssertionError:
-                raise Exception("choice mismatch for choice ID %d: %r != %r" %
-                                (choice_id, choice, (contest_id, new_choice)))
-        except KeyError:
-            choice = (contest_id, new_choice)
-            choices[choice_id] = choice
+            assert choice == (contest_id, new_choice)
+        except AssertionError:
+            raise Exception("choice mismatch for choice ID %d: %r != %r" %
+                            (choice_id, choice, (contest_id, new_choice)))
+    except KeyError:
+        choice = (contest_id, new_choice)
+        choices[choice_id] = choice
 
     # TODO: change precincts to a set and validate that each precinct
     # appears only once.
@@ -193,44 +265,28 @@ def parse_election_info(path, info):
     return info
 
 
-def init_results(election_info):
-    """
-    Return a tree-like results dictionary.
+def parse_results(path, results):
+    contests = results.contests
+    registered = results.registered
+    voted = results.voted
 
-    Arguments:
-      election_info: an ElectionInfo object.
-
-    Returns a results dict, where we have the following:
-
-      results[contest_id] -> contest_results
-      contest_results[precinct_id] -> contest_precinct_results
-      contest_precinct_results[choice_id] -> vote_total
-
-    In particular, the following will give the vote total in a precinct:
-
-      results[contest_id][precinct_id][choice_id]
-
-    """
-    results = {}
-    for contest_id, contest_info in election_info.contests.items():
-        contest_results = {}
-        results[contest_id] = contest_results
-        for precinct_id in contest_info.precinct_ids:
-            cp_results = {}  # stands for contest_precinct_results
-            contest_results[precinct_id] = cp_results
-            for choice_id in contest_info.choice_ids:
-                cp_results[choice_id] = 0
-    return results
+    for line_no, line in iter_lines(path):
+        data = split_line(line)[0]
+        choice_id, contest_id, precinct_id, vote_total = parse_data_chunk(data)
+        try:
+            contests[contest_id][precinct_id][choice_id] += vote_total
+        except KeyError:
+            err = ("error adding vote total for chunk with: "
+                   "contest_id=%d, precinct_id=%d, choice_id=%d, vote_total=%d" %
+                   (contest_id, precinct_id, choice_id, vote_total))
+            try:
+                contest_results = contests[contest_id]
+            except KeyError:
+                err = "contest_id not found in results: " + err
+            exit_with_error(err)
 
 
-def parse_results(path):
-
-    with codecs.open(input_path, "r", encoding="utf-8") as f:
-        for line_no, line in enumerate(iter(f), start=1):
-            data = split_line(line)[0]
-
-
-def parse(path, info):
+def process_input(path, name):
     """
     Modify the ElectionInfo object in place and return a results dict.
 
@@ -250,10 +306,14 @@ def parse(path, info):
     # Then we parse the file a second time, but without doing any
     # validation.  We simply read the vote totals and insert them into
     # the object structure.
+    info = ElectionInfo(name)
     parse_election_info(path, info)
-    results = init_results(info)
 
-    return results
+    results = ElectionResults()
+    init_results(info, results)
+    # parse_results(path, results)
+
+    return info, results
 
 
 class Writer(object):
@@ -293,14 +353,15 @@ class Writer(object):
         """Write the election results to the given file."""
 
         choices = info.choices
-        contests = info.contests
+        info_contests = info.contests
         precincts = info.precincts
+        results_contests = results.contests
 
         self.write(info.name)
         self.write()
-        for contest_id in sorted(contests.keys()):
-            contest_info = contests[contest_id]
-            contest_results = results[contest_id]
+        for contest_id in sorted(info_contests.keys()):
+            contest_info = info_contests[contest_id]
+            contest_results = results_contests[contest_id]
             self.write_contest(precincts, choices, contest_info, contest_results)
             self.write()
 
@@ -312,8 +373,7 @@ def inner_main(argv):
     except ValueError:
         exit_with_error("You must provide two values: NAME and PATH.")
 
-    info = ElectionInfo(name)
-    results = parse(input_path, info)
+    info, results = process_input(input_path, name)
 
     log("parsed election: %r" % info)
 
