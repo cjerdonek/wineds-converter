@@ -403,7 +403,7 @@ class ResultsWriter(object):
         """
         self.write_ln("%s - %s" % (contest_info.name, contest_info.area))
         contest_choice_ids = sorted(contest_info.choice_ids)
-        columns = ["Precinct", "Precinct ID", "Registration", "Ballots Cast"]
+        columns = ["VotingPrecinctName", "VotingPrecinctID", "Registration", "Ballots Cast"]
         # Collect the choice names.
         columns += [choices[choice_id][1] for choice_id in contest_choice_ids]
         self.write_ln(",".join(columns))
