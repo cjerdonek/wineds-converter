@@ -71,6 +71,10 @@ class ContestInfo(object):
                 (self.name, self.area, len(self.precinct_ids), len(self.choice_ids)))
 
 
+# This constant is a convenience to let us write code that is more DRY.
+# This does not include the "city" and "neighborhoods" attributes.
+DISTRICT_INT_ATTRS = ('assembly', 'bart', 'congress', 'senate', 'supervisor')
+
 class DistrictInfo(object):
 
     """
@@ -84,8 +88,8 @@ class DistrictInfo(object):
         # are strings instead of integers.
         self.assembly = {}
         self.bart = {}
+        self.city = set()
         self.congress = {}
-        self.city = {}
         self.neighborhoods = {}
         self.senate = {}
         self.supervisor = {}
@@ -328,21 +332,20 @@ class DistrictInfoParser(Parser):
             districts[value] = precinct_ids
         precinct_ids.add(precinct_id)
 
-    # TODO: implement this.
     def parse_line(self, line):
-        # VotingPrecinctID,VotingPrecinctName,MailBallotPrecinct,BalType,
-        # Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
+        # Here are the column headers of the file:
+        #   VotingPrecinctID,VotingPrecinctName,MailBallotPrecinct,BalType,
+        #   Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
         values = line.strip().split(",")
-        precinct_id = values[0]
-        assm, bart, congr, nbhd, sen, supe = values[4:]
+        precinct_id = int(values[0])
+        # Includes: Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
+        values = values[4:]
+        nbhd_label = values.pop(3)
+        for attr, value in zip(DISTRICT_INT_ATTRS, values):
+            self.add_precinct(attr, precinct_id, int(value))
 
-        self.add_precinct('assembly', precinct_id, int(assm))
-        self.add_precinct('bart', precinct_id, int(bart))
-        self.add_precinct('congress', precinct_id, int(congr))
-        self.add_precinct('senate', precinct_id, int(sen))
-        self.add_precinct('supervisor', precinct_id, int(supe))
-
-        self.add_precinct('neighborhoods', precinct_id, nbhd)
+        self.add_precinct('neighborhoods', precinct_id, nbhd_label)
+        self.district_info.city.add(precinct_id)
 
     def parse_body(self, path):
         lines = self.iter_lines(path)
@@ -462,7 +465,17 @@ def process_input(name, districts_path, wineds_path):
     # the object structure.
 
     # Pass #1
+    # TODO: rename to election_info.
     info = make_election_info(wineds_path, name, district_info)
+
+    # Check that the precincts in the district file match the precincts
+    # in the results file.
+    for i, (p1, p2) in enumerate(zip(sorted(district_info.city),
+                                     sorted(info.precincts.keys())), start=1):
+        try:
+            assert p1 == p2
+        except AssertionError:
+            exit_with_error("precinct %d differs: %r != %r" % (i, p1, p2))
 
     results = ElectionResults()
     init_results(info, results)
