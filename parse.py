@@ -148,19 +148,6 @@ def init_results(info, results):
     return results
 
 
-def iter_lines(path):
-    """
-    Return an iterator over the lines of an input file.
-
-    Each iteration yields a 2-tuple: (line_no, line).
-
-    """
-    with codecs.open(path, "r", encoding="utf-8") as f:
-        for line_no, line in enumerate(iter(f), start=1):
-            yield line_no, line
-    log("parsed: %d lines" % line_no)
-
-
 def split_line(line):
     """Return a list of field values in the line."""
     return SPLITTER.split(line.strip())
@@ -215,7 +202,7 @@ def parse_line_info(contests, choices, precincts, line_no, line):
     #   "REGISTERED VOTERS - TOTAL"
     #   "BALLOTS CAST - TOTAL"
     if area is None:
-        assert choice_id in (0, 1)
+        assert contest_id in (1, 2)
         # TODO: both have choice ID 1, so skip them and don't store them as choices.
         return
 
@@ -243,15 +230,30 @@ def parse_line_info(contests, choices, precincts, line_no, line):
     contest.precinct_ids.add(precinct_id)
 
 
+def iter_lines(path):
+    """
+    Return an iterator over the lines of an input file.
+
+    Each iteration yields a 2-tuple: (line_no, line).
+
+    """
+    with codecs.open(path, "r", encoding="utf-8") as f:
+        for line_no, line in enumerate(iter(f), start=1):
+            yield line_no, line
+    log("parsed: %d lines" % line_no)
+
+
 class Parser(object):
 
     def parse_line(self, line):
         raise NotImplementedError()
 
     def parse(self, path):
-        # TODO: remove line_no from the iterator?
         for line_no, line in iter_lines(path):
-            self.parse_line(line_no, line)
+            try:
+                self.parse_line(line_no, line)
+            except:
+                raise Exception("error while parsing line %d: %r" % (line_no, line))
 
 
 class InfoParser(Parser):
@@ -321,17 +323,17 @@ def process_input(path, name):
     Modify the ElectionInfo object in place and return a results dict.
 
     """
-    # We parse and process the file in two passes to simplify the logic
-    # and make the code easier to understand.
+    # We parse the file in two passes to simplify the logic and make the
+    # code easier to understand.
     #
     # In the first pass, we read all the election "metadata" (contests,
     # choices, precincts, etc) and validate the integer ID's, etc, to
     # make sure that all of our assumptions about the file format are
     # correct.
     #
-    # After the first pass, we build an object structure in which to
+    # After the first pass, we construct a results object in which to
     # store values.  Essentially, this is a large tree-like dictionary
-    # of contests and vote totals per precinct for each contest.
+    # of contests, precincts, vote totals, etc.
     #
     # Then we parse the file a second time, but without doing any
     # validation.  We simply read the vote totals and insert them into
@@ -342,6 +344,8 @@ def process_input(path, name):
 
     results = ElectionResults()
     init_results(info, results)
+
+    # Pass #2
     # parse_results(path, results)
 
     return info, results
