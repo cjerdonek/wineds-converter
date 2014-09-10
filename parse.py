@@ -375,17 +375,19 @@ def process_input(path, name):
     return info, results
 
 
-class Writer(object):
+class ResultsWriter(object):
 
     """
     Responsible for writing output to a file.
 
     """
 
-    def __init__(self, file):
+    def __init__(self, file, info, results):
         self.file = file
+        self.info = info
+        self.results = results
 
-    def write(self, s=""):
+    def write_ln(self, s=""):
         print(s, file=self.file)
 
     def write_contest(self, precincts, choices, contest_info, contest_results):
@@ -396,33 +398,38 @@ class Writer(object):
           contest_info: a ContestInfo object.
 
         """
-        self.write("%s - %s" % (contest_info.name, contest_info.area))
+        self.write_ln("%s - %s" % (contest_info.name, contest_info.area))
         contest_choice_ids = sorted(contest_info.choice_ids)
+        columns = ["Precinct", "Precinct ID", "Registration", "Ballots Cast"]
         # Collect the choice names.
-        columns = [choices[choice_id][1] for choice_id in contest_choice_ids]
-        columns.insert(0, "PRECINCT")
-        columns.insert(1, "PRECINCT ID")
-        self.write(",".join(columns))
-        precinct_ids = sorted(contest_info.precinct_ids)
-        for precinct_id in precinct_ids:
-            columns = [precincts[precinct_id], str(precinct_id)]
-            self.write(",".join(columns))
+        columns += [choices[choice_id][1] for choice_id in contest_choice_ids]
+        self.write_ln(",".join(columns))
 
-    def write_results(self, info, results):
+        results = self.results
+        registered = results.registered
+        voted = results.voted
+        precinct_ids = sorted(contest_info.precinct_ids)
+        for pid in precinct_ids:
+            values = [precincts[pid], str(pid), str(registered[pid]), str(voted[pid])]
+            self.write_ln(",".join(values))
+
+    def write(self):
         """Write the election results to the given file."""
+        info = self.info
+        results = self.results
 
         choices = info.choices
         info_contests = info.contests
         precincts = info.precincts
         results_contests = results.contests
 
-        self.write(info.name)
-        self.write()
+        self.write_ln(info.name)
+        self.write_ln()
         for contest_id in sorted(info_contests.keys()):
             contest_info = info_contests[contest_id]
             contest_results = results_contests[contest_id]
             self.write_contest(precincts, choices, contest_info, contest_results)
-            self.write()
+            self.write_ln()
 
 
 def inner_main(argv):
@@ -457,8 +464,8 @@ def inner_main(argv):
     log("parsed: %d choices" % len(choices))
     log("parsed: %d precincts" % len(precincts))
 
-    writer = Writer(file=sys.stdout)
-    writer.write_results(info, results)
+    writer = ResultsWriter(file=sys.stdout, info=info, results=results)
+    writer.write()
 
 
 def main(argv):
