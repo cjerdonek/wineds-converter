@@ -168,7 +168,7 @@ def parse_data_chunk(chunk):
     return choice_id, contest_id, precinct_id, vote_total
 
 
-def parse_line_info(contests, choices, precincts, line_no, line):
+def parse_line_info(contests, choices, precincts, line):
     """
     This function does not populate contest.choice_ids for the objects
     in contests.
@@ -185,7 +185,7 @@ def parse_line_info(contests, choices, precincts, line_no, line):
         try:
             data, new_contest, new_choice, precinct, area = fields
         except ValueError:
-            raise Exception("error unpacking line %d: %r" % (line_no, fields))
+            raise Exception("error unpacking fields: %r" % fields)
 
     assert len(data) == 16
     assert data[0] == '0'
@@ -251,7 +251,7 @@ class Parser(object):
     def parse(self, path):
         for line_no, line in iter_lines(path):
             try:
-                self.parse_line(line_no, line)
+                self.parse_line(line)
             except:
                 raise Exception("error while parsing line %d: %r" % (line_no, line))
 
@@ -274,29 +274,52 @@ class InfoParser(Parser):
         self.choices = info.choices
         self.precincts = info.precincts
 
-    def parse_line(self, line_no, line):
-        parse_line_info(self.contests, self.choices, self.precincts, line_no, line)
+    def parse_line(self, line):
+        parse_line_info(self.contests, self.choices, self.precincts, line)
 
 
-def parse_results(path, results):
-    contests = results.contests
-    registered = results.registered
-    voted = results.voted
+class ResultsParser(Parser):
 
-    for line_no, line in iter_lines(path):
+    """
+    In addition to parsing the file, this class's parse() method also
+    performs validation on the file to ensure that all of our assumptions
+    about the file format and data are correct.
+    """
+
+    def __init__(self, results):
+        """
+        Arguments:
+          results: an ElectionResults object.
+
+        """
+        self.contests = results.contests
+        self.registered = results.registered
+        self.voted = results.voted
+
+    def parse_line(self, line):
         data = split_line(line)[0]
         choice_id, contest_id, precinct_id, vote_total = parse_data_chunk(data)
+        if contest_id < 3:
+            if contest_id == 1:
+                precinct_totals = self.registered
+            else:
+                precinct_totals = self.voted
+            precinct_totals[precinct_id] = vote_total
+            return
+        # Otherwise, we have a normal contest.
+
+        # TODO: simplify and complete the error handling below.
         try:
-            contests[contest_id][precinct_id][choice_id] += vote_total
+            self.contests[contest_id][precinct_id][choice_id] += vote_total
         except KeyError:
             err = ("error adding vote total for chunk with: "
                    "contest_id=%d, precinct_id=%d, choice_id=%d, vote_total=%d" %
                    (contest_id, precinct_id, choice_id, vote_total))
             try:
-                contest_results = contests[contest_id]
+                contest_results = self.contests[contest_id]
             except KeyError:
                 err = "contest_id not found in results: " + err
-            exit_with_error(err)
+            raise Exception(err)
 
 
 def make_election_info(path, name):
@@ -305,8 +328,8 @@ def make_election_info(path, name):
 
     """
     info = ElectionInfo(name)
-    info_parser = InfoParser(info)
-    info_parser.parse(path)
+    parser = InfoParser(info)
+    parser.parse(path)
 
     choices = info.choices
     contests = info.contests
@@ -346,7 +369,8 @@ def process_input(path, name):
     init_results(info, results)
 
     # Pass #2
-    # parse_results(path, results)
+    parser = ResultsParser(results)
+    parser.parse(path)
 
     return info, results
 
