@@ -6,6 +6,16 @@ WinEDS 4.0 output into a simpler format.  WinEDS is an election
 management system owned by [Dominion Voting Systems][dominion].
 
 
+Setting up
+----------
+
+The script is written for Python 3 and was developed using Python 3.4.
+
+To install requirements, run the following from the repository root:
+
+    $ pip install -r requirements.txt
+
+
 New Format
 ----------
 
