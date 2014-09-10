@@ -1,15 +1,22 @@
 #!/usr/bin/env python
+#
+# **NOTE: THIS SCRIPT IS WRITTEN FOR PYTHON 3.**
+#
+"""\
+Usage: python3 parse.py NAME DISTRICTS_PATH RESULTS_PATH
 
-"""
-Usage: python3 parse.py NAME PATH
+Arguments:
 
-NAME: the election name.
+  NAME: the name of the election.
 
-PATH: path to a WinEDS Reporting Tool output file.  A relative path
-  will be interpreted as relative to the current working directory.
+  DISTRICTS_PATH: path to a CSV file mapping precincts to their
+    different districts.
 
-**Note: this script is written for Python 3.**
+  RESULTS_PATH: path to a WinEDS Reporting Tool output file that contains
+    vote totals for each precinct in each contest.
 
+In the above, relative paths will be interpreted as relative to the
+current working directory.
 """
 
 import codecs
@@ -63,6 +70,22 @@ class ContestInfo(object):
                 (self.name, self.area, len(self.precinct_ids), len(self.choice_ids)))
 
 
+# VotingPrecinctID,VotingPrecinctName,MailBallotPrecinct,BalType,Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
+class DistrictInfo(object):
+
+    def __init__(self):
+        # These are all dicts mapping district number to set of precinct_ids.
+        # The neighborhood dict is slightly different in that the keys
+        # are strings instead of integers.
+        self.assembly = {}
+        self.bart = {}
+        self.congress = {}
+        self.city = {}
+        self.neighborhoods = {}
+        self.senate = {}
+        self.supervisor = {}
+
+
 class ElectionInfo(object):
 
     """
@@ -77,8 +100,14 @@ class ElectionInfo(object):
 
     """
 
-    def __init__(self, name):
+    def __init__(self, name, district_info):
+        """
+        Arguments:
+          district_info: a DistrictInfo object.
+
+        """
         self.choices = {}
+        self.districts = district_info
         self.contests = {}
         self.precincts = {}
 
@@ -237,6 +266,7 @@ def iter_lines(path):
     Each iteration yields a 2-tuple: (line_no, line).
 
     """
+    log("parsing: %s" % path)
     with codecs.open(path, "r", encoding="utf-8") as f:
         for line_no, line in enumerate(iter(f), start=1):
             yield line_no, line
@@ -322,12 +352,12 @@ class ResultsParser(Parser):
             raise Exception(err)
 
 
-def make_election_info(path, name):
+def make_election_info(path, name, district_info):
     """
     Parse the file, and create an ElectionInfo object.
 
     """
-    info = ElectionInfo(name)
+    info = ElectionInfo(name, district_info)
     parser = InfoParser(info)
     parser.parse(path)
 
@@ -341,11 +371,13 @@ def make_election_info(path, name):
     return info
 
 
-def process_input(path, name):
+def process_input(name, districts_path, wineds_path):
     """
     Modify the ElectionInfo object in place and return a results dict.
 
     """
+    district_info = DistrictInfo()
+
     # We parse the file in two passes to simplify the logic and make the
     # code easier to understand.
     #
@@ -363,14 +395,14 @@ def process_input(path, name):
     # the object structure.
 
     # Pass #1
-    info = make_election_info(path, name)
+    info = make_election_info(wineds_path, name, district_info)
 
     results = ElectionResults()
     init_results(info, results)
 
     # Pass #2
     parser = ResultsParser(results)
-    parser.parse(path)
+    parser.parse(wineds_path)
 
     return info, results
 
@@ -440,34 +472,11 @@ class ResultsWriter(object):
 def inner_main(argv):
     try:
         # TODO: use argparse.
-        name, input_path = argv[1:]
+        name, districts_path, results_path = argv[1:]
     except ValueError:
-        exit_with_error("You must provide two values: NAME and PATH.")
+        exit_with_error("%s\nERROR: incorrect number of arguments" % __doc__)
 
-    info, results = process_input(input_path, name)
-
-    log("parsed election: %r" % info)
-
-    choices = info.choices
-    contests = info.contests
-    precincts = info.precincts
-
-    log("Contests:")
-    for cid in sorted(contests):
-        contest = contests[cid]
-        log("%s %s" % (cid, contests[cid]))
-    log()
-
-    log("Choices:")
-    for cid in sorted(choices):
-        choice = choices[cid]
-        log("%r: %s, %s" % (cid, choice[0], choice[1]))
-    log()
-
-    # TODO: use logging.
-    log("parsed: %d contests" % len(contests))
-    log("parsed: %d choices" % len(choices))
-    log("parsed: %d precincts" % len(precincts))
+    info, results = process_input(name, districts_path, results_path)
 
     writer = ResultsWriter(file=sys.stdout, info=info, results=results)
     writer.write()
