@@ -27,6 +27,19 @@ import sys
 import timeit
 
 
+DISTRICT_TYPES = {
+    'Assembly': ('assembly', '%sTH ASSEMBLY DISTRICT'),
+    'BART': ('bart', 'BART DISTRICT %s'),
+    'Congressional': ('congress', '%sTH CONGRESSIONAL DISTRICT'),
+    'Neighborhood': ('neighborhood', None),
+    'Senatorial': ('senate', '%sTH SENATORIAL DISTRICT'),
+    'Supervisorial': ('supervisor', 'SUPERVISORIAL DISTRICT %s')
+}
+
+# This constant is a convenience to let us write code that is more DRY.
+# This does not include the "city" and "neighborhoods" attributes.
+DISTRICT_INFO_ATTRS = ('assembly', 'bart', 'congress', 'senate', 'supervisor')
+
 # We split on strings of whitespace having 2 or more characters.  This is
 # necessary since field values can contain spaces (e.g. candidate names).
 SPLITTER = re.compile(r'\s{2,}')
@@ -71,10 +84,6 @@ class ContestInfo(object):
                 (self.name, self.area, len(self.precinct_ids), len(self.choice_ids)))
 
 
-# This constant is a convenience to let us write code that is more DRY.
-# This does not include the "city" and "neighborhoods" attributes.
-DISTRICT_INT_ATTRS = ('assembly', 'bart', 'congress', 'senate', 'supervisor')
-
 class DistrictInfo(object):
 
     """
@@ -88,7 +97,7 @@ class DistrictInfo(object):
         # are strings instead of integers.
         self.assembly = {}
         self.bart = {}
-        self.city = set()
+        self.city = set()  # all precinct IDs.
         self.congress = {}
         self.neighborhoods = {}
         self.senate = {}
@@ -341,7 +350,7 @@ class DistrictInfoParser(Parser):
         # Includes: Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
         values = values[4:]
         nbhd_label = values.pop(3)
-        for attr, value in zip(DISTRICT_INT_ATTRS, values):
+        for attr, value in zip(DISTRICT_INFO_ATTRS, values):
             self.add_precinct(attr, precinct_id, int(value))
 
         self.add_precinct('neighborhoods', precinct_id, nbhd_label)
@@ -438,16 +447,23 @@ def make_election_info(path, name, district_info):
     return info
 
 
-def process_input(name, districts_path, wineds_path):
+def digest_input_files(name, districts_path, wineds_path):
     """
-    Modify the ElectionInfo object in place and return a results dict.
+    Read the input files and return a 2-tuple of an ElectionInfo
+    object and an ElectionResults object.
 
     """
     district_info = DistrictInfo()
     parser = DistrictInfoParser(district_info)
     parser.parse(districts_path)
 
-    log(repr(district_info.neighborhoods))
+    # TODO: remove this debug code.
+    for attr in DISTRICT_INFO_ATTRS:
+        data = getattr(district_info, attr)
+        log(attr)
+        for num, precinct_ids in data.items():
+            log("%d: %d" % (num, len(precinct_ids)))
+
     # We parse the file in two passes to simplify the logic and make the
     # code easier to understand.
     #
@@ -465,26 +481,25 @@ def process_input(name, districts_path, wineds_path):
     # the object structure.
 
     # Pass #1
-    # TODO: rename to election_info.
-    info = make_election_info(wineds_path, name, district_info)
+    election_info = make_election_info(wineds_path, name, district_info)
 
     # Check that the precincts in the district file match the precincts
     # in the results file.
     for i, (p1, p2) in enumerate(zip(sorted(district_info.city),
-                                     sorted(info.precincts.keys())), start=1):
+                                     sorted(election_info.precincts.keys())), start=1):
         try:
             assert p1 == p2
         except AssertionError:
             exit_with_error("precinct %d differs: %r != %r" % (i, p1, p2))
 
     results = ElectionResults()
-    init_results(info, results)
+    init_results(election_info, results)
 
     # Pass #2
     parser = ResultsParser(results)
     parser.parse(wineds_path)
 
-    return info, results
+    return election_info, results
 
 
 class ResultsWriter(object):
@@ -496,7 +511,7 @@ class ResultsWriter(object):
 
     def __init__(self, file, info, results):
         self.file = file
-        self.info = info
+        self.election_info = info
         self.results = results
 
     def write_ln(self, s=""):
@@ -504,6 +519,19 @@ class ResultsWriter(object):
 
     def write_values(values):
         self.write_ln(",".join(values))
+
+    def write_district_type_summary(self, type_label):
+        attr, format_name = DISTRICT_TYPES[type_label]
+        numbers = getattr(self.election_info.districts, attr)
+        for number in sorted(numbers):
+            name = format_name % number
+            label = "%s_%s" % (type_label, number)
+            self.write_ln("%s,%s" % (name, label))
+
+    def write_contest_summary(self):
+        self.write_ln("District Grand Totals")
+        for key in ('Congressional', 'Senatorial', 'Assembly', 'BART', 'Supervisorial'):
+            self.write_district_type_summary(key)
 
     def write_contest(self, precincts, choices, contest_info, contest_results):
         """
@@ -524,15 +552,19 @@ class ResultsWriter(object):
         registered = results.registered
         voted = results.voted
         precinct_ids = sorted(contest_info.precinct_ids)
+        # TODO: remove the next line.
+        precinct_ids = []
         for pid in precinct_ids:
             precinct_results = contest_results[pid]
             values = [precincts[pid], str(pid), str(registered[pid]), str(voted[pid])]
             values += [str(precinct_results[cid]) for cid in contest_choice_ids]
             self.write_ln(",".join(values))
+        self.write_ln()
+        self.write_contest_summary()
 
     def write(self):
         """Write the election results to the given file."""
-        info = self.info
+        info = self.election_info
         results = self.results
 
         choices = info.choices
@@ -547,6 +579,7 @@ class ResultsWriter(object):
             contest_results = results_contests[contest_id]
             self.write_contest(precincts, choices, contest_info, contest_results)
             self.write_ln()
+            self.write_ln()
 
 
 def inner_main(argv):
@@ -556,7 +589,7 @@ def inner_main(argv):
     except ValueError:
         exit_with_error("%s\nERROR: incorrect number of arguments" % __doc__)
 
-    info, results = process_input(name, districts_path, results_path)
+    info, results = digest_input_files(name, districts_path, results_path)
 
     writer = ResultsWriter(file=sys.stdout, info=info, results=results)
     writer.write()
