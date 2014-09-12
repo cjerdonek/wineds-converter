@@ -509,6 +509,14 @@ class ResultsWriter(object):
 
     """
 
+    district_keys = (
+        'Congressional',
+        'Senatorial',
+        'Assembly',
+        'BART',
+        'Supervisorial'
+    )
+
     def __init__(self, file, info, results):
         self.file = file
         self.election_info = info
@@ -517,21 +525,30 @@ class ResultsWriter(object):
     def write_ln(self, s=""):
         print(s, file=self.file)
 
+    # TODO: remove this.
     def write_values(values):
         self.write_ln(",".join(values))
 
-    def write_district_type_summary(self, type_label):
+    def write_row(self, *values):
+        self.write_ln(",".join([str(v) for v in values]))
+
+    def write_district_type_summary(self, choice_ids, type_label):
         attr, format_name = DISTRICT_TYPES[type_label]
         numbers = getattr(self.election_info.districts, attr)
         for number in sorted(numbers):
             name = format_name % number
             label = "%s_%s" % (type_label, number)
-            self.write_ln("%s,%s" % (name, label))
+            self.write_row(name, label, *choice_ids)
 
-    def write_contest_summary(self):
+    def write_contest_summary(self, choice_ids):
+        """
+        Arguments:
+          choice_ids: an iterable of choice IDs.
+
+        """
         self.write_ln("District Grand Totals")
-        for key in ('Congressional', 'Senatorial', 'Assembly', 'BART', 'Supervisorial'):
-            self.write_district_type_summary(key)
+        for district_key in self.district_keys:
+            self.write_district_type_summary(choice_ids, district_key)
 
     def write_contest(self, precincts, choices, contest_info, contest_results):
         """
@@ -560,7 +577,7 @@ class ResultsWriter(object):
             values += [str(precinct_results[cid]) for cid in contest_choice_ids]
             self.write_ln(",".join(values))
         self.write_ln()
-        self.write_contest_summary()
+        self.write_contest_summary(contest_choice_ids)
 
     def write(self):
         """Write the election results to the given file."""
