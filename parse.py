@@ -526,7 +526,14 @@ class ResultsWriter(object):
     def write_row(self, *values):
         self.write_ln(",".join([str(v) for v in values]))
 
-    def write_row_totals(self, area_name, area_id, contest_results,
+    def write_totals_row_header(self, name_header, id_header, contest_choice_ids):
+        choices = self.election_info.choices
+        # Each choices value is a 2-tuple of (contest_id, choice_name).
+        choice_names = (choices[choice_id][1] for choice_id in contest_choice_ids)
+        self.write_row(name_header, id_header, "Registration", "Ballots Cast",
+                       *choice_names)
+
+    def write_totals_row(self, area_name, area_id, contest_results,
                          choice_ids, area_precinct_ids):
         """
         Write a row for an area participating in a contest.
@@ -591,7 +598,7 @@ class ResultsWriter(object):
                 log("skipping district: %s" % district_name)
                 continue
             try:
-                self.write_row_totals(district_name, district_label, contest_results,
+                self.write_totals_row(district_name, district_label, contest_results,
                                         choice_ids, district_precinct_ids)
             except:
                 raise Exception("while processing district: %s" % district_name)
@@ -608,15 +615,15 @@ class ResultsWriter(object):
         """
         assert type(precinct_ids) is set
         self.write_ln("District Grand Totals")
+        self.write_totals_row_header("DistrictName", "DistrictLabel", choice_ids)
         for type_name in self.district_type_names:
             self.write_district_type_summary(type_name, precinct_ids,
                                              contest_results, choice_ids)
 
-    def write_contest(self, precincts, choices, contest_info, contest_results):
+    def write_contest(self, precincts, contest_info, contest_results):
         """
         Arguments:
           precincts: the ElectionInfo.precincts dict.
-          choices: the ElectionInfo.choices dict.
           contest_info: a ContestInfo object.
 
         """
@@ -627,18 +634,17 @@ class ResultsWriter(object):
         log("writing contest: %s (%d precincts)" % (contest_name, len(precinct_ids)))
 
         contest_choice_ids = sorted(contest_info.choice_ids)
-        columns = ["VotingPrecinctName", "VotingPrecinctID", "Registration", "Ballots Cast"]
-        # Collect the choice names.
-        columns += [choices[choice_id][1] for choice_id in contest_choice_ids]
-        self.write_ln(",".join(columns))
+
+        self.write_totals_row_header("VotingPrecinctName", "VotingPrecinctID",
+                                     contest_choice_ids)
 
         results = self.results
         registered = results.registered
         voted = results.voted
         for precinct_id in sorted(precinct_ids):
             # Convert precinct_id into an iterable with one element in order
-            # to use write_row_totals().
-            self.write_row_totals(precincts[precinct_id], precinct_id, contest_results,
+            # to use write_totals_row().
+            self.write_totals_row(precincts[precinct_id], precinct_id, contest_results,
                                   contest_choice_ids, (precinct_id, ))
         self.write_ln()
         self.write_contest_summary(precinct_ids, contest_choice_ids, contest_results)
@@ -648,7 +654,6 @@ class ResultsWriter(object):
         info = self.election_info
         results = self.results
 
-        choices = info.choices
         info_contests = info.contests
         precincts = info.precincts
         results_contests = results.contests
@@ -659,7 +664,7 @@ class ResultsWriter(object):
             contest_info = info_contests[contest_id]
             contest_results = results_contests[contest_id]
             try:
-                self.write_contest(precincts, choices, contest_info, contest_results)
+                self.write_contest(precincts, contest_info, contest_results)
             except:
                 raise Exception("while processing contest: %s" % contest_info.name)
             self.write_ln()
