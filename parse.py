@@ -23,6 +23,7 @@ current working directory.
 
 import codecs
 from contextlib import contextmanager
+from datetime import datetime
 import re
 import sys
 import timeit
@@ -473,7 +474,7 @@ def digest_input_files(name, districts_path, wineds_path):
     #
     # After the first pass, we construct a results object in which to
     # store values.  Essentially, this is a large tree-like dictionary
-    # of contests, precincts, vote totals, etc.
+    # of contests, precincts, vote totals (that start zeroed out), etc.
     #
     # Then we parse the file a second time, but without doing any
     # validation.  We simply read the vote totals and insert them into
@@ -491,6 +492,7 @@ def digest_input_files(name, districts_path, wineds_path):
         except AssertionError:
             exit_with_error("precinct %d differs: %r != %r" % (i, p1, p2))
 
+    # Construct the results object.
     results = ElectionResults()
     init_results(election_info, results)
 
@@ -659,7 +661,14 @@ class ResultsWriter(object):
         precincts = info.precincts
         results_contests = results.contests
 
+        now = datetime.now()
         self.write_ln(info.name)
+        self.write_ln()
+        self.write_ln("Report generated on: %s %d, %s" %
+                      (now.strftime("%A, %B"),
+                       now.day,  # strftime lacks an option not to zero-pad the month.
+                       now.strftime("%Y at %I:%M:%S %p")))
+        self.write_ln()
         self.write_ln()
         for contest_id in sorted(info_contests.keys()):
             contest_info = info_contests[contest_id]
