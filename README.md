@@ -5,6 +5,16 @@ This repository contains an open-source Python 3 script to convert
 WinEDS 4.0 output into a simpler format.  WinEDS is an election
 management system owned by [Dominion Voting Systems][dominion].
 
+The script is tailored for use in elections held in San Francisco by the
+[San Francisco Department of Elections][sf-elections].  However,
+it wouldn't be too hard to modify the code for other jurisdictions.
+
+The new (target) output format is a single tab-delimited file that
+resembles the format of the PDF Statements of Vote released by the
+SF Department of Elections.  In particular, it includes a
+"District Grand Totals" section for each contest, which reports totals
+broken down by various districts and neighborhoods.
+
 
 Setting up
 ----------
@@ -93,3 +103,4 @@ Chris Jerdonek (<chris.jerdonek@gmail.com>)
 
 
 [dominion]: http://www.dominionvoting.com/
+[sf-elections]: http://sfelections.org
