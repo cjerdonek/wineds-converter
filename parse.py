@@ -4,11 +4,12 @@
 #
 
 """\
-Usage: python3 parse.py NAME DISTRICTS_PATH RESULTS_PATH
+Usage: python3 parse.py ELECTION_NAME DISTRICTS_PATH RESULTS_PATH
 
 Arguments:
 
-  NAME: the name of the election.
+  ELECTION_NAME: the name of the election, for display purposes.
+    This appears in the first line of the output file.
 
   DISTRICTS_PATH: path to a CSV file mapping precincts to their
     different districts.
