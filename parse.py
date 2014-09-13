@@ -526,9 +526,8 @@ class ResultsWriter(object):
     def write_row(self, *values):
         self.write_ln(",".join([str(v) for v in values]))
 
-    # TODO: get the precinct-level row using this same function.
-    def write_district_row(self, area_name, area_id, contest_results,
-                           choice_ids, district_precinct_ids):
+    def write_row_totals(self, area_name, area_id, contest_results,
+                         choice_ids, area_precinct_ids):
         """
         Write a row for an area participating in a contest.
 
@@ -560,7 +559,7 @@ class ResultsWriter(object):
         voted = self.results.voted
 
         precinct_count = 0
-        for precinct_id in district_precinct_ids:
+        for precinct_id in area_precinct_ids:
             try:
                 precinct_results = contest_results[precinct_id]
                 precinct_count += 1
@@ -592,7 +591,7 @@ class ResultsWriter(object):
                 log("skipping district: %s" % district_name)
                 continue
             try:
-                self.write_district_row(district_name, district_label, contest_results,
+                self.write_row_totals(district_name, district_label, contest_results,
                                         choice_ids, district_precinct_ids)
             except:
                 raise Exception("while processing district: %s" % district_name)
@@ -636,14 +635,11 @@ class ResultsWriter(object):
         results = self.results
         registered = results.registered
         voted = results.voted
-        sorted_precinct_ids = sorted(precinct_ids)
-        # TODO: remove the next line.
-        sorted_precinct_ids = []
-        for pid in sorted_precinct_ids:
-            precinct_results = contest_results[pid]
-            values = [precincts[pid], str(pid), str(registered[pid]), str(voted[pid])]
-            values += [str(precinct_results[cid]) for cid in contest_choice_ids]
-            self.write_ln(",".join(values))
+        for precinct_id in sorted(precinct_ids):
+            # Convert precinct_id into an iterable with one element in order
+            # to use write_row_totals().
+            self.write_row_totals(precincts[precinct_id], precinct_id, contest_results,
+                                  contest_choice_ids, (precinct_id, ))
         self.write_ln()
         self.write_contest_summary(precinct_ids, contest_choice_ids, contest_results)
 
