@@ -29,12 +29,17 @@ import sys
 import timeit
 
 
-AREA_TYPES = {
+# We split on strings of whitespace having 2 or more characters.  This is
+# necessary since field values can contain spaces (e.g. candidate names).
+SPLITTER = re.compile(r'\s{2,}')
+
+# Information about the area types whose name can be generated from a
+# format string and an area or district number.  This does not include
+# the "city" and "neighborhood" types.
+AREA_INFO = {
     'Assembly': ('assembly', '%sTH ASSEMBLY DISTRICT'),
     'BART': ('bart', 'BART DISTRICT %s'),
     'Congressional': ('congress', '%sTH CONGRESSIONAL DISTRICT'),
-    # TODO: display the full neighborhood name.
-    'Neighborhood': ('neighborhoods', "%s"),
     'Senatorial': ('senate', '%sTH SENATORIAL DISTRICT'),
     'Supervisorial': ('supervisor', 'SUPERVISORIAL DISTRICT %s')
 }
@@ -44,65 +49,48 @@ AREA_TYPES = {
 # This does not include the "city" and "neighborhoods" attributes.
 DISTRICT_INFO_ATTRS = ('assembly', 'bart', 'congress', 'senate', 'supervisor')
 
-# TODO: remove this after creating a mapping.
-#
-# BAYVW/HTRSPT
-# CHINA
-# CVC CTR/DWTN
-# DIAMD HTS
-# EXCELSIOR
-# HAIGHT ASH
-# INGLESIDE
-# INNER SUNSET
-# LAKE MERCED
-# LRL HTS/ANZA
-# MAR/PAC HTS
-# MISSION
-# N BERNAL HTS
-# N EMBRCDRO
-# NOE VALLEY
-# PORTOLA
-# POTRERO HILL
-# RICHMOND
-# S BERNAL HTS
-# SECLF/PREHTS
-# SOMA
-# SUNSET
-# UPRMKT/EURKA
-# VISITA VLY
-# W TWIN PKS
-# WST ADDITION
-#
-# CITY/COUNTY OF SAN FRANCISCO
-# BAYVIEW/HUNTERS POINT CHINATOWN
-# CIVIC CENTER/DOWNTOWN
-# DIAMOND HEIGHTS
-# EXCELSIOR (OUTER MISSION)
-# HAIGHT ASHBURY
-# INGLESIDE
-# INNER SUNSET
-# LAKE MERCED
-# LAUREL HEIGHTS/ANZA VISTA
-# MARINA/PACIFIC HEIGHTS
-# MISSION
-# NOE VALLEY
-# NORTH BERNAL HTS
-# NORTH EMBARCADERO
-# PORTOLA
-# POTRERO HILL
-# RICHMOND
-# SEA CLIFF/PRESIDIO HEIGHTS
-# SOUTH BERNAL HEIGHT
-# SOUTH OF MARKET
-# SUNSET
-# UPPER MARKET/EUREKA VALLEY
-# VISITATION VALLEY
-# WEST OF TWIN PEAKS
-# WESTERN ADDITION
+# This string contains a mapping from neighborhood labels in the
+# precinct-to-neighborhood file to the more human-friendly names that
+# appear in the Statements of Vote.
+NEIGHBORHOODS = """
+BAYVW/HTRSPT:BAYVIEW/HUNTERS POINT
+CHINA:CHINATOWN
+CVC CTR/DWTN:CIVIC CENTER/DOWNTOWN
+DIAMD HTS:DIAMOND HEIGHTS
+EXCELSIOR:EXCELSIOR (OUTER MISSION)
+HAIGHT ASH:HAIGHT ASHBURY
+INGLESIDE:INGLESIDE
+INNER SUNSET:INNER SUNSET
+LAKE MERCED:LAKE MERCED
+LRL HTS/ANZA:LAUREL HEIGHTS/ANZA VISTA
+MAR/PAC HTS:MARINA/PACIFIC HEIGHTS
+MISSION:MISSION
+N BERNAL HTS:NORTH BERNAL HTS
+N EMBRCDRO:NORTH EMBARCADERO
+NOE VALLEY:NOE VALLEY
+PORTOLA:PORTOLA
+POTRERO HILL:POTRERO HILL
+RICHMOND:RICHMOND
+S BERNAL HTS:SOUTH BERNAL HEIGHT
+SECLF/PREHTS:SEA CLIFF/PRESIDIO HEIGHTS
+SOMA:SOUTH OF MARKET
+SUNSET:SUNSET
+UPRMKT/EURKA:UPPER MARKET/EUREKA VALLEY
+VISITA VLY:VISITATION VALLEY
+W TWIN PKS:WEST OF TWIN PEAKS
+WST ADDITION:WESTERN ADDITION
+"""
 
-# We split on strings of whitespace having 2 or more characters.  This is
-# necessary since field values can contain spaces (e.g. candidate names).
-SPLITTER = re.compile(r'\s{2,}')
+def make_nbhd_names():
+    """
+    Return a dict mapping neighborhood labels to human-friendly names.
+
+    """
+    data = {}
+    for s in NEIGHBORHOODS.strip().splitlines():
+        label, name = s.split(":")
+        data[label] = name
+    return data
 
 
 @contextmanager
@@ -144,18 +132,18 @@ class ContestInfo(object):
                 (self.name, self.area, len(self.precinct_ids), len(self.choice_ids)))
 
 
-class AreaIndex(object):
+class AreaPrecincts(object):
 
     """
     Encapsulates what precincts are in what districts and areas.
 
-    Each attribute corresponds to a "district type".  With the exception
-    of the city attribute, each attribute is a dict that maps a district
-    number (or string in the case of neighborhoods) to a set of integer
-    precinct IDs.  Each key in the dict represents a "district".
+    Each attribute corresponds to an "area type".  With the exception
+    of the city attribute, each attribute is a dict that maps an integer
+    area ID (or string in the case of neighborhoods) to a set of integer
+    precinct IDs.  Each key in the dict represents an "area" or district.
 
     The city attribute is a simple set of integer precinct IDs (because
-    there is only one district corresponding to the "city" district type).
+    there is only one area corresponding to the "city" area type).
 
     """
 
@@ -185,16 +173,17 @@ class ElectionInfo(object):
 
     """
 
+    nbhd_names = make_nbhd_names()
+
     def __init__(self, name, district_index):
         """
         Arguments:
-          district_index: a AreaIndex object.
+          district_index: a AreaPrecincts object.
 
         """
         self.choices = {}
         self.contests = {}
         self.area_index = district_index
-        self.neighborhoods = {}
         self.precincts = {}
 
         self.name = name
@@ -382,7 +371,7 @@ class Parser(object):
                             (self.line_no, self.line))
 
 
-class AreaIndexParser(Parser):
+class PrecinctIndexParser(Parser):
 
     """
     Parses a CSV file with information about precincts and districts.
@@ -392,7 +381,7 @@ class AreaIndexParser(Parser):
     def __init__(self, district_index):
         """
         Arguments:
-          district_index: a AreaIndex object.
+          district_index: a AreaPrecincts object.
 
         """
         self.district_info = district_index
@@ -518,8 +507,8 @@ def digest_input_files(name, districts_path, wineds_path):
     object and an ElectionResults object.
 
     """
-    district_info = AreaIndex()
-    parser = AreaIndexParser(district_info)
+    area_precincts = AreaPrecincts()
+    parser = PrecinctIndexParser(area_precincts)
     parser.parse(districts_path)
 
     # We parse the file in two passes to simplify the logic and make the
@@ -539,11 +528,11 @@ def digest_input_files(name, districts_path, wineds_path):
     # the object structure.
 
     # Pass #1
-    election_info = make_election_info(wineds_path, name, district_info)
+    election_info = make_election_info(wineds_path, name, area_precincts)
 
     # Check that the precincts in the district file match the precincts
     # in the results file.
-    for i, (p1, p2) in enumerate(zip(sorted(district_info.city),
+    for i, (p1, p2) in enumerate(zip(sorted(area_precincts.city),
                                      sorted(election_info.precincts.keys())), start=1):
         try:
             assert p1 == p2
@@ -573,8 +562,7 @@ class ResultsWriter(object):
         'Senatorial',
         'Assembly',
         'BART',
-        'Supervisorial',
-        'Neighborhood'
+        'Supervisorial'
     )
 
     def __init__(self, file, info, results):
@@ -605,10 +593,10 @@ class ResultsWriter(object):
 
         The columns in the row are--
 
-        * Header columns
+        * Row headers
            1) area name
            2) area identifier
-        * Total columns
+        * Totals
            3) registration
            4) ballots cast
            5) choice #1 vote total
@@ -654,20 +642,12 @@ class ResultsWriter(object):
             self.write_totals_row(precincts[precinct_id], precinct_id, contest_results,
                                   contest_choice_ids, (precinct_id, ))
 
-    def write_area_type_rows(self, type_label, contest_precinct_ids,
-                                contest_results, choice_ids):
-        """
-        Write the rows for a contest for a particular area type.
-
-        For example: the "Congressional" areas.
-
-        """
-        attr, format_name = AREA_TYPES[type_label]
-        area_type = getattr(self.election_info.area_index, attr)
-        for area_key in sorted(area_type.keys()):
-            area_name = format_name % area_key
-            area_label = "%s:%s" % (type_label, area_key)
-            area_precinct_ids = area_type[area_key]
+    def write_area_rows(self, contest_results, choice_ids, contest_precinct_ids,
+                        area_precincts, area_type_name, make_area_name, area_ids):
+        for area_id in area_ids:
+            area_name = make_area_name(area_id)
+            area_label = "%s:%s" % (area_type_name, area_id)
+            area_precinct_ids = area_precincts[area_id]
             assert type(area_precinct_ids) is set
             if area_precinct_ids.isdisjoint(contest_precinct_ids):
                 # Then no precincts in the district overlapped the contest, so skip it.
@@ -677,22 +657,50 @@ class ResultsWriter(object):
                 self.write_totals_row(area_name, area_label, contest_results,
                                       choice_ids, area_precinct_ids)
             except:
-                raise Exception("while processing area: %s" % district_name)
+                raise Exception("while processing area: %s" % area_name)
 
-    def write_contest_summary(self, contest_results, choice_ids, precinct_ids):
+    def write_area_type_rows(self, contest_results, contest_precinct_ids,
+                             choice_ids, area_type_name):
+        """
+        Write the rows for a contest for a particular area type.
+
+        For example: the "Congressional" areas.
+
+        """
+        attr, format_name = AREA_INFO[area_type_name]
+        area_type = getattr(self.election_info.area_index, attr)
+        area_ids = sorted(area_type.keys())
+        make_area_name = lambda area_id: format_name % area_id
+        self.write_area_rows(contest_results, choice_ids, contest_precinct_ids,
+                             area_type, area_type_name, make_area_name, area_ids)
+
+    def write_contest_summary(self, contest_results, choice_ids, contest_precinct_ids):
         """
         Arguments:
           choice_ids: an iterable of choice IDs in the contest, in
             column display order.
-          precinct_ids: a set of precinct IDs corresponding to the
+          contest_precinct_ids: a set of precinct IDs corresponding to the
             precincts participating in the contest.
 
         """
-        assert type(precinct_ids) is set
+        assert type(contest_precinct_ids) is set
         self.write_ln("District Grand Totals")
         self.write_totals_row_header("DistrictName", "DistrictLabel", choice_ids)
         for type_name in self.district_type_names:
-            self.write_area_type_rows(type_name, precinct_ids, contest_results, choice_ids)
+            self.write_area_type_rows(contest_results, contest_precinct_ids, choice_ids, type_name)
+
+        # Also write the neighborhood rows.
+        nbhd_names = self.election_info.nbhd_names
+        nbhd_pairs = nbhd_names.items()  # (nbhd_id, nbhd_name)
+        # Alphabetize the pairs by the full name and not the label.
+        nbhd_pairs = sorted(nbhd_pairs, key=lambda pair: pair[1])
+
+        nbhd_precincts = self.election_info.area_index.neighborhoods
+        make_nbhd_name = lambda nbhd_id: nbhd_names[nbhd_id]
+        nbhd_ids = [pair[0] for pair in nbhd_pairs]
+
+        self.write_area_rows(contest_results, choice_ids, contest_precinct_ids,
+                             nbhd_precincts, "Neighborhood", make_nbhd_name, nbhd_ids)
 
     def write_contest(self, precincts, contest_info, contest_results):
         """
