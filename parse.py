@@ -583,13 +583,13 @@ class ResultsWriter(object):
         self.write_row(name_header, id_header, "Registration", "Ballots Cast",
                        *choice_names)
 
-    def write_totals_row(self, area_name, area_id, contest_results,
-                         choice_ids, area_precinct_ids):
+    def write_totals_row(self, contest_results, choice_ids,
+                         area_name, area_id, area_precinct_ids):
         """
-        Write a row for an area participating in a contest.
+        Write a row for a contest, for a participating district or area.
 
-        The area can be a precinct or district, for example "Pct 9503/9504"
-        or"12TH CONGRESSIONAL DISTRICT".
+        For example, the area can be a precinct or district, like
+        "Pct 9503/9504" or "12TH CONGRESSIONAL DISTRICT".
 
         The columns in the row are--
 
@@ -639,8 +639,8 @@ class ResultsWriter(object):
         for precinct_id in sorted(precinct_ids):
             # Convert precinct_id into an iterable with one element in order
             # to use write_totals_row().
-            self.write_totals_row(precincts[precinct_id], precinct_id, contest_results,
-                                  contest_choice_ids, (precinct_id, ))
+            self.write_totals_row(contest_results, contest_choice_ids,
+                                  precincts[precinct_id], precinct_id, (precinct_id, ))
 
     def write_area_rows(self, contest_results, choice_ids, contest_precinct_ids,
                         area_precincts, area_type_name, make_area_name, area_ids):
@@ -654,8 +654,8 @@ class ResultsWriter(object):
                 log("skipping area: %s" % area_name)
                 continue
             try:
-                self.write_totals_row(area_name, area_label, contest_results,
-                                      choice_ids, area_precinct_ids)
+                self.write_totals_row(contest_results, choice_ids,
+                                      area_name, area_label, area_precinct_ids)
             except:
                 raise Exception("while processing area: %s" % area_name)
 
@@ -688,6 +688,13 @@ class ResultsWriter(object):
         self.write_totals_row_header("DistrictName", "DistrictLabel", choice_ids)
         for type_name in self.district_type_names:
             self.write_area_type_rows(contest_results, contest_precinct_ids, choice_ids, type_name)
+
+        # Write the city-wide row.
+        all_precinct_ids = self.election_info.area_index.city
+        # The area ID "City:0" is just a filler to have the same format
+        # as other areas.
+        self.write_totals_row(contest_results, choice_ids,
+                              "CITY/COUNTY OF SAN FRANCISCO", "City:0", all_precinct_ids)
 
         # Also write the neighborhood rows.
         nbhd_names = self.election_info.nbhd_names
