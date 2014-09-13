@@ -33,7 +33,8 @@ DISTRICT_TYPES = {
     'Assembly': ('assembly', '%sTH ASSEMBLY DISTRICT'),
     'BART': ('bart', 'BART DISTRICT %s'),
     'Congressional': ('congress', '%sTH CONGRESSIONAL DISTRICT'),
-    'Neighborhood': ('neighborhood', None),
+    # TODO: display the full neighborhood name.
+    'Neighborhood': ('neighborhoods', "%s"),
     'Senatorial': ('senate', '%sTH SENATORIAL DISTRICT'),
     'Supervisorial': ('supervisor', 'SUPERVISORIAL DISTRICT %s')
 }
@@ -515,7 +516,8 @@ class ResultsWriter(object):
         'Senatorial',
         'Assembly',
         'BART',
-        'Supervisorial'
+        'Supervisorial',
+        'Neighborhood'
     )
 
     def __init__(self, file, info, results):
@@ -595,41 +597,45 @@ class ResultsWriter(object):
             self.write_totals_row(precincts[precinct_id], precinct_id, contest_results,
                                   contest_choice_ids, (precinct_id, ))
 
-    def write_district_type_summary(self, type_label, contest_precinct_ids,
-                                    contest_results, choice_ids):
+    def write_area_type_rows(self, type_label, contest_precinct_ids,
+                                contest_results, choice_ids):
+        """
+        Write the rows for a contest for a particular area type.
+
+        For example: the "Congressional" areas.
+
+        """
         attr, format_name = DISTRICT_TYPES[type_label]
         district_type = getattr(self.election_info.districts, attr)
-        for district_number in sorted(district_type.keys()):
-            district_name = format_name % district_number
-            district_label = "%s_%s" % (type_label, district_number)
-            district_precinct_ids = district_type[district_number]
-            assert type(district_precinct_ids) is set
-            if district_precinct_ids.isdisjoint(contest_precinct_ids):
+        for area_key in sorted(district_type.keys()):
+            area_name = format_name % area_key
+            area_label = "%s:%s" % (type_label, area_key)
+            area_precinct_ids = district_type[area_key]
+            assert type(area_precinct_ids) is set
+            if area_precinct_ids.isdisjoint(contest_precinct_ids):
                 # Then no precincts in the district overlapped the contest, so skip it.
-                log("skipping district: %s" % district_name)
+                log("skipping area: %s" % area_name)
                 continue
             try:
-                self.write_totals_row(district_name, district_label, contest_results,
-                                      choice_ids, district_precinct_ids)
+                self.write_totals_row(area_name, area_label, contest_results,
+                                      choice_ids, area_precinct_ids)
             except:
-                raise Exception("while processing district: %s" % district_name)
+                raise Exception("while processing area: %s" % district_name)
 
-    def write_contest_summary(self, precinct_ids, choice_ids,
-                              contest_results):
+    def write_contest_summary(self, contest_results, choice_ids, precinct_ids):
         """
         Arguments:
-          precinct_ids: a set of precinct IDs corresponding to the
-            precincts participating in the contest.
           choice_ids: an iterable of choice IDs in the contest, in
             column display order.
+          precinct_ids: a set of precinct IDs corresponding to the
+            precincts participating in the contest.
 
         """
         assert type(precinct_ids) is set
         self.write_ln("District Grand Totals")
         self.write_totals_row_header("DistrictName", "DistrictLabel", choice_ids)
         for type_name in self.district_type_names:
-            self.write_district_type_summary(type_name, precinct_ids,
-                                             contest_results, choice_ids)
+            self.write_area_type_rows(type_name, precinct_ids, contest_results, choice_ids)
 
     def write_contest(self, precincts, contest_info, contest_results):
         """
@@ -640,18 +646,17 @@ class ResultsWriter(object):
         """
         contest_name = contest_info.name
         precinct_ids = contest_info.precinct_ids
+        contest_choice_ids = sorted(contest_info.choice_ids)
 
         log("writing contest: %s (%d precincts)" % (contest_name, len(precinct_ids)))
 
         self.write_ln("%s - %s" % (contest_name, contest_info.area))
 
-        contest_choice_ids = sorted(contest_info.choice_ids)
-
         self.write_totals_row_header("VotingPrecinctName", "VotingPrecinctID", contest_choice_ids)
         self.write_precinct_rows(contest_results, contest_choice_ids, precinct_ids)
         self.write_ln()
 
-        self.write_contest_summary(precinct_ids, contest_choice_ids, contest_results)
+        self.write_contest_summary(contest_results, contest_choice_ids, precinct_ids)
 
     def write(self):
         """Write the election results to the given file."""
