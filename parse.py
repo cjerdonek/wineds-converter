@@ -639,21 +639,18 @@ class ResultsWriter(object):
 
         """
         contest_name = contest_info.name
-        self.write_ln("%s - %s" % (contest_name, contest_info.area))
-
         precinct_ids = contest_info.precinct_ids
+
         log("writing contest: %s (%d precincts)" % (contest_name, len(precinct_ids)))
+
+        self.write_ln("%s - %s" % (contest_name, contest_info.area))
 
         contest_choice_ids = sorted(contest_info.choice_ids)
 
-        self.write_totals_row_header("VotingPrecinctName", "VotingPrecinctID",
-                                     contest_choice_ids)
-
-        results = self.results
-        registered = results.registered
-        voted = results.voted
+        self.write_totals_row_header("VotingPrecinctName", "VotingPrecinctID", contest_choice_ids)
         self.write_precinct_rows(contest_results, contest_choice_ids, precinct_ids)
         self.write_ln()
+
         self.write_contest_summary(precinct_ids, contest_choice_ids, contest_results)
 
     def write(self):
