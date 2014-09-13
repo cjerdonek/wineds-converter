@@ -523,17 +523,13 @@ class ResultsWriter(object):
     def write_ln(self, s=""):
         print(s, file=self.file)
 
-    # TODO: remove this.
-    def write_values(values):
-        self.write_ln(",".join(values))
-
     def write_row(self, *values):
         self.write_ln(",".join([str(v) for v in values]))
 
-    def write_district_row(self, district_name, type_label, number, contest_results,
+    def write_district_row(self, district_name, district_label, contest_results,
                            choice_ids, district_precinct_ids):
         """
-        Write a row for the district summary of a contest.
+        Write a row for a district overlapping a contest.
 
         For example, for "12TH CONGRESSIONAL DISTRICT".
 
@@ -544,7 +540,6 @@ class ResultsWriter(object):
             contest_precinct_results[choice_id] -> vote_total
 
         """
-        label = "%s_%s" % (type_label, number)
         totals = []
         for choice_id in choice_ids:
             total = 0
@@ -560,7 +555,7 @@ class ResultsWriter(object):
                 total += precinct_results[choice_id]
             assert precinct_count > 0
             totals.append(total)
-        self.write_row(district_name, label, *totals)
+        self.write_row(district_name, district_label, *totals)
 
     def write_district_type_summary(self, type_label, contest_precinct_ids,
                                     contest_results, choice_ids):
@@ -568,6 +563,7 @@ class ResultsWriter(object):
         district_type = getattr(self.election_info.districts, attr)
         for district_number in sorted(district_type.keys()):
             district_name = format_name % district_number
+            district_label = "%s_%s" % (type_label, district_number)
             district_precinct_ids = district_type[district_number]
             assert type(district_precinct_ids) is set
             if district_precinct_ids.isdisjoint(contest_precinct_ids):
@@ -575,8 +571,8 @@ class ResultsWriter(object):
                 log("skipping district: %s" % district_name)
                 continue
             try:
-                self.write_district_row(district_name, type_label, district_number,
-                                        contest_results, choice_ids, district_precinct_ids)
+                self.write_district_row(district_name, district_label, contest_results,
+                                        choice_ids, district_precinct_ids)
             except:
                 raise Exception("while processing district: %s" % district_name)
 
