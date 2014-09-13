@@ -526,12 +526,26 @@ class ResultsWriter(object):
     def write_row(self, *values):
         self.write_ln(",".join([str(v) for v in values]))
 
-    def write_district_row(self, district_name, district_label, contest_results,
+    # TODO: get the precinct-level row using this same function.
+    def write_district_row(self, area_name, area_id, contest_results,
                            choice_ids, district_precinct_ids):
         """
-        Write a row for a district overlapping a contest.
+        Write a row for an participating in a contest.
 
-        For example, for "12TH CONGRESSIONAL DISTRICT".
+        The area can be a precinct or district, for example "Pct 9503/9504"
+        or"12TH CONGRESSIONAL DISTRICT".
+
+        The columns in the row are--
+
+        * Header columns
+           1) area name
+           2) area identifier
+        * Total columns
+           3) registration
+           4) ballots cast
+           5) choice #1 vote total
+           6) choice #2 vote total
+           7) etc.
 
         Arguments:
 
@@ -555,7 +569,7 @@ class ResultsWriter(object):
                 total += precinct_results[choice_id]
             assert precinct_count > 0
             totals.append(total)
-        self.write_row(district_name, district_label, *totals)
+        self.write_row(area_name, area_id, *totals)
 
     def write_district_type_summary(self, type_label, contest_precinct_ids,
                                     contest_results, choice_ids):
