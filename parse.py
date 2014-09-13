@@ -84,7 +84,7 @@ class ContestInfo(object):
                 (self.name, self.area, len(self.precinct_ids), len(self.choice_ids)))
 
 
-class DistrictInfo(object):
+class DistrictIndex(object):
 
     """
     Encapsulates what precincts are in what districts.
@@ -120,15 +120,15 @@ class ElectionInfo(object):
 
     """
 
-    def __init__(self, name, district_info):
+    def __init__(self, name, district_index):
         """
         Arguments:
-          district_info: a DistrictInfo object.
+          district_index: a DistrictIndex object.
 
         """
         self.choices = {}
         self.contests = {}
-        self.districts = district_info
+        self.districts = district_index
         self.neighborhoods = {}
         self.precincts = {}
 
@@ -146,13 +146,13 @@ class ElectionResults(object):
 
     Attributes:
 
-      contests: a results dictionary, as described below.
+      contests: a dictionary, as described below.
       registered: a dict mapping precinct_id to a registration count.
       voted: a dict mapping precinct_id to a voter count.
 
-    The results dictionary is a tree-like structure as follows:
+    The contests dictionary is a tree-like structure as follows:
 
-      results[contest_id] -> contest_results
+      contests[contest_id] -> contest_results
       contest_results[precinct_id] -> contest_precinct_results
       contest_precinct_results[choice_id] -> vote_total
 
@@ -317,20 +317,20 @@ class Parser(object):
                             (self.line_no, self.line))
 
 
-class DistrictInfoParser(Parser):
+class DistrictIndexParser(Parser):
 
     """
     Parses a CSV file with information about precincts and districts.
 
     """
 
-    def __init__(self, district_info):
+    def __init__(self, district_index):
         """
         Arguments:
-          info: a DistrictInfo object.
+          district_index: a DistrictIndex object.
 
         """
-        self.district_info = district_info
+        self.district_info = district_index
 
     def add_precinct(self, attr, precinct_id, value):
         districts = getattr(self.district_info, attr)
@@ -453,16 +453,9 @@ def digest_input_files(name, districts_path, wineds_path):
     object and an ElectionResults object.
 
     """
-    district_info = DistrictInfo()
-    parser = DistrictInfoParser(district_info)
+    district_info = DistrictIndex()
+    parser = DistrictIndexParser(district_info)
     parser.parse(districts_path)
-
-    # TODO: remove this debug code.
-    for attr in DISTRICT_INFO_ATTRS:
-        data = getattr(district_info, attr)
-        log(attr)
-        for num, precinct_ids in data.items():
-            log("%d: %d" % (num, len(precinct_ids)))
 
     # We parse the file in two passes to simplify the logic and make the
     # code easier to understand.
@@ -509,7 +502,7 @@ class ResultsWriter(object):
 
     """
 
-    district_keys = (
+    district_type_labels = (
         'Congressional',
         'Senatorial',
         'Assembly',
@@ -532,23 +525,55 @@ class ResultsWriter(object):
     def write_row(self, *values):
         self.write_ln(",".join([str(v) for v in values]))
 
-    def write_district_type_summary(self, choice_ids, type_label):
-        attr, format_name = DISTRICT_TYPES[type_label]
-        numbers = getattr(self.election_info.districts, attr)
-        for number in sorted(numbers):
-            name = format_name % number
-            label = "%s_%s" % (type_label, number)
-            self.write_row(name, label, *choice_ids)
+    def write_district_row(self, type_label, format_name, number,
+                           contest_results, choice_ids, precinct_ids):
+        """
+        Write a row for the district summary of a contest.
 
-    def write_contest_summary(self, choice_ids):
+        For example, for "12TH CONGRESSIONAL DISTRICT".
+
+        Arguments:
+
+          contest_results: a dict described by the following:
+            contest_results[precinct_id] -> contest_precinct_results
+            contest_precinct_results[choice_id] -> vote_total
+
+        """
+        name = format_name % number
+        label = "%s_%s" % (type_label, number)
+        totals = []
+        for choice_id in choice_ids:
+            total = 0
+            for precinct_id in precinct_ids:
+                try:
+                    precinct_results = contest_results[precinct_id]
+                except KeyError:
+                    raise Exception("key %d not found in: %r" %
+                                    (precinct_id, contest_results.keys()))
+                total += precinct_results[choice_id]
+            totals.append(total)
+        self.write_row(name, label, *totals)
+
+    def write_district_type_summary(self, type_label, contest_results, choice_ids):
+        attr, format_name = DISTRICT_TYPES[type_label]
+        district_type = getattr(self.election_info.districts, attr)
+        for number in sorted(district_type.keys()):
+            precinct_ids = district_type[number]
+            try:
+                self.write_district_row(type_label, format_name, number,
+                                        contest_results, choice_ids, precinct_ids)
+            except:
+                raise Exception("while processing district: %s, %s" % (type_label, number))
+
+    def write_contest_summary(self, contest_results, choice_ids):
         """
         Arguments:
           choice_ids: an iterable of choice IDs.
 
         """
         self.write_ln("District Grand Totals")
-        for district_key in self.district_keys:
-            self.write_district_type_summary(choice_ids, district_key)
+        for type_label in self.district_type_labels:
+            self.write_district_type_summary(type_label, contest_results, choice_ids)
 
     def write_contest(self, precincts, choices, contest_info, contest_results):
         """
@@ -558,7 +583,14 @@ class ResultsWriter(object):
           contest_info: a ContestInfo object.
 
         """
-        self.write_ln("%s - %s" % (contest_info.name, contest_info.area))
+        contest_name = contest_info.name
+        self.write_ln("%s - %s" % (contest_name, contest_info.area))
+        precinct_ids = sorted(contest_info.precinct_ids)
+
+        log("writing contest: %s (%d precincts)" % (contest_name, len(precinct_ids)))
+        log(repr(precinct_ids))
+        log(repr(contest_results.keys()))
+
         contest_choice_ids = sorted(contest_info.choice_ids)
         columns = ["VotingPrecinctName", "VotingPrecinctID", "Registration", "Ballots Cast"]
         # Collect the choice names.
@@ -568,7 +600,6 @@ class ResultsWriter(object):
         results = self.results
         registered = results.registered
         voted = results.voted
-        precinct_ids = sorted(contest_info.precinct_ids)
         # TODO: remove the next line.
         precinct_ids = []
         for pid in precinct_ids:
@@ -577,7 +608,7 @@ class ResultsWriter(object):
             values += [str(precinct_results[cid]) for cid in contest_choice_ids]
             self.write_ln(",".join(values))
         self.write_ln()
-        self.write_contest_summary(contest_choice_ids)
+        self.write_contest_summary(contest_results, contest_choice_ids)
 
     def write(self):
         """Write the election results to the given file."""
@@ -594,7 +625,10 @@ class ResultsWriter(object):
         for contest_id in sorted(info_contests.keys()):
             contest_info = info_contests[contest_id]
             contest_results = results_contests[contest_id]
-            self.write_contest(precincts, choices, contest_info, contest_results)
+            try:
+                self.write_contest(precincts, choices, contest_info, contest_results)
+            except:
+                raise Exception("while processing contest: %s" % contest_info.name)
             self.write_ln()
             self.write_ln()
 
