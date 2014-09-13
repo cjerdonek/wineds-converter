@@ -46,6 +46,33 @@ DISTRICT_INFO_ATTRS = ('assembly', 'bart', 'congress', 'senate', 'supervisor')
 
 # TODO: remove this after creating a mapping.
 #
+# BAYVW/HTRSPT
+# CHINA
+# CVC CTR/DWTN
+# DIAMD HTS
+# EXCELSIOR
+# HAIGHT ASH
+# INGLESIDE
+# INNER SUNSET
+# LAKE MERCED
+# LRL HTS/ANZA
+# MAR/PAC HTS
+# MISSION
+# N BERNAL HTS
+# N EMBRCDRO
+# NOE VALLEY
+# PORTOLA
+# POTRERO HILL
+# RICHMOND
+# S BERNAL HTS
+# SECLF/PREHTS
+# SOMA
+# SUNSET
+# UPRMKT/EURKA
+# VISITA VLY
+# W TWIN PKS
+# WST ADDITION
+#
 # CITY/COUNTY OF SAN FRANCISCO
 # BAYVIEW/HUNTERS POINT CHINATOWN
 # CIVIC CENTER/DOWNTOWN
@@ -700,6 +727,8 @@ class ResultsWriter(object):
         now = datetime.now()
         self.write_ln(info.name)
         self.write_ln()
+        # This looks like the following, for example:
+        #   Report generated on: Friday, September 12, 2014 at 09:06:26 PM
         self.write_ln("Report generated on: %s %d, %s" %
                       (now.strftime("%A, %B"),
                        now.day,  # strftime lacks an option not to zero-pad the month.
