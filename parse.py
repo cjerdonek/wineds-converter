@@ -39,9 +39,39 @@ DISTRICT_TYPES = {
     'Supervisorial': ('supervisor', 'SUPERVISORIAL DISTRICT %s')
 }
 
+# TODO: remove this constant.
 # This constant is a convenience to let us write code that is more DRY.
 # This does not include the "city" and "neighborhoods" attributes.
 DISTRICT_INFO_ATTRS = ('assembly', 'bart', 'congress', 'senate', 'supervisor')
+
+# TODO: remove this after creating a mapping.
+#
+# CITY/COUNTY OF SAN FRANCISCO
+# BAYVIEW/HUNTERS POINT CHINATOWN
+# CIVIC CENTER/DOWNTOWN
+# DIAMOND HEIGHTS
+# EXCELSIOR (OUTER MISSION)
+# HAIGHT ASHBURY
+# INGLESIDE
+# INNER SUNSET
+# LAKE MERCED
+# LAUREL HEIGHTS/ANZA VISTA
+# MARINA/PACIFIC HEIGHTS
+# MISSION
+# NOE VALLEY
+# NORTH BERNAL HTS
+# NORTH EMBARCADERO
+# PORTOLA
+# POTRERO HILL
+# RICHMOND
+# SEA CLIFF/PRESIDIO HEIGHTS
+# SOUTH BERNAL HEIGHT
+# SOUTH OF MARKET
+# SUNSET
+# UPPER MARKET/EUREKA VALLEY
+# VISITATION VALLEY
+# WEST OF TWIN PEAKS
+# WESTERN ADDITION
 
 # We split on strings of whitespace having 2 or more characters.  This is
 # necessary since field values can contain spaces (e.g. candidate names).
