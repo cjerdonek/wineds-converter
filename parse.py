@@ -530,7 +530,7 @@ class ResultsWriter(object):
     def write_district_row(self, area_name, area_id, contest_results,
                            choice_ids, district_precinct_ids):
         """
-        Write a row for an participating in a contest.
+        Write a row for an area participating in a contest.
 
         The area can be a precinct or district, for example "Pct 9503/9504"
         or"12TH CONGRESSIONAL DISTRICT".
@@ -554,21 +554,28 @@ class ResultsWriter(object):
             contest_precinct_results[choice_id] -> vote_total
 
         """
-        totals = []
-        for choice_id in choice_ids:
-            total = 0
-            precinct_count = 0
-            for precinct_id in district_precinct_ids:
-                try:
-                    precinct_results = contest_results[precinct_id]
-                    precinct_count += 1
-                except KeyError:
-                    # Then this precinct in the district did not
-                    # participate in the contest.
-                    continue
-                total += precinct_results[choice_id]
-            assert precinct_count > 0
-            totals.append(total)
+        # Add two for the "registration" and "ballots cast" columns.
+        totals = (len(choice_ids) + 2) * [0]
+        registered = self.results.registered
+        voted = self.results.voted
+
+        precinct_count = 0
+        for precinct_id in district_precinct_ids:
+            try:
+                precinct_results = contest_results[precinct_id]
+                precinct_count += 1
+            except KeyError:
+                # Then this precinct in the district did not
+                # participate in the contest.
+                continue
+
+            totals[0] += registered[precinct_id]
+            totals[1] += voted[precinct_id]
+
+            for i, choice_id in enumerate(choice_ids, start=2):
+                totals[i] += precinct_results[choice_id]
+
+        assert precinct_count > 0
         self.write_row(area_name, area_id, *totals)
 
     def write_district_type_summary(self, type_label, contest_precinct_ids,
