@@ -17,6 +17,13 @@ repository root:
     $ pip install -r requirements.txt
 
 
+Usage
+-----
+
+For usage notes, see the docstring of the main [`parse.py`](parse.py#L6)
+file.
+
+
 New Format
 ----------
 

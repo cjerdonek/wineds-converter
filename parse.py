@@ -4,7 +4,11 @@
 #
 
 """\
-Usage: python3 parse.py ELECTION_NAME DISTRICTS_PATH RESULTS_PATH
+Usage: python3 parse.py ELECTION_NAME DISTRICTS_PATH RESULTS_PATH > out.tsv
+
+Parses the given files and writes a new output file to stdout.
+The new output file is tab-delimited (.tsv).  We chose tabs since some
+fields contain commas (e.g. "US Representative, District 12").
 
 Arguments:
 
@@ -19,6 +23,7 @@ Arguments:
 
 In the above, relative paths will be interpreted as relative to the
 current working directory.
+
 """
 
 import codecs
@@ -28,6 +33,7 @@ import re
 import sys
 import timeit
 
+WRITER_DELIMITER = "\t"
 
 # We split on strings of whitespace having 2 or more characters.  This is
 # necessary since field values can contain spaces (e.g. candidate names).
@@ -43,11 +49,6 @@ AREA_INFO = {
     'Senatorial': ('senate', '%sTH SENATORIAL DISTRICT'),
     'Supervisorial': ('supervisor', 'SUPERVISORIAL DISTRICT %s')
 }
-
-# TODO: remove this constant.
-# This constant is a convenience to let us write code that is more DRY.
-# This does not include the "city" and "neighborhoods" attributes.
-DISTRICT_INFO_ATTRS = ('assembly', 'bart', 'congress', 'senate', 'supervisor')
 
 # This string contains a mapping from neighborhood labels in the
 # precinct-to-neighborhood file to the more human-friendly names that
@@ -378,6 +379,8 @@ class PrecinctIndexParser(Parser):
 
     """
 
+    AREA_HEADERS = ("Assembly", "BART", "Congressional", "Senatorial", "Supervisorial")
+
     def __init__(self, district_index):
         """
         Arguments:
@@ -404,7 +407,8 @@ class PrecinctIndexParser(Parser):
         # Includes: Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
         values = values[4:]
         nbhd_label = values.pop(3)
-        for attr, value in zip(DISTRICT_INFO_ATTRS, values):
+        for area_type_name, value in zip(self.AREA_HEADERS, values):
+            attr = AREA_INFO[area_type_name][0]
             self.add_precinct(attr, precinct_id, int(value))
 
         self.add_precinct('neighborhoods', precinct_id, nbhd_label)
@@ -574,7 +578,7 @@ class ResultsWriter(object):
         print(s, file=self.file)
 
     def write_row(self, *values):
-        self.write_ln(",".join([str(v) for v in values]))
+        self.write_ln(WRITER_DELIMITER.join([str(v) for v in values]))
 
     def write_totals_row_header(self, name_header, id_header, contest_choice_ids):
         choices = self.election_info.choices
