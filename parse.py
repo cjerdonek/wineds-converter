@@ -695,10 +695,11 @@ class ResultsWriter(object):
         for type_name in self.district_type_names:
             self.write_area_type_rows(contest_results, contest_precinct_ids, choice_ids, type_name)
 
-        # Write the city-wide row.
+        # Write the city-wide row.  This precedes the neighborhood totals
+        # in the PDF Statements of Vote.
         all_precinct_ids = self.election_info.area_index.city
-        # The area ID "City:0" is just a filler to have the same format
-        # as other areas.
+        # The area ID "City:0" is just a placeholder value so the column
+        # value can have the same format as other rows in the summary.
         self.write_totals_row(contest_results, choice_ids,
                               "CITY/COUNTY OF SAN FRANCISCO", "City:0", all_precinct_ids)
 
