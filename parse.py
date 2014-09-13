@@ -29,7 +29,7 @@ import sys
 import timeit
 
 
-DISTRICT_TYPES = {
+AREA_TYPES = {
     'Assembly': ('assembly', '%sTH ASSEMBLY DISTRICT'),
     'BART': ('bart', 'BART DISTRICT %s'),
     'Congressional': ('congress', '%sTH CONGRESSIONAL DISTRICT'),
@@ -144,10 +144,10 @@ class ContestInfo(object):
                 (self.name, self.area, len(self.precinct_ids), len(self.choice_ids)))
 
 
-class DistrictIndex(object):
+class AreaIndex(object):
 
     """
-    Encapsulates what precincts are in what districts.
+    Encapsulates what precincts are in what districts and areas.
 
     Each attribute corresponds to a "district type".  With the exception
     of the city attribute, each attribute is a dict that maps a district
@@ -188,12 +188,12 @@ class ElectionInfo(object):
     def __init__(self, name, district_index):
         """
         Arguments:
-          district_index: a DistrictIndex object.
+          district_index: a AreaIndex object.
 
         """
         self.choices = {}
         self.contests = {}
-        self.districts = district_index
+        self.area_index = district_index
         self.neighborhoods = {}
         self.precincts = {}
 
@@ -382,7 +382,7 @@ class Parser(object):
                             (self.line_no, self.line))
 
 
-class DistrictIndexParser(Parser):
+class AreaIndexParser(Parser):
 
     """
     Parses a CSV file with information about precincts and districts.
@@ -392,7 +392,7 @@ class DistrictIndexParser(Parser):
     def __init__(self, district_index):
         """
         Arguments:
-          district_index: a DistrictIndex object.
+          district_index: a AreaIndex object.
 
         """
         self.district_info = district_index
@@ -518,8 +518,8 @@ def digest_input_files(name, districts_path, wineds_path):
     object and an ElectionResults object.
 
     """
-    district_info = DistrictIndex()
-    parser = DistrictIndexParser(district_info)
+    district_info = AreaIndex()
+    parser = AreaIndexParser(district_info)
     parser.parse(districts_path)
 
     # We parse the file in two passes to simplify the logic and make the
@@ -662,12 +662,12 @@ class ResultsWriter(object):
         For example: the "Congressional" areas.
 
         """
-        attr, format_name = DISTRICT_TYPES[type_label]
-        district_type = getattr(self.election_info.districts, attr)
-        for area_key in sorted(district_type.keys()):
+        attr, format_name = AREA_TYPES[type_label]
+        area_type = getattr(self.election_info.area_index, attr)
+        for area_key in sorted(area_type.keys()):
             area_name = format_name % area_key
             area_label = "%s:%s" % (type_label, area_key)
-            area_precinct_ids = district_type[area_key]
+            area_precinct_ids = area_type[area_key]
             assert type(area_precinct_ids) is set
             if area_precinct_ids.isdisjoint(contest_precinct_ids):
                 # Then no precincts in the district overlapped the contest, so skip it.
