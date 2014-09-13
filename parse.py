@@ -587,6 +587,14 @@ class ResultsWriter(object):
         assert precinct_count > 0
         self.write_row(area_name, area_id, *totals)
 
+    def write_precinct_rows(self, contest_results, contest_choice_ids, precinct_ids):
+        precincts = self.election_info.precincts
+        for precinct_id in sorted(precinct_ids):
+            # Convert precinct_id into an iterable with one element in order
+            # to use write_totals_row().
+            self.write_totals_row(precincts[precinct_id], precinct_id, contest_results,
+                                  contest_choice_ids, (precinct_id, ))
+
     def write_district_type_summary(self, type_label, contest_precinct_ids,
                                     contest_results, choice_ids):
         attr, format_name = DISTRICT_TYPES[type_label]
@@ -602,7 +610,7 @@ class ResultsWriter(object):
                 continue
             try:
                 self.write_totals_row(district_name, district_label, contest_results,
-                                        choice_ids, district_precinct_ids)
+                                      choice_ids, district_precinct_ids)
             except:
                 raise Exception("while processing district: %s" % district_name)
 
@@ -644,11 +652,7 @@ class ResultsWriter(object):
         results = self.results
         registered = results.registered
         voted = results.voted
-        for precinct_id in sorted(precinct_ids):
-            # Convert precinct_id into an iterable with one element in order
-            # to use write_totals_row().
-            self.write_totals_row(precincts[precinct_id], precinct_id, contest_results,
-                                  contest_choice_ids, (precinct_id, ))
+        self.write_precinct_rows(contest_results, contest_choice_ids, precinct_ids)
         self.write_ln()
         self.write_contest_summary(precinct_ids, contest_choice_ids, contest_results)
 
