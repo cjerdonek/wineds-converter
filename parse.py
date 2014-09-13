@@ -281,14 +281,16 @@ def parse_line_info(contests, choices, precincts, line):
     """
     fields = split_line(line)
     try:
-        data, new_contest, new_choice, precinct, area = fields
+        data, new_contest, new_choice, precinct, contest_area = fields
     except ValueError:
-        # This can occur for summary lines like the following that lack an area:
-        # 0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
-        # 0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
+        # This exception can occur for summary lines like the following
+        # that lack a final "contest_area" column (since there is
+        # no contest for these rows):
+        #   0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
+        #   0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
         fields.append(None)
         try:
-            data, new_contest, new_choice, precinct, area = fields
+            data, new_contest, new_choice, precinct, contest_area = fields
         except ValueError:
             raise Exception("error unpacking fields: %r" % fields)
 
@@ -306,7 +308,7 @@ def parse_line_info(contests, choices, precincts, line):
     # to be treated differently:
     #   "REGISTERED VOTERS - TOTAL"
     #   "BALLOTS CAST - TOTAL"
-    if area is None:
+    if contest_area is None:
         assert contest_id in (1, 2)
         # TODO: both have choice ID 1, so skip them and don't store them as choices.
         return
@@ -314,9 +316,9 @@ def parse_line_info(contests, choices, precincts, line):
     try:
         contest = contests[contest_id]
         assert new_contest == contest.name
-        assert area == contest.area
+        assert contest_area == contest.area
     except KeyError:
-        contest = ContestInfo(name=new_contest, area=area)
+        contest = ContestInfo(name=new_contest, area=contest_area)
         contests[contest_id] = contest
 
     try:
