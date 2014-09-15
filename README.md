@@ -15,6 +15,10 @@ SF Department of Elections.  In particular, it includes a
 "District Grand Totals" section for each contest, which reports totals
 broken down by various districts and neighborhoods.
 
+The new file format is also smaller in size.  For example, for the
+June 3, 2014 election, an 8.5 MB WinEDS file converted to a file with
+size 487 KB.
+
 
 Setting up
 ----------

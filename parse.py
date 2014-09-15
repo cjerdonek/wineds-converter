@@ -669,6 +669,7 @@ class ContestWriter(Writer):
                 totals[i] += precinct_results[choice_id]
 
         assert totals[0] > 0
+        # Prevent division by zero.
         totals[3] = "0.00" if totals[1] == 0 else "{:.2%}".format(totals[2] / totals[1])[:-1]
         self.write_row(area_name, area_id, *totals)
 
