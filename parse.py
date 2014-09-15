@@ -261,21 +261,6 @@ def split_line(line):
     return SPLITTER.split(line.strip())
 
 
-def parse_data_chunk(chunk):
-    """Parse the 16-character string beginning each line."""
-    # 0AAACCCPPPPTTTTT
-    #
-    # AAA   = contest_id
-    # CCC   = choice_id
-    # PPPP  = precinct_id
-    # TTTTT = choice_total
-    contest_id = int(chunk[1:4])
-    choice_id = int(chunk[4:7])
-    precinct_id = int(chunk[7:11])
-    vote_total = int(chunk[11:16])
-    return choice_id, contest_id, precinct_id, vote_total
-
-
 class Parser(object):
 
     line_no = 0
@@ -366,6 +351,22 @@ class PrecinctIndexParser(Parser):
         next(lines)  # Skip the header line.
         for x in lines:
             self.parse_line(self.line)
+
+
+def parse_data_chunk(chunk):
+    """Parse the 16-character string beginning each line."""
+    # 0AAACCCPPPPTTTTT
+    #
+    # AAA   = contest_id
+    # CCC   = choice_id
+    # PPPP  = precinct_id
+    # TTTTT = choice_total
+    contest_id = int(chunk[1:4])
+    choice_id = int(chunk[4:7])
+    precinct_id = int(chunk[7:11])
+    vote_total = int(chunk[11:16])
+    return choice_id, contest_id, precinct_id, vote_total
+
 
 class ElectionInfoParser(Parser):
 
