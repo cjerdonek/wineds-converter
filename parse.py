@@ -4,7 +4,7 @@
 #
 
 """\
-Usage: python3 parse.py ELECTION_NAME DISTRICTS_PATH RESULTS_PATH > out.tsv
+Usage: python3 parse.py ELECTION_NAME PCT_INDEX_PATH RESULTS_PATH > out.tsv
 
 Parses the given files and writes a new output file to stdout.
 
@@ -16,8 +16,8 @@ Arguments:
   ELECTION_NAME: the name of the election, for display purposes.
     This appears in the first line of the output file.
 
-  DISTRICTS_PATH: path to a CSV file mapping precincts to their
-    different districts.
+  PCT_INDEX_PATH: path to a CSV file mapping precincts to their
+    different districts and neighborhoods.
 
   RESULTS_PATH: path to a WinEDS Reporting Tool output file that contains
     vote totals for each precinct in each contest.
@@ -300,7 +300,7 @@ class Parser(object):
 class PrecinctIndexParser(Parser):
 
     """
-    Parses a CSV file with information about precincts and districts.
+    Parses a CSV precinct-index file.
 
     """
 
@@ -512,7 +512,7 @@ def make_election_info(path, name, areas_info):
     return election_info
 
 
-def digest_input_files(name, districts_path, wineds_path):
+def digest_input_files(name, precinct_index_path, wineds_path):
     """
     Read the input files and return a 2-tuple of an ElectionInfo
     object and an ElectionResults object.
@@ -520,7 +520,7 @@ def digest_input_files(name, districts_path, wineds_path):
     """
     areas_info = AreasInfo()
     parser = PrecinctIndexParser(areas_info)
-    parser.parse_path(districts_path)
+    parser.parse_path(precinct_index_path)
 
     # We parse the file in two passes to simplify the logic and make the
     # code easier to understand.
@@ -799,11 +799,11 @@ class ResultsWriter(object):
 def inner_main(argv):
     try:
         # TODO: use argparse.
-        name, districts_path, results_path = argv[1:]
+        name, precinct_index_path, results_path = argv[1:]
     except ValueError:
         exit_with_error("%s\nERROR: incorrect number of arguments" % __doc__)
 
-    info, results = digest_input_files(name, districts_path, results_path)
+    info, results = digest_input_files(name, precinct_index_path, results_path)
 
     writer = ResultsWriter(file=sys.stdout, info=info, results=results)
     writer.write()
