@@ -583,10 +583,14 @@ class ResultsWriter(object):
         self.write_ln(WRITER_DELIMITER.join([str(v) for v in values]))
 
     def write_totals_row_header(self, name_header, id_header, contest_choice_ids):
+        """
+        Write the column header row for the totals rows.
+
+        """
         choices = self.election_info.choices
         # Each choices value is a 2-tuple of (contest_id, choice_name).
         choice_names = (choices[choice_id][1] for choice_id in contest_choice_ids)
-        self.write_row(name_header, id_header, "Registration", "Ballots Cast",
+        self.write_row(name_header, id_header, "Precincts", "Registration", "Ballots Cast",
                        *choice_names)
 
     def write_totals_row(self, contest_results, choice_ids,
@@ -603,41 +607,43 @@ class ResultsWriter(object):
            1) area name
            2) area identifier
         * Totals
-           3) registration
-           4) ballots cast
-           5) choice #1 vote total
-           6) choice #2 vote total
-           7) etc.
+           3) number of precincts represented by row
+           4) registration
+           5) ballots cast
+           6) choice #1 vote total
+           7) choice #2 vote total
+           8) etc.
 
         Arguments:
 
-          contest_results: a dict described by the following:
-            contest_results[precinct_id] -> contest_precinct_results
-            contest_precinct_results[choice_id] -> vote_total
+          contest_results: a value in the results.contests dictionary,
+            where results is an ElectionResults object.  See the
+            ElectionResults docstring for information on the structure
+            of these values.
+          area_precinct_ids: an iterable of precinct IDs in the given area.
 
         """
-        # Add two for the "registration" and "ballots cast" columns.
-        totals = (len(choice_ids) + 2) * [0]
+        # Add three for: precinct count, registration, and ballots cast.
+        totals = (3 + len(choice_ids)) * [0]
         registered = self.results.registered
         voted = self.results.voted
 
-        precinct_count = 0
         for precinct_id in area_precinct_ids:
             try:
                 precinct_results = contest_results[precinct_id]
-                precinct_count += 1
             except KeyError:
                 # Then this precinct in the district did not
                 # participate in the contest.
                 continue
 
-            totals[0] += registered[precinct_id]
-            totals[1] += voted[precinct_id]
+            totals[0] += 1
+            totals[1] += registered[precinct_id]
+            totals[2] += voted[precinct_id]
 
-            for i, choice_id in enumerate(choice_ids, start=2):
+            for i, choice_id in enumerate(choice_ids, start=3):
                 totals[i] += precinct_results[choice_id]
 
-        assert precinct_count > 0
+        assert totals[0] > 0
         self.write_row(area_name, area_id, *totals)
 
     def write_precinct_rows(self, contest_results, contest_choice_ids, precinct_ids):
