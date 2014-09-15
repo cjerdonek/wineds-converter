@@ -256,11 +256,6 @@ def init_results(info, results):
     return results
 
 
-def split_line(line):
-    """Return a list of field values in the line."""
-    return SPLITTER.split(line.strip())
-
-
 class Parser(object):
 
     line_no = 0
@@ -273,14 +268,13 @@ class Parser(object):
         Each iteration yields a 2-tuple: (line_no, line).
 
         """
-        with f:
-            for line_no, line in enumerate(iter(f), start=1):
-                self.line = line
-                self.line_no = line_no
-                # This yields no values because we set the information
-                # we need as instance attributes instead.  This is more
-                # convenient for things like our Parser exception handler.
-                yield
+        for line_no, line in enumerate(iter(f), start=1):
+            self.line = line
+            self.line_no = line_no
+            # This yields no values because we set the information
+            # we need as instance attributes instead.  This is more
+            # convenient for things like our Parser exception handler.
+            yield
         log("parsed: %d lines" % line_no)
 
     def parse_line(self, line):
@@ -292,12 +286,11 @@ class Parser(object):
 
     def parse_file(self, f):
         try:
-            self.parse_body(f)
+            with f:
+                self.parse_body(f)
         except:
             raise Exception("error while parsing line %d: %r" %
                             (self.line_no, self.line))
-        finally:
-            assert f.closed
 
     def parse(self, path):
         log("parsing: %s" % path)
@@ -353,6 +346,11 @@ class PrecinctIndexParser(Parser):
             self.parse_line(self.line)
 
 
+def split_line(line):
+    """Return a list of field values in the line."""
+    return SPLITTER.split(line.strip())
+
+
 def parse_data_chunk(chunk):
     """Parse the 16-character string beginning each line."""
     # 0AAACCCPPPPTTTTT
@@ -392,8 +390,6 @@ class ElectionInfoParser(Parser):
         in contests.
 
         """
-        contests, choices, precincts = self.contests, self.choices, self.precincts
-
         fields = split_line(line)
         try:
             data, new_contest, new_choice, precinct, contest_area = fields
@@ -412,6 +408,8 @@ class ElectionInfoParser(Parser):
         assert len(data) == 16
         assert data[0] == '0'
         choice_id, contest_id, precinct_id, vote_total = parse_data_chunk(data)
+
+        contests, choices, precincts = self.contests, self.choices, self.precincts
 
         try:
             old_precinct = precincts[precinct_id]
