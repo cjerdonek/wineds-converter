@@ -34,6 +34,7 @@ import sys
 import timeit
 
 WRITER_DELIMITER = "\t"
+GRAND_TOTALS_HEADER = "Grand Totals"
 
 # We split on strings of whitespace having 2 or more characters.  This is
 # necessary since field values can contain spaces (e.g. candidate names).
@@ -646,6 +647,16 @@ class ResultsWriter(object):
         assert totals[0] > 0
         self.write_row(area_name, area_id, *totals)
 
+    def write_grand_totals_row(self, contest_results, choice_ids, header):
+        """
+        Write a row for the city-wide totals.
+
+        """
+        all_precinct_ids = self.election_info.area_index.city
+        # The area ID "City:0" is just a placeholder value so the column
+        # value can have the same format as other rows in the summary.
+        self.write_totals_row(contest_results, choice_ids, header, "City:0", all_precinct_ids)
+
     def write_precinct_rows(self, contest_results, contest_choice_ids, precinct_ids):
         precincts = self.election_info.precincts
         for precinct_id in sorted(precinct_ids):
@@ -653,9 +664,11 @@ class ResultsWriter(object):
             # to use write_totals_row().
             self.write_totals_row(contest_results, contest_choice_ids,
                                   precincts[precinct_id], precinct_id, (precinct_id, ))
+        self.write_grand_totals_row(contest_results, contest_choice_ids, GRAND_TOTALS_HEADER)
 
-    def write_area_rows(self, contest_results, choice_ids, contest_precinct_ids,
-                        area_precincts, area_type_name, make_area_name, area_ids):
+    def write_area_rows(self, contest_name, contest_results, choice_ids,
+                        contest_precinct_ids, area_precincts, area_type_name,
+                        make_area_name, area_ids):
         for area_id in area_ids:
             area_name = make_area_name(area_id)
             area_label = "%s:%s" % (area_type_name, area_id)
@@ -663,7 +676,7 @@ class ResultsWriter(object):
             assert type(area_precinct_ids) is set
             if area_precinct_ids.isdisjoint(contest_precinct_ids):
                 # Then no precincts in the district overlapped the contest, so skip it.
-                log("skipping area: %s" % area_name)
+                log("skipping area in %s: %s" % (contest_name, area_name))
                 continue
             try:
                 self.write_totals_row(contest_results, choice_ids,
@@ -671,7 +684,7 @@ class ResultsWriter(object):
             except:
                 raise Exception("while processing area: %s" % area_name)
 
-    def write_area_type_rows(self, contest_results, contest_precinct_ids,
+    def write_area_type_rows(self, contest_name, contest_results, contest_precinct_ids,
                              choice_ids, area_type_name):
         """
         Write the rows for a contest for a particular area type.
@@ -683,10 +696,12 @@ class ResultsWriter(object):
         area_type = getattr(self.election_info.area_index, attr)
         area_ids = sorted(area_type.keys())
         make_area_name = lambda area_id: format_name % area_id
-        self.write_area_rows(contest_results, choice_ids, contest_precinct_ids,
-                             area_type, area_type_name, make_area_name, area_ids)
+        self.write_area_rows(contest_name, contest_results,
+                             choice_ids, contest_precinct_ids, area_type,
+                             area_type_name, make_area_name, area_ids)
 
-    def write_contest_summary(self, contest_results, choice_ids, contest_precinct_ids):
+    def write_contest_summary(self, contest_name, contest_results, choice_ids,
+                              contest_precinct_ids):
         """
         Arguments:
           choice_ids: an iterable of choice IDs in the contest, in
@@ -699,15 +714,12 @@ class ResultsWriter(object):
         self.write_ln("District Grand Totals")
         self.write_totals_row_header("DistrictName", "DistrictLabel", choice_ids)
         for type_name in self.district_type_names:
-            self.write_area_type_rows(contest_results, contest_precinct_ids, choice_ids, type_name)
+            self.write_area_type_rows(contest_name, contest_results,
+                                      contest_precinct_ids, choice_ids, type_name)
 
         # Write the city-wide row.  This precedes the neighborhood totals
         # in the PDF Statements of Vote.
-        all_precinct_ids = self.election_info.area_index.city
-        # The area ID "City:0" is just a placeholder value so the column
-        # value can have the same format as other rows in the summary.
-        self.write_totals_row(contest_results, choice_ids,
-                              "CITY/COUNTY OF SAN FRANCISCO", "City:0", all_precinct_ids)
+        self.write_grand_totals_row(contest_results, choice_ids, "CITY/COUNTY OF SAN FRANCISCO")
 
         # Also write the neighborhood rows.
         nbhd_names = self.election_info.nbhd_names
@@ -719,8 +731,10 @@ class ResultsWriter(object):
         make_nbhd_name = lambda nbhd_id: nbhd_names[nbhd_id]
         nbhd_ids = [pair[0] for pair in nbhd_pairs]
 
-        self.write_area_rows(contest_results, choice_ids, contest_precinct_ids,
-                             nbhd_precincts, "Neighborhood", make_nbhd_name, nbhd_ids)
+        self.write_area_rows(contest_name, contest_results, choice_ids,
+                             contest_precinct_ids, nbhd_precincts,
+                             "Neighborhood", make_nbhd_name, nbhd_ids)
+        self.write_grand_totals_row(contest_results, choice_ids, GRAND_TOTALS_HEADER)
 
     def write_contest(self, precincts, contest_info, contest_results):
         """
@@ -741,7 +755,7 @@ class ResultsWriter(object):
         self.write_precinct_rows(contest_results, contest_choice_ids, precinct_ids)
         self.write_ln()
 
-        self.write_contest_summary(contest_results, contest_choice_ids, precinct_ids)
+        self.write_contest_summary(contest_name, contest_results, contest_choice_ids, precinct_ids)
 
     def write(self):
         """Write the election results to the given file."""
