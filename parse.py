@@ -672,7 +672,7 @@ class ContestWriter(Writer):
         totals[3] = "0.00" if totals[1] == 0 else "{:.2%}".format(totals[2] / totals[1])[:-1]
         self.write_row(area_name, area_id, *totals)
 
-    def write_grand_totals_row(self, contest_results, choice_ids, header):
+    def write_grand_totals_row(self, header):
         """
         Write a row for the city-wide totals.
 
@@ -680,7 +680,8 @@ class ContestWriter(Writer):
         all_precinct_ids = self.election_info.areas_info.city
         # The area ID "City:0" is just a placeholder value so the column
         # value can have the same format as other rows in the summary.
-        self.write_totals_row(contest_results, choice_ids, header, "City:0", all_precinct_ids)
+        self.write_totals_row(self.contest_results, self.sorted_choice_ids,
+                              header, "City:0", all_precinct_ids)
 
     def write_precinct_rows(self):
         contest_results = self.contest_results
@@ -691,7 +692,7 @@ class ContestWriter(Writer):
             # to use write_totals_row().
             self.write_totals_row(contest_results, contest_choice_ids,
                                   precincts[precinct_id], precinct_id, (precinct_id, ))
-        self.write_grand_totals_row(contest_results, contest_choice_ids, GRAND_TOTALS_HEADER)
+        self.write_grand_totals_row(GRAND_TOTALS_HEADER)
 
     def write_area_rows(self, contest_name, contest_results, choice_ids,
                         contest_precinct_ids, area_type, area_type_name,
@@ -739,9 +740,8 @@ class ContestWriter(Writer):
             self.write_area_type_rows(contest_name, contest_results,
                                       contest_precinct_ids, choice_ids, area_type_name)
 
-        # Write the city-wide row.  This precedes the neighborhood totals
-        # in the PDF Statements of Vote.
-        self.write_grand_totals_row(contest_results, choice_ids, "CITY/COUNTY OF SAN FRANCISCO")
+        # This precedes the neighborhood totals in the PDF Statement of Vote.
+        self.write_grand_totals_row("CITY/COUNTY OF SAN FRANCISCO")
 
         # Also write the neighborhood rows.
         nbhd_names = self.election_info.nbhd_names
@@ -759,7 +759,7 @@ class ContestWriter(Writer):
         self.write_area_rows(contest_name, contest_results, choice_ids,
                              contest_precinct_ids, neighborhoods_area,
                              "Neighborhood", make_nbhd_name, nbhd_ids)
-        self.write_grand_totals_row(contest_results, choice_ids, GRAND_TOTALS_HEADER)
+        self.write_grand_totals_row(GRAND_TOTALS_HEADER)
 
     def write(self):
         log("writing contest: %s (%d precincts)" % (self.contest_name, len(self.precinct_ids)))
