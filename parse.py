@@ -579,6 +579,7 @@ class ContestWriter(Writer):
 
     def __init__(self, file, election_info, results, contest_info):
         self.file = file
+        self.sorted_choice_ids = sorted(contest_info.choice_ids)
         self.contest_info = contest_info
         self.election_info = election_info
         self.results = results
@@ -586,14 +587,14 @@ class ContestWriter(Writer):
     def write_row(self, *values):
         self.write_ln(WRITER_DELIMITER.join([str(v) for v in values]))
 
-    def write_totals_row_header(self, name_header, id_header, contest_choice_ids):
+    def write_totals_row_header(self, name_header, id_header):
         """
         Write the column header row for the totals rows.
 
         """
         choices = self.election_info.choices
         # Each choices value is a 2-tuple of (contest_id, choice_name).
-        choice_names = (choices[choice_id][1] for choice_id in contest_choice_ids)
+        choice_names = (choices[choice_id][1] for choice_id in self.sorted_choice_ids)
         self.write_row(name_header, id_header, "Precincts", "Registration",
                        "Ballots Cast", "Turnout (%)", *choice_names)
 
@@ -664,7 +665,8 @@ class ContestWriter(Writer):
         # value can have the same format as other rows in the summary.
         self.write_totals_row(contest_results, choice_ids, header, "City:0", all_precinct_ids)
 
-    def write_precinct_rows(self, contest_results, contest_choice_ids, precinct_ids):
+    def write_precinct_rows(self, contest_results, precinct_ids):
+        contest_choice_ids = self.sorted_choice_ids
         precincts = self.election_info.precincts
         for precinct_id in sorted(precinct_ids):
             # Convert precinct_id into an iterable with one element in order
@@ -707,8 +709,7 @@ class ContestWriter(Writer):
                              choice_ids, contest_precinct_ids, area_type,
                              area_type_name, make_area_name, area_ids)
 
-    def write_contest_summary(self, contest_name, contest_results, choice_ids,
-                              contest_precinct_ids):
+    def write_contest_summary(self, contest_name, contest_results, contest_precinct_ids):
         """
         Arguments:
           choice_ids: an iterable of choice IDs in the contest, in
@@ -717,9 +718,10 @@ class ContestWriter(Writer):
             precincts participating in the contest.
 
         """
+        choice_ids = self.sorted_choice_ids
         assert type(contest_precinct_ids) is set
         self.write_ln("District Grand Totals")
-        self.write_totals_row_header("DistrictName", "DistrictLabel", choice_ids)
+        self.write_totals_row_header("DistrictName", "DistrictLabel")
         for area_type_name in self.area_type_names:
             self.write_area_type_rows(contest_name, contest_results,
                                       contest_precinct_ids, choice_ids, area_type_name)
@@ -756,17 +758,16 @@ class ContestWriter(Writer):
         contest_info = self.contest_info
         contest_name = contest_info.name
         precinct_ids = contest_info.precinct_ids
-        contest_choice_ids = sorted(contest_info.choice_ids)
 
         log("writing contest: %s (%d precincts)" % (contest_name, len(precinct_ids)))
 
         self.write_ln("%s - %s" % (contest_name, contest_info.area))
 
-        self.write_totals_row_header("VotingPrecinctName", "VotingPrecinctID", contest_choice_ids)
-        self.write_precinct_rows(contest_results, contest_choice_ids, precinct_ids)
+        self.write_totals_row_header("VotingPrecinctName", "VotingPrecinctID")
+        self.write_precinct_rows(contest_results, precinct_ids)
         self.write_ln()
 
-        self.write_contest_summary(contest_name, contest_results, contest_choice_ids, precinct_ids)
+        self.write_contest_summary(contest_name, contest_results, precinct_ids)
 
 
 class ResultsWriter(Writer):
