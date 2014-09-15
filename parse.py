@@ -541,8 +541,8 @@ def digest_input_files(name, precinct_index_path, wineds_path):
     # Pass #1
     election_info = make_election_info(wineds_path, name, areas_info)
 
-    # Check that the precincts in the district file match the precincts
-    # in the results file.
+    # Check that the precincts in the precinct index file match the
+    # precincts in the results file.
     for i, (p1, p2) in enumerate(zip(sorted(areas_info.city),
                                      sorted(election_info.precincts.keys())), start=1):
         try:
@@ -561,12 +561,13 @@ def digest_input_files(name, precinct_index_path, wineds_path):
     return election_info, results
 
 
-class ResultsWriter(object):
+class Writer(object):
 
-    """
-    Responsible for writing output to a file.
+    def write_ln(self, s=""):
+        print(s, file=self.file)
 
-    """
+
+class ContestWriter(Writer):
 
     area_type_names = (
         'Congressional',
@@ -576,13 +577,10 @@ class ResultsWriter(object):
         'Supervisorial'
     )
 
-    def __init__(self, file, info, results):
+    def __init__(self, file, election_info, results):
         self.file = file
-        self.election_info = info
+        self.election_info = election_info
         self.results = results
-
-    def write_ln(self, s=""):
-        print(s, file=self.file)
 
     def write_row(self, *values):
         self.write_ln(WRITER_DELIMITER.join([str(v) for v in values]))
@@ -744,7 +742,10 @@ class ResultsWriter(object):
                              "Neighborhood", make_nbhd_name, nbhd_ids)
         self.write_grand_totals_row(contest_results, choice_ids, GRAND_TOTALS_HEADER)
 
-    def write_contest(self, precincts, contest_info, contest_results):
+    # TODO: cut down on the number of arguments passed by storing things
+    # like the following as attributes: contest_name, contest_results,
+    # choice_ids, and contest_precinct_ids.
+    def write(self, precincts, contest_info, contest_results):
         """
         Arguments:
           precincts: the ElectionInfo.precincts dict.
@@ -765,17 +766,20 @@ class ResultsWriter(object):
 
         self.write_contest_summary(contest_name, contest_results, contest_choice_ids, precinct_ids)
 
-    def write(self):
-        """Write the election results to the given file."""
-        info = self.election_info
-        results = self.results
 
-        info_contests = info.contests
-        precincts = info.precincts
+class ResultsWriter(Writer):
+
+    def __init__(self, file):
+        self.file = file
+
+    def write(self, election_info, results):
+        """Write the election results to the given file."""
+        info_contests = election_info.contests
+        precincts = election_info.precincts
         results_contests = results.contests
 
         now = datetime.now()
-        self.write_ln(info.name)
+        self.write_ln(election_info.name)
         self.write_ln()
         # This looks like the following, for example:
         #   Report generated on: Friday, September 12, 2014 at 09:06:26 PM
@@ -789,10 +793,8 @@ class ResultsWriter(object):
             contest_info = info_contests[contest_id]
             contest_results = results_contests[contest_id]
             try:
-                # TODO: make a ContestWriter class to cut down on the
-                # number of arguments passed?  For example: contest_name,
-                # contest_results, choice_ids, and contest_precinct_ids.
-                self.write_contest(precincts, contest_info, contest_results)
+                contest_writer = ContestWriter(self.file, election_info, results)
+                contest_writer.write(precincts, contest_info, contest_results)
             except:
                 raise Exception("while processing contest: %s" % contest_info.name)
             self.write_ln()
@@ -807,10 +809,10 @@ def inner_main(argv):
         err = "ERROR: incorrect number of arguments"
         exit_with_error("\n".join([err, __doc__, err]))
 
-    info, results = digest_input_files(name, precinct_index_path, results_path)
+    election_info, results = digest_input_files(name, precinct_index_path, results_path)
 
-    writer = ResultsWriter(file=sys.stdout, info=info, results=results)
-    writer.write()
+    writer = ResultsWriter(file=sys.stdout)
+    writer.write(election_info, results)
 
 
 def main(argv):
