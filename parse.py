@@ -3,7 +3,7 @@
 # **THIS SCRIPT IS WRITTEN FOR PYTHON 3.**
 #
 
-"""\
+"""
 Usage: python3 parse.py ELECTION_NAME PCT_INDEX_PATH RESULTS_PATH > out.tsv
 
 Parses the given files and writes a new output file to stdout.
@@ -13,8 +13,9 @@ fields contain commas (e.g. "US Representative, District 12").
 
 Arguments:
 
-  ELECTION_NAME: the name of the election, for display purposes.
+  ELECTION_NAME: the name of the election for display purposes.
     This appears in the first line of the output file.
+    An example value is "San Francisco June 3, 2014 Election".
 
   PCT_INDEX_PATH: path to a CSV file mapping precincts to their
     different districts and neighborhoods.
@@ -24,7 +25,6 @@ Arguments:
 
 In the above, relative paths will be interpreted as relative to the
 current working directory.
-
 """
 
 import codecs
@@ -801,7 +801,8 @@ def inner_main(argv):
         # TODO: use argparse.
         name, precinct_index_path, results_path = argv[1:]
     except ValueError:
-        exit_with_error("%s\nERROR: incorrect number of arguments" % __doc__)
+        err = "ERROR: incorrect number of arguments"
+        exit_with_error("\n".join([err, __doc__, err]))
 
     info, results = digest_input_files(name, precinct_index_path, results_path)
 
