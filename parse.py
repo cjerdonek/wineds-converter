@@ -7,7 +7,8 @@
 Usage: python3 parse.py ELECTION_NAME DISTRICTS_PATH RESULTS_PATH > out.tsv
 
 Parses the given files and writes a new output file to stdout.
-The new output file is tab-delimited (.tsv).  We chose tabs since some
+
+The new output file is tab-delimited (.tsv).  Tabs are used since some
 fields contain commas (e.g. "US Representative, District 12").
 
 Arguments:
@@ -40,9 +41,10 @@ GRAND_TOTALS_HEADER = "Grand Totals"
 # necessary since field values can contain spaces (e.g. candidate names).
 SPLITTER = re.compile(r'\s{2,}')
 
-# Information about the area types whose name can be generated from a
-# format string and an area or district number.  This does not include
-# the "city" and "neighborhood" types.
+# A dictionary containing information about the types of areas whose
+# name can be generated from a format string and a district number.
+# This dictionary does not include the "city" and "neighborhood"
+# area types.
 AREA_INFO = {
     'Assembly': ('assembly', '%sTH ASSEMBLY DISTRICT'),
     'BART': ('bart', 'BART DISTRICT %s'),
@@ -53,7 +55,7 @@ AREA_INFO = {
 
 # This string contains a mapping from neighborhood labels in the
 # precinct-to-neighborhood file to the more human-friendly names that
-# appear in the Statements of Vote.
+# appear in the Statement of Vote.
 NEIGHBORHOODS = """
 BAYVW/HTRSPT:BAYVIEW/HUNTERS POINT
 CHINA:CHINATOWN
@@ -95,20 +97,20 @@ def make_nbhd_names():
     return data
 
 
-@contextmanager
-def time_it():
-    start_time = timeit.default_timer()
-    yield
-    elapsed = timeit.default_timer() - start_time
-    log("elapsed: %.4f seconds" % elapsed)
-
-
 # TODO: use Python's logging module.
 def log(s=None):
     """Write to stderr."""
     if s is None:
         s = ""
     print(s, file=sys.stderr)
+
+
+@contextmanager
+def time_it():
+    start_time = timeit.default_timer()
+    yield
+    elapsed = timeit.default_timer() - start_time
+    log("elapsed: %.4f seconds" % elapsed)
 
 
 def exit_with_error(msg):
@@ -274,69 +276,6 @@ def parse_data_chunk(chunk):
     return choice_id, contest_id, precinct_id, vote_total
 
 
-def parse_line_info(contests, choices, precincts, line):
-    """
-    This function does not populate contest.choice_ids for the objects
-    in contests.
-
-    """
-    fields = split_line(line)
-    try:
-        data, new_contest, new_choice, precinct, contest_area = fields
-    except ValueError:
-        # This exception can occur for summary lines like the following
-        # that lack a final "contest_area" column (since there is
-        # no contest for these rows):
-        #   0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
-        #   0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
-        fields.append(None)
-        try:
-            data, new_contest, new_choice, precinct, contest_area = fields
-        except ValueError:
-            raise Exception("error unpacking fields: %r" % fields)
-
-    assert len(data) == 16
-    assert data[0] == '0'
-    choice_id, contest_id, precinct_id, vote_total = parse_data_chunk(data)
-
-    try:
-        old_precinct = precincts[precinct_id]
-        assert old_precinct == precinct
-    except KeyError:
-        precincts[precinct_id] = precinct
-
-    # The contests with the following names are special cases that need
-    # to be treated differently:
-    #   "REGISTERED VOTERS - TOTAL"
-    #   "BALLOTS CAST - TOTAL"
-    if contest_area is None:
-        assert contest_id in (1, 2)
-        # TODO: both have choice ID 1, so skip them and don't store them as choices.
-        return
-
-    try:
-        contest = contests[contest_id]
-        assert new_contest == contest.name
-        assert contest_area == contest.area
-    except KeyError:
-        contest = ContestInfo(name=new_contest, area=contest_area)
-        contests[contest_id] = contest
-
-    try:
-        choice = choices[choice_id]
-        try:
-            assert choice == (contest_id, new_choice)
-        except AssertionError:
-            raise Exception("choice mismatch for choice ID %d: %r != %r" %
-                            (choice_id, choice, (contest_id, new_choice)))
-    except KeyError:
-        choice = (contest_id, new_choice)
-        choices[choice_id] = choice
-
-    # TODO: validate that each precinct appears only once.
-    contest.precinct_ids.add(precinct_id)
-
-
 class Parser(object):
 
     line_no = 0
@@ -442,7 +381,68 @@ class ElectionInfoParser(Parser):
         self.precincts = info.precincts
 
     def parse_line(self, line):
-        parse_line_info(self.contests, self.choices, self.precincts, line)
+        """
+        This function does not populate contest.choice_ids for the objects
+        in contests.
+
+        """
+        contests, choices, precincts = self.contests, self.choices, self.precincts
+
+        fields = split_line(line)
+        try:
+            data, new_contest, new_choice, precinct, contest_area = fields
+        except ValueError:
+            # This exception can occur for summary lines like the following
+            # that lack a final "contest_area" column (since there is
+            # no contest for these rows):
+            #   0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
+            #   0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
+            fields.append(None)
+            try:
+                data, new_contest, new_choice, precinct, contest_area = fields
+            except ValueError:
+                raise Exception("error unpacking fields: %r" % fields)
+
+        assert len(data) == 16
+        assert data[0] == '0'
+        choice_id, contest_id, precinct_id, vote_total = parse_data_chunk(data)
+
+        try:
+            old_precinct = precincts[precinct_id]
+            assert old_precinct == precinct
+        except KeyError:
+            precincts[precinct_id] = precinct
+
+        # The contests with the following names are special cases that need
+        # to be treated differently:
+        #   "REGISTERED VOTERS - TOTAL"
+        #   "BALLOTS CAST - TOTAL"
+        if contest_area is None:
+            assert contest_id in (1, 2)
+            # TODO: both have choice ID 1, so skip them and don't store them as choices.
+            return
+
+        try:
+            contest = contests[contest_id]
+            assert new_contest == contest.name
+            assert contest_area == contest.area
+        except KeyError:
+            contest = ContestInfo(name=new_contest, area=contest_area)
+            contests[contest_id] = contest
+
+        try:
+            choice = choices[choice_id]
+            try:
+                assert choice == (contest_id, new_choice)
+            except AssertionError:
+                raise Exception("choice mismatch for choice ID %d: %r != %r" %
+                                (choice_id, choice, (contest_id, new_choice)))
+        except KeyError:
+            choice = (contest_id, new_choice)
+            choices[choice_id] = choice
+
+        # TODO: validate that each precinct appears only once.
+        contest.precinct_ids.add(precinct_id)
 
 
 class ResultsParser(Parser):
