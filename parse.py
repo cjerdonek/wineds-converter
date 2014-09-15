@@ -292,7 +292,7 @@ class Parser(object):
             raise Exception("error while parsing line %d: %r" %
                             (self.line_no, self.line))
 
-    def parse(self, path):
+    def parse_path(self, path):
         log("parsing: %s" % path)
         self.parse_file(codecs.open(path, "r", encoding="utf-8"))
 
@@ -312,10 +312,10 @@ class PrecinctIndexParser(Parser):
           areas_info: a AreasInfo object.
 
         """
-        self.district_info = areas_info
+        self.areas_info = areas_info
 
     def add_precinct(self, attr, precinct_id, value):
-        districts = getattr(self.district_info, attr)
+        districts = getattr(self.areas_info, attr)
         try:
             precinct_ids = districts[value]
         except KeyError:
@@ -337,7 +337,7 @@ class PrecinctIndexParser(Parser):
             self.add_precinct(attr, precinct_id, int(value))
 
         self.add_precinct('neighborhoods', precinct_id, nbhd_label)
-        self.district_info.city.add(precinct_id)
+        self.areas_info.city.add(precinct_id)
 
     def parse_body(self, f):
         lines = self.iter_lines(f)
@@ -493,23 +493,23 @@ class ResultsParser(Parser):
             raise Exception(err)
 
 
-def make_election_info(path, name, district_info):
+def make_election_info(path, name, areas_info):
     """
     Parse the file, and create an ElectionInfo object.
 
     """
-    info = ElectionInfo(name, district_info)
-    parser = ElectionInfoParser(info)
-    parser.parse(path)
+    election_info = ElectionInfo(name, areas_info)
+    parser = ElectionInfoParser(election_info)
+    parser.parse_path(path)
 
-    choices = info.choices
-    contests = info.contests
+    choices = election_info.choices
+    contests = election_info.contests
 
     for choice_id, (contest_id, choice_name) in choices.items():
         contest = contests[contest_id]
         contest.choice_ids.add(choice_id)
 
-    return info
+    return election_info
 
 
 def digest_input_files(name, districts_path, wineds_path):
@@ -520,7 +520,7 @@ def digest_input_files(name, districts_path, wineds_path):
     """
     area_precincts = AreasInfo()
     parser = PrecinctIndexParser(area_precincts)
-    parser.parse(districts_path)
+    parser.parse_path(districts_path)
 
     # We parse the file in two passes to simplify the logic and make the
     # code easier to understand.
@@ -556,7 +556,7 @@ def digest_input_files(name, districts_path, wineds_path):
 
     # Pass #2
     parser = ResultsParser(results)
-    parser.parse(wineds_path)
+    parser.parse_path(wineds_path)
 
     return election_info, results
 
