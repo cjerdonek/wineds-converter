@@ -136,10 +136,10 @@ class ContestInfo(object):
                 (self.name, self.area, len(self.precinct_ids), len(self.choice_ids)))
 
 
-class AreaPrecincts(object):
+class AreasInfo(object):
 
     """
-    Encapsulates what precincts are in what districts and areas.
+    Encapsulates information about each area and district.
 
     Each attribute corresponds to an "area type".  With the exception
     of the city attribute, each attribute is a dict that maps an integer
@@ -179,15 +179,15 @@ class ElectionInfo(object):
 
     nbhd_names = make_nbhd_names()
 
-    def __init__(self, name, district_index):
+    def __init__(self, name, areas_info):
         """
         Arguments:
-          district_index: a AreaPrecincts object.
+          areas_info: a AreasInfo object.
 
         """
         self.choices = {}
         self.contests = {}
-        self.area_index = district_index
+        self.areas_info = areas_info
         self.precincts = {}
 
         self.name = name
@@ -306,13 +306,13 @@ class PrecinctIndexParser(Parser):
 
     AREA_HEADERS = ("Assembly", "BART", "Congressional", "Senatorial", "Supervisorial")
 
-    def __init__(self, district_index):
+    def __init__(self, areas_info):
         """
         Arguments:
-          district_index: a AreaPrecincts object.
+          areas_info: a AreasInfo object.
 
         """
-        self.district_info = district_index
+        self.district_info = areas_info
 
     def add_precinct(self, attr, precinct_id, value):
         districts = getattr(self.district_info, attr)
@@ -518,7 +518,7 @@ def digest_input_files(name, districts_path, wineds_path):
     object and an ElectionResults object.
 
     """
-    area_precincts = AreaPrecincts()
+    area_precincts = AreasInfo()
     parser = PrecinctIndexParser(area_precincts)
     parser.parse(districts_path)
 
@@ -660,7 +660,7 @@ class ResultsWriter(object):
         Write a row for the city-wide totals.
 
         """
-        all_precinct_ids = self.election_info.area_index.city
+        all_precinct_ids = self.election_info.areas_info.city
         # The area ID "City:0" is just a placeholder value so the column
         # value can have the same format as other rows in the summary.
         self.write_totals_row(contest_results, choice_ids, header, "City:0", all_precinct_ids)
@@ -701,7 +701,7 @@ class ResultsWriter(object):
 
         """
         attr, format_name = AREA_INFO[area_type_name]
-        area_type = getattr(self.election_info.area_index, attr)
+        area_type = getattr(self.election_info.areas_info, attr)
         area_ids = sorted(area_type.keys())
         make_area_name = lambda area_id: format_name % area_id
         self.write_area_rows(contest_name, contest_results,
@@ -735,7 +735,7 @@ class ResultsWriter(object):
         # Alphabetize the pairs by the full name and not the label.
         nbhd_pairs = sorted(nbhd_pairs, key=lambda pair: pair[1])
 
-        nbhd_precincts = self.election_info.area_index.neighborhoods
+        nbhd_precincts = self.election_info.areas_info.neighborhoods
         make_nbhd_name = lambda nbhd_id: nbhd_names[nbhd_id]
         nbhd_ids = [pair[0] for pair in nbhd_pairs]
 
