@@ -281,15 +281,14 @@ class Parser(object):
     line_no = 0
     line = None
 
-    def iter_lines(self, path):
+    def iter_lines(self, f):
         """
         Return an iterator over the lines of an input file.
 
         Each iteration yields a 2-tuple: (line_no, line).
 
         """
-        log("parsing: %s" % path)
-        with codecs.open(path, "r", encoding="utf-8") as f:
+        with f:
             for line_no, line in enumerate(iter(f), start=1):
                 self.line = line
                 self.line_no = line_no
@@ -302,16 +301,22 @@ class Parser(object):
     def parse_line(self, line):
         raise NotImplementedError()
 
-    def parse_body(self, path):
-        for x in self.iter_lines(path):
+    def parse_body(self, f):
+        for x in self.iter_lines(f):
             self.parse_line(self.line)
 
-    def parse(self, path):
+    def parse_file(self, f):
         try:
-            self.parse_body(path)
+            self.parse_body(f)
         except:
             raise Exception("error while parsing line %d: %r" %
                             (self.line_no, self.line))
+        finally:
+            assert f.closed
+
+    def parse(self, path):
+        log("parsing: %s" % path)
+        self.parse_file(codecs.open(path, "r", encoding="utf-8"))
 
 
 class PrecinctIndexParser(Parser):
@@ -356,8 +361,8 @@ class PrecinctIndexParser(Parser):
         self.add_precinct('neighborhoods', precinct_id, nbhd_label)
         self.district_info.city.add(precinct_id)
 
-    def parse_body(self, path):
-        lines = self.iter_lines(path)
+    def parse_body(self, f):
+        lines = self.iter_lines(f)
         next(lines)  # Skip the header line.
         for x in lines:
             self.parse_line(self.line)
