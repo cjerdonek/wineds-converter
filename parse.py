@@ -404,7 +404,8 @@ class ElectionInfoParser(Parser):
         """
         fields = split_line(line)
         try:
-            data, new_contest, new_choice, precinct, contest_area = fields
+            # TODO: rename new_contest and new_choice to contest_name and choice_name.
+            data, new_contest, new_choice, precinct_name, contest_area = fields
         except ValueError:
             # Then this line must be one of the summary lines that lack a
             # final "contest_area" column (since these rows have no contest
@@ -412,7 +413,7 @@ class ElectionInfoParser(Parser):
             #   0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
             #   0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
             try:
-                data, new_contest, new_choice, precinct = fields
+                data, new_contest, new_choice, precinct_name = fields
             except ValueError:
                 raise Exception("error unpacking fields: %r" % fields)
             contest_area = None
@@ -426,10 +427,10 @@ class ElectionInfoParser(Parser):
         # matches the precinct name stored before.
         precincts = self.precincts
         try:
-            old_precinct = precincts[precinct_id]
-            assert precinct == old_precinct
+            old_precinct_name = precincts[precinct_id]
+            assert precinct_name == old_precinct_name
         except KeyError:
-            precincts[precinct_id] = precinct
+            precincts[precinct_id] = precinct_name
 
         if contest_area is None:
             # Then validate our assumptions about the summary line and
@@ -448,8 +449,7 @@ class ElectionInfoParser(Parser):
             return
         # Otherwise, the line corresponds to a real contest.
 
-        contests, choices = self.contests, self.choices
-
+        contests = self.contests
         try:
             contest = contests[contest_id]
             assert new_contest == contest.name
@@ -458,6 +458,7 @@ class ElectionInfoParser(Parser):
             contest = ContestInfo(name=new_contest, area=contest_area)
             contests[contest_id] = contest
 
+        choices = self.choices
         try:
             choice = choices[choice_id]
             try:
