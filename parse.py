@@ -45,7 +45,7 @@ SPLITTER = re.compile(r'\s{2,}')
 # name can be generated from a format string and a district number.
 # This dictionary does not include the "city" and "neighborhood"
 # area types.
-AREA_INFO = {
+DISTRICT_TYPE_INFO = {
     'Assembly': ('assembly', '%sTH ASSEMBLY DISTRICT'),
     'BART': ('bart', 'BART DISTRICT %s'),
     'Congressional': ('congress', '%sTH CONGRESSIONAL DISTRICT'),
@@ -304,7 +304,7 @@ class PrecinctIndexParser(Parser):
 
     """
 
-    AREA_HEADERS = ("Assembly", "BART", "Congressional", "Senatorial", "Supervisorial")
+    DISTRICT_HEADERS = ("Assembly", "BART", "Congressional", "Senatorial", "Supervisorial")
 
     def __init__(self, areas_info):
         """
@@ -332,8 +332,8 @@ class PrecinctIndexParser(Parser):
         # Includes: Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
         values = values[4:]
         nbhd_label = values.pop(3)
-        for area_type_name, area_id in zip(self.AREA_HEADERS, values):
-            area_attr = AREA_INFO[area_type_name][0]
+        for district_type_name, area_id in zip(self.DISTRICT_HEADERS, values):
+            area_attr = DISTRICT_TYPE_INFO[district_type_name][0]
             self.add_precinct_to_area(area_attr, precinct_id, int(area_id))
 
         self.add_precinct_to_area('neighborhoods', precinct_id, nbhd_label)
@@ -569,7 +569,7 @@ class Writer(object):
 
 class ContestWriter(Writer):
 
-    area_type_names = (
+    district_type_names = (
         'Congressional',
         'Senatorial',
         'Assembly',
@@ -712,21 +712,21 @@ class ContestWriter(Writer):
             except:
                 raise Exception("while processing area: %s" % area_name)
 
-    def write_area_type_rows(self, contest_name, contest_results, contest_precinct_ids,
-                             choice_ids, area_type_name):
+    def write_district_type_rows(self, contest_name, contest_results, contest_precinct_ids,
+                                 choice_ids, district_type_name):
         """
         Write the rows for a contest for a particular area type.
 
         For example: the "Congressional" areas.
 
         """
-        area_attr, format_name = AREA_INFO[area_type_name]
+        area_attr, format_name = DISTRICT_TYPE_INFO[district_type_name]
         area_type = getattr(self.election_info.areas_info, area_attr)
         area_ids = sorted(area_type.keys())
         make_area_name = lambda area_id: format_name % area_id
-        self.write_area_rows(contest_name, contest_results,
-                             choice_ids, contest_precinct_ids, area_type,
-                             area_type_name, make_area_name, area_ids)
+        self.write_area_rows(contest_name, contest_results, choice_ids,
+                             contest_precinct_ids, area_type, district_type_name,
+                             make_area_name, area_ids)
 
     def write_contest_summary(self):
         contest_name = self.contest_name
@@ -736,9 +736,9 @@ class ContestWriter(Writer):
         assert type(contest_precinct_ids) is set
         self.write_ln("District Grand Totals")
         self.write_totals_row_header("DistrictName", "DistrictLabel")
-        for area_type_name in self.area_type_names:
-            self.write_area_type_rows(contest_name, contest_results,
-                                      contest_precinct_ids, choice_ids, area_type_name)
+        for district_type_name in self.district_type_names:
+            self.write_district_type_rows(contest_name, contest_results,
+                                          contest_precinct_ids, choice_ids, district_type_name)
 
         # This precedes the neighborhood totals in the PDF Statement of Vote.
         self.write_grand_totals_row("CITY/COUNTY OF SAN FRANCISCO")
