@@ -182,7 +182,7 @@ class ElectionInfo(object):
     def __init__(self, name, areas_info):
         """
         Arguments:
-          areas_info: a AreasInfo object.
+          areas_info: an AreasInfo object.
 
         """
         self.choices = {}
@@ -309,18 +309,18 @@ class PrecinctIndexParser(Parser):
     def __init__(self, areas_info):
         """
         Arguments:
-          areas_info: a AreasInfo object.
+          areas_info: an AreasInfo object.
 
         """
         self.areas_info = areas_info
 
-    def add_precinct(self, attr, precinct_id, value):
-        districts = getattr(self.areas_info, attr)
+    def add_precinct_to_area(self, area_attr, precinct_id, area_id):
+        area_type = getattr(self.areas_info, area_attr)
         try:
-            precinct_ids = districts[value]
+            precinct_ids = area_type[area_id]
         except KeyError:
             precinct_ids = set()
-            districts[value] = precinct_ids
+            area_type[area_id] = precinct_ids
         precinct_ids.add(precinct_id)
 
     def parse_line(self, line):
@@ -332,11 +332,11 @@ class PrecinctIndexParser(Parser):
         # Includes: Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
         values = values[4:]
         nbhd_label = values.pop(3)
-        for area_type_name, value in zip(self.AREA_HEADERS, values):
-            attr = AREA_INFO[area_type_name][0]
-            self.add_precinct(attr, precinct_id, int(value))
+        for area_type_name, area_id in zip(self.AREA_HEADERS, values):
+            area_attr = AREA_INFO[area_type_name][0]
+            self.add_precinct_to_area(area_attr, precinct_id, int(area_id))
 
-        self.add_precinct('neighborhoods', precinct_id, nbhd_label)
+        self.add_precinct_to_area('neighborhoods', precinct_id, nbhd_label)
         self.areas_info.city.add(precinct_id)
 
     def parse_body(self, f):
@@ -518,8 +518,8 @@ def digest_input_files(name, districts_path, wineds_path):
     object and an ElectionResults object.
 
     """
-    area_precincts = AreasInfo()
-    parser = PrecinctIndexParser(area_precincts)
+    areas_info = AreasInfo()
+    parser = PrecinctIndexParser(areas_info)
     parser.parse_path(districts_path)
 
     # We parse the file in two passes to simplify the logic and make the
@@ -539,11 +539,11 @@ def digest_input_files(name, districts_path, wineds_path):
     # the object structure.
 
     # Pass #1
-    election_info = make_election_info(wineds_path, name, area_precincts)
+    election_info = make_election_info(wineds_path, name, areas_info)
 
     # Check that the precincts in the district file match the precincts
     # in the results file.
-    for i, (p1, p2) in enumerate(zip(sorted(area_precincts.city),
+    for i, (p1, p2) in enumerate(zip(sorted(areas_info.city),
                                      sorted(election_info.precincts.keys())), start=1):
         try:
             assert p1 == p2
@@ -675,12 +675,12 @@ class ResultsWriter(object):
         self.write_grand_totals_row(contest_results, contest_choice_ids, GRAND_TOTALS_HEADER)
 
     def write_area_rows(self, contest_name, contest_results, choice_ids,
-                        contest_precinct_ids, area_precincts, area_type_name,
+                        contest_precinct_ids, area_type, area_type_name,
                         make_area_name, area_ids):
         for area_id in area_ids:
             area_name = make_area_name(area_id)
             area_label = "%s:%s" % (area_type_name, area_id)
-            area_precinct_ids = area_precincts[area_id]
+            area_precinct_ids = area_type[area_id]
             assert type(area_precinct_ids) is set
             if area_precinct_ids.isdisjoint(contest_precinct_ids):
                 # Then no precincts in the district overlapped the contest, so skip it.
@@ -700,8 +700,8 @@ class ResultsWriter(object):
         For example: the "Congressional" areas.
 
         """
-        attr, format_name = AREA_INFO[area_type_name]
-        area_type = getattr(self.election_info.areas_info, attr)
+        area_attr, format_name = AREA_INFO[area_type_name]
+        area_type = getattr(self.election_info.areas_info, area_attr)
         area_ids = sorted(area_type.keys())
         make_area_name = lambda area_id: format_name % area_id
         self.write_area_rows(contest_name, contest_results,
@@ -735,12 +735,12 @@ class ResultsWriter(object):
         # Alphabetize the pairs by the full name and not the label.
         nbhd_pairs = sorted(nbhd_pairs, key=lambda pair: pair[1])
 
-        nbhd_precincts = self.election_info.areas_info.neighborhoods
+        neighborhoods_area = self.election_info.areas_info.neighborhoods
         make_nbhd_name = lambda nbhd_id: nbhd_names[nbhd_id]
         nbhd_ids = [pair[0] for pair in nbhd_pairs]
 
         self.write_area_rows(contest_name, contest_results, choice_ids,
-                             contest_precinct_ids, nbhd_precincts,
+                             contest_precinct_ids, neighborhoods_area,
                              "Neighborhood", make_nbhd_name, nbhd_ids)
         self.write_grand_totals_row(contest_results, choice_ids, GRAND_TOTALS_HEADER)
 
