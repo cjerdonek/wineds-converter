@@ -568,7 +568,7 @@ class ResultsWriter(object):
 
     """
 
-    district_type_names = (
+    area_type_names = (
         'Congressional',
         'Senatorial',
         'Assembly',
@@ -721,9 +721,9 @@ class ResultsWriter(object):
         assert type(contest_precinct_ids) is set
         self.write_ln("District Grand Totals")
         self.write_totals_row_header("DistrictName", "DistrictLabel", choice_ids)
-        for type_name in self.district_type_names:
+        for area_type_name in self.area_type_names:
             self.write_area_type_rows(contest_name, contest_results,
-                                      contest_precinct_ids, choice_ids, type_name)
+                                      contest_precinct_ids, choice_ids, area_type_name)
 
         # Write the city-wide row.  This precedes the neighborhood totals
         # in the PDF Statements of Vote.
@@ -789,6 +789,9 @@ class ResultsWriter(object):
             contest_info = info_contests[contest_id]
             contest_results = results_contests[contest_id]
             try:
+                # TODO: make a ContestWriter class to cut down on the
+                # number of arguments passed?  For example: contest_name,
+                # contest_results, choice_ids, and contest_precinct_ids.
                 self.write_contest(precincts, contest_info, contest_results)
             except:
                 raise Exception("while processing contest: %s" % contest_info.name)
