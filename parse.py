@@ -591,8 +591,8 @@ class ResultsWriter(object):
         choices = self.election_info.choices
         # Each choices value is a 2-tuple of (contest_id, choice_name).
         choice_names = (choices[choice_id][1] for choice_id in contest_choice_ids)
-        self.write_row(name_header, id_header, "Precincts", "Registration", "Ballots Cast",
-                       *choice_names)
+        self.write_row(name_header, id_header, "Precincts", "Registration",
+                       "Ballots Cast", "Turnout (%)", *choice_names)
 
     def write_totals_row(self, contest_results, choice_ids,
                          area_name, area_id, area_precinct_ids):
@@ -605,15 +605,16 @@ class ResultsWriter(object):
         The columns in the row are--
 
         * Row headers
-           1) area name
-           2) area identifier
+           1) Area name
+           2) Area identifier
         * Totals
-           3) number of precincts represented by row
-           4) registration
-           5) ballots cast
-           6) choice #1 vote total
-           7) choice #2 vote total
-           8) etc.
+           3) Number of precincts represented by row
+           4) Registration
+           5) Ballots cast
+           6) Percent turnout
+           7) choice #1 vote total
+           8) choice #2 vote total
+           9) etc.
 
         Arguments:
 
@@ -624,8 +625,10 @@ class ResultsWriter(object):
           area_precinct_ids: an iterable of precinct IDs in the given area.
 
         """
-        # Add three for: precinct count, registration, and ballots cast.
-        totals = (3 + len(choice_ids)) * [0]
+        # Add four extra columns for:
+        # precinct count, registration, ballots cast, and percent turnout.
+        extra_columns = 4
+        totals = (extra_columns + len(choice_ids)) * [0]
         registered = self.results.registered
         voted = self.results.voted
 
@@ -641,10 +644,11 @@ class ResultsWriter(object):
             totals[1] += registered[precinct_id]
             totals[2] += voted[precinct_id]
 
-            for i, choice_id in enumerate(choice_ids, start=3):
+            for i, choice_id in enumerate(choice_ids, start=extra_columns):
                 totals[i] += precinct_results[choice_id]
 
         assert totals[0] > 0
+        totals[3] = "0.00" if totals[1] == 0 else "{:.2%}".format(totals[2] / totals[1])[:-1]
         self.write_row(area_name, area_id, *totals)
 
     def write_grand_totals_row(self, contest_results, choice_ids, header):
