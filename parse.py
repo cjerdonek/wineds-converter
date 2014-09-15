@@ -577,8 +577,9 @@ class ContestWriter(Writer):
         'Supervisorial'
     )
 
-    def __init__(self, file, election_info, results):
+    def __init__(self, file, election_info, results, contest_info):
         self.file = file
+        self.contest_info = contest_info
         self.election_info = election_info
         self.results = results
 
@@ -745,13 +746,14 @@ class ContestWriter(Writer):
     # TODO: cut down on the number of arguments passed by storing things
     # like the following as attributes: contest_name, contest_results,
     # choice_ids, and contest_precinct_ids.
-    def write(self, precincts, contest_info, contest_results):
+    def write(self, contest_results):
         """
         Arguments:
           precincts: the ElectionInfo.precincts dict.
           contest_info: a ContestInfo object.
 
         """
+        contest_info = self.contest_info
         contest_name = contest_info.name
         precinct_ids = contest_info.precinct_ids
         contest_choice_ids = sorted(contest_info.choice_ids)
@@ -775,7 +777,6 @@ class ResultsWriter(Writer):
     def write(self, election_info, results):
         """Write the election results to the given file."""
         info_contests = election_info.contests
-        precincts = election_info.precincts
         results_contests = results.contests
 
         now = datetime.now()
@@ -793,8 +794,8 @@ class ResultsWriter(Writer):
             contest_info = info_contests[contest_id]
             contest_results = results_contests[contest_id]
             try:
-                contest_writer = ContestWriter(self.file, election_info, results)
-                contest_writer.write(precincts, contest_info, contest_results)
+                contest_writer = ContestWriter(self.file, election_info, results, contest_info)
+                contest_writer.write(contest_results)
             except:
                 raise Exception("while processing contest: %s" % contest_info.name)
             self.write_ln()
