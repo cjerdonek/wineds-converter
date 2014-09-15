@@ -369,9 +369,14 @@ def parse_data_chunk(chunk):
 class ElectionInfoParser(Parser):
 
     """
-    In addition to parsing the file, this class's parse() method also
-    performs validation on the file to ensure that all of our assumptions
-    about the file format and data are correct.
+    Parser for a TEXT report from the WinEDS Reporting Tool.
+
+    This class is responsible for reading and building election metadata
+    from the file but not election vote totals.
+
+    When parsing, the parser also performs validation on the file to ensure
+    that our assumptions about the file format and data are correct.
+
     """
 
     def __init__(self, info):
@@ -386,45 +391,64 @@ class ElectionInfoParser(Parser):
 
     def parse_line(self, line):
         """
-        This function does not populate contest.choice_ids for the objects
-        in contests.
+        This function parses a single line, validates our assumptions
+        about the file format, and then stores any new election metadata
+        in the ElectionInfo object associated with the current
+        parser instance.
+
+        This function populates election_info.choices but does not
+        populate contest.choice_ids for the objects in election_info.contests.
+        We populate contest.choice_ids from election_info.choices
+        afterwards.
 
         """
         fields = split_line(line)
         try:
             data, new_contest, new_choice, precinct, contest_area = fields
         except ValueError:
-            # This exception can occur for summary lines like the following
-            # that lack a final "contest_area" column (since there is
-            # no contest for these rows):
+            # Then this line must be one of the summary lines that lack a
+            # final "contest_area" column (since these rows have no contest
+            # associated with them):
             #   0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
             #   0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
-            fields.append(None)
             try:
-                data, new_contest, new_choice, precinct, contest_area = fields
+                data, new_contest, new_choice, precinct = fields
             except ValueError:
                 raise Exception("error unpacking fields: %r" % fields)
+            contest_area = None
 
+        # Validate our assumptions about the initial data chunk.
         assert len(data) == 16
         assert data[0] == '0'
         choice_id, contest_id, precinct_id, vote_total = parse_data_chunk(data)
 
-        contests, choices, precincts = self.contests, self.choices, self.precincts
-
+        # Store the precinct_id if it is new, otherwise check that it
+        # matches the precinct name stored before.
+        precincts = self.precincts
         try:
             old_precinct = precincts[precinct_id]
-            assert old_precinct == precinct
+            assert precinct == old_precinct
         except KeyError:
             precincts[precinct_id] = precinct
 
-        # The contests with the following names are special cases that need
-        # to be treated differently:
-        #   "REGISTERED VOTERS - TOTAL"
-        #   "BALLOTS CAST - TOTAL"
         if contest_area is None:
+            # Then validate our assumptions about the summary line and
+            # skip storing any contest or choices.
+            assert choice_id == 1
             assert contest_id in (1, 2)
-            # TODO: both have choice ID 1, so skip them and don't store them as choices.
+            if contest_id == 1:
+                expected_contest_name = "REGISTERED VOTERS - TOTAL"
+                expected_choice_name = "VOTERS"
+            else:
+                # Then contest_id is 2.
+                expected_contest_name = "BALLOTS CAST - TOTAL"
+                expected_choice_name = "BALLOTS CAST"
+            assert new_contest == expected_contest_name
+            assert new_choice == expected_choice_name
             return
+        # Otherwise, the line corresponds to a real contest.
+
+        contests, choices = self.contests, self.choices
 
         try:
             contest = contests[contest_id]
