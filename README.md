@@ -53,8 +53,8 @@ to detect the first line of the section starting a new contest.
 
 
     *** Governor - CALIFORNIA
-    VotingPrecinctName  VotingPrecinctID  Precincts  Registration >
-      Ballots Cast  Turnout (%)  [...CANDIDATE NAMES...]
+    VotingPrecinctName  VotingPrecinctID  Precincts  Registration >>
+     >> Ballots Cast  Turnout (%)  [...CANDIDATE NAMES...]
     Pct 1101      1101      1     484     141  29.13     3     0  ...
     Pct 1102      1102      1     873     286  32.76    13     1  ...
     [...OTHER PRECINCTS...]
@@ -62,15 +62,15 @@ to detect the first line of the section starting a new contest.
     Grand Totals  City:0  597  435757  129399  29.70  4683  1223  ...
 
     District Grand Totals
-    DistrictName  DistrictLabel  Precincts  Registration >
-      Ballots Cast  Turnout (%)  [...CANDIDATE NAMES...]
-    12TH CONGRESSIONAL DISTRICT  Congressional:12  522  385648  114107 >
-      29.59  4286  1135  ...
+    DistrictName  DistrictLabel  Precincts  Registration >>
+     >> Ballots Cast  Turnout (%)  [...CANDIDATE NAMES...]
+    12TH CONGRESSIONAL DISTRICT  Congressional:12  522  385648  114107 >>
+     >> 29.59  4286  1135  ...
     [...OTHER DISTRICTS...]
     [...CITY/COUNTY...]
     [...NEIGHBORHOODS...]
-    Grand Totals                 City:0            597  435757  129399 >
-      29.70  4683  1223  ...
+    Grand Totals                 City:0            597  435757  129399 >>
+     >> 29.70  4683  1223  ...
 
     [...ADDITIONAL CONTESTS IN SAME FORMAT AS ABOVE...]
 
