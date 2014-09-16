@@ -125,15 +125,15 @@ class ContestInfo(object):
 
     """
 
-    def __init__(self, name, area):
+    def __init__(self, name, district_name):
         self.choice_ids = set()
         self.precinct_ids = set()
         self.name = name
-        self.area = area
+        self.district_name = district_name
 
     def __repr__(self):
-        return ("<ContestInfo object: name=%r, area=%r, %d precincts, %d choices)" %
-                (self.name, self.area, len(self.precinct_ids), len(self.choice_ids)))
+        return ("<ContestInfo object: name=%r, district_name=%r, %d precincts, %d choices)" %
+                (self.name, self.district_name, len(self.precinct_ids), len(self.choice_ids)))
 
 
 class AreasInfo(object):
@@ -404,10 +404,10 @@ class ElectionInfoParser(Parser):
         """
         fields = split_line(line)
         try:
-            data, contest_name, choice_name, precinct_name, contest_area_name = fields
+            data, contest_name, choice_name, precinct_name, district_name = fields
         except ValueError:
             # Then this line must be one of the summary lines that lack a
-            # final "contest_area_name" column (since these rows have no contest
+            # final district_name column (since these rows have no contest
             # associated with them):
             #   0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
             #   0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
@@ -415,7 +415,7 @@ class ElectionInfoParser(Parser):
                 data, contest_name, choice_name, precinct_name = fields
             except ValueError:
                 raise Exception("error unpacking fields: %r" % fields)
-            contest_area_name = None
+            district_name = None
 
         # Validate our assumptions about the initial data chunk.
         assert len(data) == 16
@@ -431,7 +431,7 @@ class ElectionInfoParser(Parser):
         except KeyError:
             precincts[precinct_id] = precinct_name
 
-        if contest_area_name is None:
+        if district_name is None:
             # Then validate our assumptions about the summary line and
             # skip storing any contest or choices.
             assert choice_id == 1
@@ -452,9 +452,9 @@ class ElectionInfoParser(Parser):
         try:
             contest = contests[contest_id]
             assert contest_name == contest.name
-            assert contest_area_name == contest.area
+            assert district_name == contest.district_name
         except KeyError:
-            contest = ContestInfo(name=contest_name, area=contest_area_name)
+            contest = ContestInfo(name=contest_name, district_name=district_name)
             contests[contest_id] = contest
 
         choices = self.choices
@@ -729,7 +729,7 @@ class ContestWriter(Writer):
             assert type(area_precinct_ids) is set
             if area_precinct_ids.isdisjoint(contest_precinct_ids):
                 # Then no precincts in the district overlapped the contest, so skip it.
-                log("skipping area in %s: %s" % (contest_name, area_name))
+                log("   no precincts: %s" % (area_name, ))
                 continue
             try:
                 self.write_totals_row(contest_results, choice_ids,
@@ -788,7 +788,7 @@ class ContestWriter(Writer):
 
     def write(self):
         log("writing contest: %s (%d precincts)" % (self.contest_name, len(self.precinct_ids)))
-        self.write_ln("%s - %s" % (self.contest_name, self.contest_info.area))
+        self.write_ln("%s - %s" % (self.contest_name, self.contest_info.district_name))
         self.write_totals_row_header("VotingPrecinctName", "VotingPrecinctID")
         self.write_precinct_rows()
         self.write_ln()
