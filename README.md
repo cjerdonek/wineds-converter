@@ -81,10 +81,11 @@ several spaces between columns were replaced by strings of two spaces):
 
 For description purposes, we rewrite the last line as follows:
 
-    0CCCHHHPPPPTTTTT  CONTEST_NAME  CHOICE_NAME  PRECINCT_NAME  AREA_NAME
+    0CCCHHHPPPPTTTTT  CONTEST_NAME  CHOICE_NAME  PRECINCT_NAME  DISTRICT_NAME
 
-The `AREA_NAME` column is the name of the area associated with the contest.
-This column is absent for the "REGISTERED VOTERS" and "BALLOTS CAST" rows.
+The `DISTRICT_NAME` column is a description of the area associated
+with the contest.  This column is absent for the "REGISTERED VOTERS"
+and "BALLOTS CAST" rows.
 
 Here is a key for the meaning of the first block (with values for the
 example above in parentheses).  The ID's can all be interpreted as
