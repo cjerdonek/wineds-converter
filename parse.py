@@ -788,9 +788,9 @@ class ContestWriter(Writer):
         assert type(self.precinct_ids) is set
         # Begin each contest with a distinctive string.  We use 3 stars.
         # Doing this makes it easier for people to both (1) search through
-        # the CSV (e.g. by using COMMAND+F or CTRL+F), and (2) to parse it,
-        # since this way they can easily know where to begin parsing
-        # the lines for each contest.
+        # the CSV (e.g. by using COMMAND+F or CTRL+F), and (2) parse the
+        # file with a script (since it gives people an easy way to find
+        # where the lines for each contest start).
         self.write_ln("*** %s - %s" % (contest_name, self.contest_info.district_name))
         self.write_totals_row_header("VotingPrecinctName", "VotingPrecinctID")
         self.write_precinct_rows()
