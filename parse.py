@@ -657,7 +657,7 @@ class ContestWriter(Writer):
         self.write_row(name_header, id_header, "Precincts", "Registration",
                        "Ballots Cast", "Turnout (%)", *choice_names)
 
-    def write_totals_row(self, choice_ids, area_name, area_id, area_precinct_ids):
+    def write_totals_row(self, area_name, area_id, area_precinct_ids):
         """
         Write a row for a contest, for a participating district or area.
 
@@ -685,6 +685,7 @@ class ContestWriter(Writer):
         # Add four extra columns for:
         # precinct count, registration, ballots cast, and percent turnout.
         extra_columns = 4
+        choice_ids = self.sorted_choice_ids
         totals = (extra_columns + len(choice_ids)) * [0]
         registered = self.results.registered
         voted = self.results.voted
@@ -718,20 +719,19 @@ class ContestWriter(Writer):
         all_precinct_ids = self.election_info.areas_info.city
         # The area ID "City:0" is just a placeholder value so the column
         # value can have the same format as other rows in the summary.
-        self.write_totals_row(self.sorted_choice_ids, header, "City:0", all_precinct_ids)
+        self.write_totals_row(header, "City:0", all_precinct_ids)
 
     def write_precinct_rows(self):
-        contest_choice_ids = self.sorted_choice_ids
         precincts = self.election_info.precincts
         for precinct_id in sorted(self.precinct_ids):
             # Convert precinct_id into an iterable with one element in order
             # to use write_totals_row().
-            self.write_totals_row(contest_choice_ids, precincts[precinct_id],
-                                  precinct_id, (precinct_id, ))
+            self.write_totals_row(precincts[precinct_id], precinct_id, (precinct_id, ))
         self.write_grand_totals_row(GRAND_TOTALS_HEADER)
 
-    def write_area_rows(self, choice_ids, contest_precinct_ids,
-                        area_type, area_type_name, make_area_name, area_ids):
+    # TODO: remove contest_precinct_ids argument?
+    def write_area_rows(self, contest_precinct_ids, area_type, area_type_name,
+                        make_area_name, area_ids):
         for area_id in area_ids:
             area_name = make_area_name(area_id)
             area_label = "%s:%s" % (area_type_name, area_id)
@@ -742,11 +742,11 @@ class ContestWriter(Writer):
                 log("   no precincts: %s" % (area_name, ))
                 continue
             try:
-                self.write_totals_row(choice_ids, area_name, area_label, area_precinct_ids)
+                self.write_totals_row(area_name, area_label, area_precinct_ids)
             except:
                 raise Exception("while processing area: %s" % area_name)
 
-    def write_district_type_rows(self, contest_precinct_ids, choice_ids, district_type_name):
+    def write_district_type_rows(self, contest_precinct_ids, district_type_name):
         """
         Write the rows for a contest for a particular area type.
 
@@ -757,18 +757,16 @@ class ContestWriter(Writer):
         area_type = getattr(self.election_info.areas_info, area_attr)
         area_ids = sorted(area_type.keys())
         make_area_name = lambda area_id: format_name % area_id
-        self.write_area_rows(choice_ids, contest_precinct_ids,
-                             area_type, district_type_name, make_area_name, area_ids)
+        self.write_area_rows(contest_precinct_ids, area_type, district_type_name,
+                             make_area_name, area_ids)
 
     def write_contest_summary(self):
         contest_precinct_ids = self.precinct_ids
-        choice_ids = self.sorted_choice_ids
         assert type(contest_precinct_ids) is set
         self.write_ln("District Grand Totals")
         self.write_totals_row_header("DistrictName", "DistrictLabel")
         for district_type_name in self.district_type_names:
-            self.write_district_type_rows(contest_precinct_ids, choice_ids,
-                                          district_type_name)
+            self.write_district_type_rows(contest_precinct_ids, district_type_name)
 
         # This precedes the neighborhood totals in the PDF Statement of Vote.
         self.write_grand_totals_row("CITY/COUNTY OF SAN FRANCISCO")
@@ -785,7 +783,7 @@ class ContestWriter(Writer):
 
         # TODO: cut down on the number of arguments passed around
         # by accessing the values via attributes.
-        self.write_area_rows(choice_ids, contest_precinct_ids, neighborhoods_area,
+        self.write_area_rows(contest_precinct_ids, neighborhoods_area,
                              "Neighborhood", make_nbhd_name, nbhd_ids)
         self.write_grand_totals_row(GRAND_TOTALS_HEADER)
 
