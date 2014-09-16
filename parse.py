@@ -285,6 +285,7 @@ class Parser(object):
             self.parse_line(self.line)
 
     def parse_file(self, f):
+        log("parsing...\n  %r" % self.name)
         try:
             with f:
                 self.parse_body(f)
@@ -293,7 +294,7 @@ class Parser(object):
                             (self.line_no, self.line))
 
     def parse_path(self, path):
-        log("parsing: %s" % path)
+        log("opening...\n  %s" % path)
         self.parse_file(codecs.open(path, "r", encoding="utf-8"))
 
 
@@ -305,6 +306,8 @@ class PrecinctIndexParser(Parser):
     """
 
     DISTRICT_HEADERS = ("Assembly", "BART", "Congressional", "Senatorial", "Supervisorial")
+
+    name = "Precinct Index File"
 
     def __init__(self, areas_info):
         """
@@ -378,6 +381,8 @@ class ElectionInfoParser(Parser):
     that our assumptions about the file format and data are correct.
 
     """
+
+    name = "Results File (pass #1, for election metadata)"
 
     def __init__(self, info):
         """
@@ -469,7 +474,8 @@ class ElectionInfoParser(Parser):
             choice = (contest_id, choice_name)
             choices[choice_id] = choice
 
-        # TODO: validate that each precinct appears only once.
+        # The following line is a no-op for contest choices after the
+        # first in a precinct.
         contest.precinct_ids.add(precinct_id)
 
 
@@ -480,6 +486,8 @@ class ResultsParser(Parser):
     performs validation on the file to ensure that all of our assumptions
     about the file format and data are correct.
     """
+
+    name = "Results File (pass #2, for vote totals)"
 
     def __init__(self, results):
         """
