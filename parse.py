@@ -106,11 +106,18 @@ def log(s=None):
 
 
 @contextmanager
-def time_it():
+def time_it(task_desc):
+    """
+    A context manager for timing chunks of code and logging it.
+
+    Arguments:
+      task_desc: task description for logging purposes
+
+    """
     start_time = timeit.default_timer()
     yield
     elapsed = timeit.default_timer() - start_time
-    log("elapsed: %.4f seconds" % elapsed)
+    log("elapsed (%s): %.4f seconds" % (task_desc, elapsed))
 
 
 def exit_with_error(msg):
@@ -285,13 +292,14 @@ class Parser(object):
             self.parse_line(self.line)
 
     def parse_file(self, f):
-        log("parsing...\n  %r" % self.name)
-        try:
-            with f:
-                self.parse_body(f)
-        except:
-            raise Exception("error while parsing line %d: %r" %
-                            (self.line_no, self.line))
+        with time_it("parsing %r" % self.name):
+            log("parsing...\n  %r" % self.name)
+            try:
+                with f:
+                    self.parse_body(f)
+            except:
+                raise Exception("error while parsing line %d: %r" %
+                                (self.line_no, self.line))
 
     def parse_path(self, path):
         log("opening...\n  %s" % path)
@@ -795,7 +803,8 @@ class ContestWriter(Writer):
         self.write_grand_totals_row(GRAND_TOTALS_HEADER)
 
     def write(self):
-        log("writing contest: %s (%d precincts)" % (self.contest_name, len(self.precinct_ids)))
+        log("writing contest: %s (%d precincts)" %
+            (self.contest_name, len(self.precinct_ids)))
         self.write_ln("%s - %s" % (self.contest_name, self.contest_info.district_name))
         self.write_totals_row_header("VotingPrecinctName", "VotingPrecinctID")
         self.write_precinct_rows()
@@ -808,8 +817,7 @@ class ResultsWriter(Writer):
     def __init__(self, file):
         self.file = file
 
-    def write(self, election_info, results):
-        """Write the election results to the given file."""
+    def write_inner(self, election_info, results):
         info_contests = election_info.contests
         results_contests = results.contests
 
@@ -835,6 +843,10 @@ class ResultsWriter(Writer):
             self.write_ln()
             self.write_ln()
 
+    def write(self, election_info, results):
+        """Write the election results to the given file."""
+        with time_it("writing output file"):
+            self.write_inner(election_info, results)
 
 def inner_main(argv):
     try:
@@ -851,7 +863,9 @@ def inner_main(argv):
 
 
 def main(argv):
-    with time_it():
+    # Skip a line for readability.
+    log()
+    with time_it("full program"):
         inner_main(argv)
 
 
