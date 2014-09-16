@@ -786,7 +786,12 @@ class ContestWriter(Writer):
             (contest_name, len(self.precinct_ids)))
         # TODO: move this assertion earlier in the script?
         assert type(self.precinct_ids) is set
-        self.write_ln("%s - %s" % (contest_name, self.contest_info.district_name))
+        # Begin each contest with a distinctive string.  We use 3 stars.
+        # Doing this makes it easier for people to both (1) search through
+        # the CSV (e.g. by using COMMAND+F or CTRL+F), and (2) to parse it,
+        # since this way they can easily know where to begin parsing
+        # the lines for each contest.
+        self.write_ln("*** %s - %s" % (contest_name, self.contest_info.district_name))
         self.write_totals_row_header("VotingPrecinctName", "VotingPrecinctID")
         self.write_precinct_rows()
         self.write_ln()
