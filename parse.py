@@ -619,6 +619,15 @@ class ContestWriter(Writer):
     )
 
     def __init__(self, file, election_info, results, contest_info, contest_results):
+        """
+        Arguments:
+
+          contest_results: a value in the results.contests dictionary,
+            where results is an ElectionResults object.  See the
+            ElectionResults docstring for information on the structure
+            of these values.
+
+        """
         self.file = file
         self.contest_info = contest_info
         self.contest_results = contest_results
@@ -648,8 +657,7 @@ class ContestWriter(Writer):
         self.write_row(name_header, id_header, "Precincts", "Registration",
                        "Ballots Cast", "Turnout (%)", *choice_names)
 
-    def write_totals_row(self, contest_results, choice_ids,
-                         area_name, area_id, area_precinct_ids):
+    def write_totals_row(self, choice_ids, area_name, area_id, area_precinct_ids):
         """
         Write a row for a contest, for a participating district or area.
 
@@ -671,11 +679,6 @@ class ContestWriter(Writer):
            9) etc.
 
         Arguments:
-
-          contest_results: a value in the results.contests dictionary,
-            where results is an ElectionResults object.  See the
-            ElectionResults docstring for information on the structure
-            of these values.
           area_precinct_ids: an iterable of precinct IDs in the given area.
 
         """
@@ -686,6 +689,7 @@ class ContestWriter(Writer):
         registered = self.results.registered
         voted = self.results.voted
 
+        contest_results = self.contest_results
         for precinct_id in area_precinct_ids:
             try:
                 precinct_results = contest_results[precinct_id]
@@ -714,21 +718,19 @@ class ContestWriter(Writer):
         all_precinct_ids = self.election_info.areas_info.city
         # The area ID "City:0" is just a placeholder value so the column
         # value can have the same format as other rows in the summary.
-        self.write_totals_row(self.contest_results, self.sorted_choice_ids,
-                              header, "City:0", all_precinct_ids)
+        self.write_totals_row(self.sorted_choice_ids, header, "City:0", all_precinct_ids)
 
     def write_precinct_rows(self):
-        contest_results = self.contest_results
         contest_choice_ids = self.sorted_choice_ids
         precincts = self.election_info.precincts
         for precinct_id in sorted(self.precinct_ids):
             # Convert precinct_id into an iterable with one element in order
             # to use write_totals_row().
-            self.write_totals_row(contest_results, contest_choice_ids,
-                                  precincts[precinct_id], precinct_id, (precinct_id, ))
+            self.write_totals_row(contest_choice_ids, precincts[precinct_id],
+                                  precinct_id, (precinct_id, ))
         self.write_grand_totals_row(GRAND_TOTALS_HEADER)
 
-    def write_area_rows(self, contest_results, choice_ids, contest_precinct_ids,
+    def write_area_rows(self, choice_ids, contest_precinct_ids,
                         area_type, area_type_name, make_area_name, area_ids):
         for area_id in area_ids:
             area_name = make_area_name(area_id)
@@ -740,13 +742,11 @@ class ContestWriter(Writer):
                 log("   no precincts: %s" % (area_name, ))
                 continue
             try:
-                self.write_totals_row(contest_results, choice_ids,
-                                      area_name, area_label, area_precinct_ids)
+                self.write_totals_row(choice_ids, area_name, area_label, area_precinct_ids)
             except:
                 raise Exception("while processing area: %s" % area_name)
 
-    def write_district_type_rows(self, contest_results, contest_precinct_ids,
-                                 choice_ids, district_type_name):
+    def write_district_type_rows(self, contest_precinct_ids, choice_ids, district_type_name):
         """
         Write the rows for a contest for a particular area type.
 
@@ -757,19 +757,18 @@ class ContestWriter(Writer):
         area_type = getattr(self.election_info.areas_info, area_attr)
         area_ids = sorted(area_type.keys())
         make_area_name = lambda area_id: format_name % area_id
-        self.write_area_rows(contest_results, choice_ids, contest_precinct_ids,
+        self.write_area_rows(choice_ids, contest_precinct_ids,
                              area_type, district_type_name, make_area_name, area_ids)
 
     def write_contest_summary(self):
         contest_precinct_ids = self.precinct_ids
-        contest_results = self.contest_results
         choice_ids = self.sorted_choice_ids
         assert type(contest_precinct_ids) is set
         self.write_ln("District Grand Totals")
         self.write_totals_row_header("DistrictName", "DistrictLabel")
         for district_type_name in self.district_type_names:
-            self.write_district_type_rows(contest_results, contest_precinct_ids,
-                                          choice_ids, district_type_name)
+            self.write_district_type_rows(contest_precinct_ids, choice_ids,
+                                          district_type_name)
 
         # This precedes the neighborhood totals in the PDF Statement of Vote.
         self.write_grand_totals_row("CITY/COUNTY OF SAN FRANCISCO")
@@ -786,8 +785,8 @@ class ContestWriter(Writer):
 
         # TODO: cut down on the number of arguments passed around
         # by accessing the values via attributes.
-        self.write_area_rows(contest_results, choice_ids, contest_precinct_ids,
-                             neighborhoods_area, "Neighborhood", make_nbhd_name, nbhd_ids)
+        self.write_area_rows(choice_ids, contest_precinct_ids, neighborhoods_area,
+                             "Neighborhood", make_nbhd_name, nbhd_ids)
         self.write_grand_totals_row(GRAND_TOTALS_HEADER)
 
     def write(self):
@@ -825,7 +824,8 @@ class ResultsWriter(Writer):
             contest_info = info_contests[contest_id]
             contest_results = results_contests[contest_id]
             try:
-                contest_writer = ContestWriter(self.file, election_info, results, contest_info, contest_results)
+                contest_writer = ContestWriter(self.file, election_info, results,
+                                               contest_info, contest_results)
                 contest_writer.write()
             except:
                 raise Exception("while processing contest: %s" % contest_info.name)
