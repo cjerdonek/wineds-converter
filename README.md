@@ -25,10 +25,9 @@ Setting up
 
 The script is written for Python 3 and was developed using Python 3.4.
 
-To install third-party dependencies, run the following from the
-repository root:
+You can download Python [from here][python-download].
 
-    $ pip install -r requirements.txt
+Then just clone this repo or download the individual file `parse.py`.
 
 
 Usage
@@ -111,4 +110,5 @@ Chris Jerdonek (<chris.jerdonek@gmail.com>)
 
 
 [dominion]: http://www.dominionvoting.com/
+[python-download]: https://www.python.org/downloads/
 [sf-elections]: http://sfelections.org
