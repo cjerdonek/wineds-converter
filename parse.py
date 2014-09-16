@@ -404,19 +404,18 @@ class ElectionInfoParser(Parser):
         """
         fields = split_line(line)
         try:
-            # TODO: rename new_contest and new_choice to contest_name and choice_name.
-            data, new_contest, new_choice, precinct_name, contest_area = fields
+            data, contest_name, choice_name, precinct_name, contest_area_name = fields
         except ValueError:
             # Then this line must be one of the summary lines that lack a
-            # final "contest_area" column (since these rows have no contest
+            # final "contest_area_name" column (since these rows have no contest
             # associated with them):
             #   0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
             #   0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
             try:
-                data, new_contest, new_choice, precinct_name = fields
+                data, contest_name, choice_name, precinct_name = fields
             except ValueError:
                 raise Exception("error unpacking fields: %r" % fields)
-            contest_area = None
+            contest_area_name = None
 
         # Validate our assumptions about the initial data chunk.
         assert len(data) == 16
@@ -432,7 +431,7 @@ class ElectionInfoParser(Parser):
         except KeyError:
             precincts[precinct_id] = precinct_name
 
-        if contest_area is None:
+        if contest_area_name is None:
             # Then validate our assumptions about the summary line and
             # skip storing any contest or choices.
             assert choice_id == 1
@@ -444,30 +443,30 @@ class ElectionInfoParser(Parser):
                 # Then contest_id is 2.
                 expected_contest_name = "BALLOTS CAST - TOTAL"
                 expected_choice_name = "BALLOTS CAST"
-            assert new_contest == expected_contest_name
-            assert new_choice == expected_choice_name
+            assert contest_name == expected_contest_name
+            assert choice_name == expected_choice_name
             return
         # Otherwise, the line corresponds to a real contest.
 
         contests = self.contests
         try:
             contest = contests[contest_id]
-            assert new_contest == contest.name
-            assert contest_area == contest.area
+            assert contest_name == contest.name
+            assert contest_area_name == contest.area
         except KeyError:
-            contest = ContestInfo(name=new_contest, area=contest_area)
+            contest = ContestInfo(name=contest_name, area=contest_area_name)
             contests[contest_id] = contest
 
         choices = self.choices
         try:
             choice = choices[choice_id]
             try:
-                assert choice == (contest_id, new_choice)
+                assert choice == (contest_id, choice_name)
             except AssertionError:
                 raise Exception("choice mismatch for choice ID %d: %r != %r" %
-                                (choice_id, choice, (contest_id, new_choice)))
+                                (choice_id, choice, (contest_id, choice_name)))
         except KeyError:
-            choice = (contest_id, new_choice)
+            choice = (contest_id, choice_name)
             choices[choice_id] = choice
 
         # TODO: validate that each precinct appears only once.
