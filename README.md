@@ -53,8 +53,7 @@ to detect the first line of the section starting a new contest.
 
 
     *** Governor - CALIFORNIA
-    VotingPrecinctName  VotingPrecinctID  Precincts  Registration >>
-     >> Ballots Cast  Turnout (%)  [...CANDIDATE NAMES...]
+    VotingPrecinctName  VotingPrecinctID  Precincts  Registration  Ballots Cast  Turnout (%)  [...CANDIDATE NAMES...]
     Pct 1101      1101      1     484     141  29.13     3     0  ...
     Pct 1102      1102      1     873     286  32.76    13     1  ...
     [...OTHER PRECINCTS...]
