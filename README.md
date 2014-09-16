@@ -44,21 +44,35 @@ This section documents the new format (i.e. the destination or target
 format of the conversion).
 
 Here is a snippet of what a file in the new format looks like.  The
-column data is comma-delimited, and an empty line separates each contest.
+data rows in the file are tab-delimited.  The string `***` can be used
+to detect the first line of the section starting a new contest.
 
-    State Proposition 42 - CALIFORNIA
-    Precinct,Precinct ID,Registration,Ballots Cast,Yes,No
-    Pct 1101,1101,484,141,82,42
-    Pct 1102,1102,873,286,188,67
-    ...
-    Pct 9901 MB,9901,0,0,0,0
-    Pct 9902 MB,9902,0,0,0,0
+    San Francisco Election - June 3, 2014
 
-    Local Measure A - CITY/COUNTY OF SAN FRANCI
-    Precinct,Precinct ID,Registration,Ballots Cast,Yes,No
-    Pct 1101,1101,484,141,89,45
-    Pct 1102,1102,873,286,208,64
-    ...
+    Report generated on: Tuesday, June 17, 2014 at 04:30:15 PM
+
+
+    *** Governor - CALIFORNIA
+    VotingPrecinctName  VotingPrecinctID  Precincts  Registration >
+      Ballots Cast  Turnout (%)  [...CANDIDATE NAMES...]
+    Pct 1101      1101      1     484     141  29.13     3     0  ...
+    Pct 1102      1102      1     873     286  32.76    13     1  ...
+    [...OTHER PRECINCTS...]
+    Pct 9902 MB   9902      1       0       0   0.00     0     0  ...
+    Grand Totals  City:0  597  435757  129399  29.70  4683  1223  ...
+
+    District Grand Totals
+    DistrictName  DistrictLabel  Precincts  Registration >
+      Ballots Cast  Turnout (%)  [...CANDIDATE NAMES...]
+    12TH CONGRESSIONAL DISTRICT  Congressional:12  522  385648  114107 >
+      29.59  4286  1135  ...
+    [...OTHER DISTRICTS...]
+    [...CITY/COUNTY...]
+    [...NEIGHBORHOODS...]
+    Grand Totals                 City:0            597  435757  129399 >
+      29.70  4683  1223  ...
+
+    [...ADDITIONAL CONTESTS IN SAME FORMAT AS ABOVE...]
 
 
 Source Format (WinEDS)
