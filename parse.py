@@ -268,6 +268,9 @@ class Parser(object):
     line_no = 0
     line = None
 
+    def get_parse_return_value(self):
+        return None
+
     def iter_lines(self, f):
         """
         Return an iterator over the lines of an input file.
@@ -300,10 +303,11 @@ class Parser(object):
             except:
                 raise Exception("error while parsing line %d: %r" %
                                 (self.line_no, self.line))
+        return self.get_parse_return_value()
 
     def parse_path(self, path):
         log("opening...\n  %s" % path)
-        self.parse_file(codecs.open(path, "r", encoding="utf-8"))
+        return self.parse_file(codecs.open(path, "r", encoding="utf-8"))
 
 
 class PrecinctIndexParser(Parser):
@@ -317,13 +321,11 @@ class PrecinctIndexParser(Parser):
 
     name = "Precinct Index File"
 
-    def __init__(self, areas_info):
-        """
-        Arguments:
-          areas_info: an AreasInfo object.
+    def __init__(self):
+        self.areas_info = AreasInfo()
 
-        """
-        self.areas_info = areas_info
+    def get_parse_return_value(self):
+        return self.areas_info
 
     def add_precinct_to_area(self, area_attr, precinct_id, area_id):
         area_type = getattr(self.areas_info, area_attr)
@@ -559,9 +561,8 @@ def digest_input_files(name, precinct_index_path, wineds_path):
     object and an ElectionResults object.
 
     """
-    areas_info = AreasInfo()
-    parser = PrecinctIndexParser(areas_info)
-    parser.parse_path(precinct_index_path)
+    parser = PrecinctIndexParser()
+    areas_info = parser.parse_path(precinct_index_path)
 
     # We parse the file in two passes to simplify the logic and make the
     # code easier to understand.
@@ -857,6 +858,7 @@ def make_test_file():
 def main(argv):
     # Check length of argv to avoid the following when accessing argv[1]:
     # IndexError: list index out of range
+    # TODO: use argparse.
     if len(argv) > 1 and argv[1] == "test":
         make_test_file()
         return
