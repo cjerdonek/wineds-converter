@@ -290,6 +290,9 @@ class Parser(object):
     def parse_line(self, line):
         raise NotImplementedError()
 
+    # TODO: DRY this up with the subclasses that override parse_body().
+    # For example, this function can take a line iterator, and parse_file()
+    # can be responsible for calling iter_lines().
     def parse_body(self, f):
         for x in self.iter_lines(f):
             self.parse_line(self.line)
@@ -850,9 +853,22 @@ def inner_main(argv):
     writer.write(election_info, results)
 
 
+class FilterParser(Parser):
+
+    name = "Precinct Index File (filtering)"
+
+    def __init__(self, output_path):
+        self.output_path = output_path
+
+    def parse_line(self, line):
+        print(line)
+
+
 def make_test_file():
     log("making test file")
-    pass
+    precincts_file = "sample-data/election-2014-06-03/Precinct-Neighborhoods_20140321.csv"
+    parser = FilterParser()
+    print(parser.parse_path(precincts_file))
 
 
 def main(argv):
