@@ -849,12 +849,21 @@ def inner_main(argv):
     writer.write(election_info, results)
 
 
+def make_test_file():
+    log("making test file")
+    pass
+
+
 def main(argv):
+    # Check length of argv to avoid the following when accessing argv[1]:
+    # IndexError: list index out of range
+    if len(argv) > 1 and argv[1] == "test":
+        make_test_file()
+        return
     # Skip a line for readability.
     log()
     with time_it("full program"):
         inner_main(argv)
-
 
 if __name__ == "__main__":
     main(sys.argv)
