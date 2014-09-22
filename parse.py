@@ -144,6 +144,11 @@ class AreasInfo(object):
     The city attribute is a simple set of integer precinct IDs (because
     there is only one area corresponding to the "city" area type).
 
+    Other Attributes:
+
+      nbhd_names: a dict mapping neighborhood string label to string name.
+        For example, "BAYVW/HTRSPT" maps to "BAYVIEW/HUNTERS POINT".
+
     """
 
     # A dictionary containing information about the types of areas whose
@@ -158,6 +163,8 @@ class AreasInfo(object):
         'Supervisorial': ('supervisor', 'SUPERVISORIAL DISTRICT %s')
     }
 
+    nbhd_names = make_nbhd_names()
+
     def __init__(self):
         # A dictionary of precinct_id to precinct_name.
         self.precincts = {}
@@ -165,6 +172,7 @@ class AreasInfo(object):
         self.assembly = {}
         self.bart = {}
         # TODO: rename to all_precincts or precinct_ids?
+        # TODO: or better yet, remove this since we have self.precincts?
         self.city = set()  # all precinct IDs.
         self.congress = {}
         self.neighborhoods = {}
@@ -180,6 +188,7 @@ class AreasInfo(object):
         return lambda area_id: format_str % area_id
 
 
+# TODO: rename to ReportInfo?
 class ElectionInfo(object):
 
     """
@@ -190,13 +199,9 @@ class ElectionInfo(object):
       choices: a dict of integer choice ID to a 2-tuple of
         (contest_id, choice_name).
       contests: a dict of integer contest_id to ContestInfo object.
-      neighborhoods: a dict mapping neighborhood string label to string name.
-        For example, "BAYVW/HTRSPT" maps to "BAYVIEW/HUNTERS POINT".
       precincts: a dict of integer precinct ID to precinct name.
 
     """
-
-    nbhd_names = make_nbhd_names()
 
     def __init__(self):
         self.choices = {}
@@ -800,7 +805,7 @@ class ContestWriter(Writer):
         self.write_grand_totals_row("CITY/COUNTY OF SAN FRANCISCO")
 
         # Also write the neighborhood rows.
-        nbhd_names = self.election_info.nbhd_names
+        nbhd_names = self.areas_info.nbhd_names
         nbhd_pairs = nbhd_names.items()  # (nbhd_id, nbhd_name)
         # Alphabetize the pairs by the full name and not the label.
         nbhd_pairs = sorted(nbhd_pairs, key=lambda pair: pair[1])
