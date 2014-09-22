@@ -195,22 +195,22 @@ class ElectionInfo(object):
 
     nbhd_names = make_nbhd_names()
 
-    def __init__(self, name, areas_info):
+    def __init__(self, areas_info):
         """
         Arguments:
           areas_info: an AreasInfo object.
 
         """
+        self.name = None
+
         self.choices = {}
         self.contests = {}
         self.areas_info = areas_info
         self.precincts = {}
 
-        self.name = name
-
     def __repr__(self):
-        return ("<ElectionInfo object: %d contests, %d choices, %d precincts>" %
-                (len(self.contests), len(self.choices), len(self.precincts)))
+        return ("<ElectionInfo object: name=%r, %d contests, %d choices, %d precincts>" %
+                (self.name, len(self.contests), len(self.choices), len(self.precincts)))
 
 
 class ElectionResults(object):
@@ -561,12 +561,12 @@ class ResultsParser(Parser):
             raise Exception(err)
 
 
-def make_election_info(path, name, areas_info):
+def make_election_info(path, areas_info):
     """
     Parse the file, and create an ElectionInfo object.
 
     """
-    election_info = ElectionInfo(name, areas_info)
+    election_info = ElectionInfo(areas_info)
     parser = ElectionInfoParser(election_info)
     parser.parse_path(path)
 
@@ -605,7 +605,8 @@ def digest_input_files(name, precinct_index_path, wineds_path):
     # the object structure.
 
     # Pass #1
-    election_info = make_election_info(wineds_path, name, areas_info)
+    election_info = make_election_info(wineds_path, areas_info)
+    election_info.name = name
 
     # Check that the precincts in the precinct index file match the
     # precincts in the results file.
@@ -924,8 +925,29 @@ class PrecinctFilterParser(FilterParser):
         return precinct_id in self.precinct_ids
 
 
-def make_test_file(args):
-    log("running mode to make test file")
+class ExportFilterParser(FilterParser):
+
+    name = "Results Export File (filtering)"
+
+    def __init__(self, output_path, precinct_ids, contest_ids):
+        super().__init__(output_path)
+        self.precinct_ids = precinct_ids
+
+    def parse_first_line(self, line):
+        # Copy the header line.
+        self.write(line)
+
+    def should_write(self, line):
+        precinct_id, values = parse_precinct_index_line(line)
+        return precinct_id in self.precinct_ids
+
+
+def make_test_precincts(args):
+    """
+    Create a small precinct file for end-to-end testing purposes.
+
+    """
+    log("making test precinct file")
     output_path, = args
     precincts_path = "data/election-2014-06-03/precincts_20140321.csv"
 
@@ -950,13 +972,30 @@ def make_test_file(args):
     parser.parse_path(precincts_path)
 
 
+def make_test_export(args):
+    """
+    Create a small data export file for end-to-end testing purposes.
+
+    """
+    log("making test export file")
+    precincts_path, export_path = args
+    areas_info = parse_precinct_file(precincts_path)
+    print(repr(areas_info))
+
+
 def main(argv):
     # Check length of argv to avoid the following when accessing argv[1]:
     # IndexError: list index out of range
     # TODO: use argparse.
-    if len(argv) > 1 and argv[1] == "make_test_files":
-        make_test_file(argv[2:])
-        return
+    if len(argv) > 1:
+        arg = argv[1]
+        if arg == "make_test_precincts":
+            make_test_precincts(argv[2:])
+            return
+        elif arg == "make_test_export":
+            make_test_export(argv[2:])
+            return
+
     # Skip a line for readability.
     log()
     with time_it("full program"):
