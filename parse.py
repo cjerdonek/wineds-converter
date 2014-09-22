@@ -27,7 +27,6 @@ In the above, relative paths will be interpreted as relative to the
 current working directory.
 """
 
-import codecs
 from contextlib import contextmanager
 from datetime import datetime
 import re
@@ -311,7 +310,7 @@ class Parser(object):
 
     def parse_path(self, path):
         log("opening...\n  %s" % path)
-        return self.parse_file(codecs.open(path, "r", encoding="utf-8"))
+        return self.parse_file(open(path, "r", encoding="utf-8"))
 
 
 class PrecinctIndexParser(Parser):
