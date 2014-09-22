@@ -159,6 +159,9 @@ class AreasInfo(object):
     }
 
     def __init__(self):
+        # A dictionary of precinct_id to precinct_name.
+        self.precincts = {}
+
         self.assembly = {}
         self.bart = {}
         # TODO: rename to all_precincts or precinct_ids?
@@ -366,6 +369,14 @@ class PrecinctIndexParser(Parser):
         #   VotingPrecinctID,VotingPrecinctName,MailBallotPrecinct,BalType,
         #   Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
         precinct_id, values = parse_precinct_index_line(line)
+        precinct_name = values[1]
+        if precinct_id in self.areas_info.precincts:
+            log(("WARN: precinct_id %d occurred again in line:\n"
+                 " [#%d]: %s") % (precinct_id, self.line_no, line.strip()))
+            return
+
+        self.areas_info.precincts[precinct_id] = precinct_name
+
         # Includes: Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
         values = values[4:]
         nbhd_label = values.pop(3)
