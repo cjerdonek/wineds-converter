@@ -209,7 +209,7 @@ class ElectionInfo(object):
         self.precincts = {}
 
     def __repr__(self):
-        return ("<ElectionInfo object: name=%r, %d contests, %d choices, %d precincts>" %
+        return ("<ElectionInfo object: %d contests, %d choices, %d precincts>" %
                 (len(self.contests), len(self.choices), len(self.precincts)))
 
 
@@ -884,6 +884,7 @@ def inner_main(argv):
     # TODO: consider combining these three things into a master object.
     election_info, areas_info, results = digest_input_files(precinct_index_path, results_path)
 
+    # TODO: look into how to control the encoding when writing to stdout.
     writer = ResultsWriter(file=sys.stdout, election_name=election_name)
     writer.write(election_info, areas_info, results)
 
@@ -897,9 +898,8 @@ class FilterParser(Parser):
 
     """
 
-    def __init__(self, output_path):
-        self.output_file = None
-        self.output_path = output_path
+    def __init__(self, output_file):
+        self.output_file = output_file
         self.write_line_count = 0
 
     def should_write(self, line):
@@ -914,10 +914,8 @@ class FilterParser(Parser):
             self.write(line)
 
     def parse_lines(self, lines):
-        with open(self.output_path, "w", encoding="utf-8") as f:
-            self.output_file = f
-            # TODO: use the Hollywood principle instead of calling the base class method.
-            super().parse_lines(lines)
+        # TODO: use the Hollywood principle instead of calling the base class method.
+        super().parse_lines(lines)
         log("wrote: %d lines" % self.write_line_count)
 
 
@@ -925,8 +923,8 @@ class PrecinctFilterParser(FilterParser):
 
     name = "Precinct Index File (filtering)"
 
-    def __init__(self, output_path, precinct_ids):
-        super().__init__(output_path)
+    def __init__(self, precinct_ids, output_file):
+        super().__init__(output_file)
         self.precinct_ids = precinct_ids
 
     def parse_first_line(self, line):
@@ -942,17 +940,14 @@ class ExportFilterParser(FilterParser):
 
     name = "Results Export File (filtering)"
 
-    def __init__(self, output_path, precinct_ids, contest_ids):
-        super().__init__(output_path)
+    def __init__(self, precinct_ids, contest_ids, output_file):
+        super().__init__(output_file)
+        self.contest_ids = contest_ids
         self.precinct_ids = precinct_ids
 
-    def parse_first_line(self, line):
-        # Copy the header line.
-        self.write(line)
-
     def should_write(self, line):
-        precinct_id, values = parse_precinct_index_line(line)
-        return precinct_id in self.precinct_ids
+        # TODO: parse the line and examine the precinct and contest ID.
+        return self.line_no < 10
 
 
 def make_test_precincts(args):
@@ -961,7 +956,7 @@ def make_test_precincts(args):
 
     """
     log("making test precinct file")
-    output_path, = args
+    assert not args
     precincts_path = "data/election-2014-06-03/precincts_20140321.csv"
 
     areas_info = parse_precinct_file(precincts_path)
@@ -981,7 +976,7 @@ def make_test_precincts(args):
 
     print("randomly chose: %d precincts" % len(precincts))
 
-    parser = PrecinctFilterParser(output_path, precincts)
+    parser = PrecinctFilterParser(precincts, output_file=sys.stdout)
     parser.parse_path(precincts_path)
 
 
@@ -993,7 +988,10 @@ def make_test_export(args):
     log("making test export file")
     precincts_path, export_path = args
     areas_info = parse_precinct_file(precincts_path)
-    print(repr(areas_info))
+
+    parser = ExportFilterParser(precinct_ids=set(), contest_ids=set(),
+                                output_file=sys.stdout)
+    parser.parse_path(export_path)
 
 
 def main(argv):
