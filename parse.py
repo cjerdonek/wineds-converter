@@ -856,21 +856,31 @@ class FilterParser(Parser):
     name = "Precinct Index File (filtering)"
 
     def __init__(self, output_path):
+        self.output_file = None
         self.output_path = output_path
 
+    def should_write(self, line):
+        raise NotImplementedError()
+
+    def write(self, line):
+        self.output_file.write(line)
+
     def parse_line(self, line):
-        print(line)
+        if self.should_write(line):
+            self.write(line)
 
     def parse_lines(self, lines):
-        # TODO
-        self.parse_lines_remaining(lines)
+        with open(self.output_path, "w", encoding="utf-8") as f:
+            self.output_file = f
+            self.parse_lines_remaining(lines)
 
 
-def make_test_file():
-    log("making test file")
-    precincts_file = "sample-data/election-2014-06-03/Precinct-Neighborhoods_20140321.csv"
-    parser = FilterParser()
-    print(parser.parse_path(precincts_file))
+def make_test_file(args):
+    log("running mode to make test file")
+    output_path, = args
+    precincts_file = "data/election-2014-06-03/Precinct-Neighborhoods_20140321.csv"
+    parser = FilterParser(output_path)
+    parser.parse_path(precincts_file)
 
 
 def main(argv):
@@ -878,7 +888,7 @@ def main(argv):
     # IndexError: list index out of range
     # TODO: use argparse.
     if len(argv) > 1 and argv[1] == "test":
-        make_test_file()
+        make_test_file(argv[2:])
         return
     # Skip a line for readability.
     log()
