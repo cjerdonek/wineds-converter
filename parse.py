@@ -932,9 +932,19 @@ def make_test_file(args):
     areas_info = parse_precinct_file(precincts_path)
     all_precincts = areas_info.city
 
+    precincts = set()
+    def choose_from_area_type(area_type, precincts):
+        for area_precincts in area_type.values():
+            precinct, = random.sample(area_precincts, 1)
+            precincts.add(precinct)
 
-    # TODO: pick a precinct from every district and neighborhood?
-    precincts = set(random.sample(all_precincts, 5))
+    # Choose at least one precinct from each district and neighborhood.
+    for type_name in areas_info.DISTRICT_TYPE_INFO:
+        area_type = areas_info.get_area_type(type_name)
+        choose_from_area_type(area_type, precincts)
+    choose_from_area_type(areas_info.neighborhoods, precincts)
+
+    print("randomly chose: %d precincts" % len(precincts))
 
     parser = PrecinctFilterParser(output_path, precincts)
     parser.parse_path(precincts_path)
