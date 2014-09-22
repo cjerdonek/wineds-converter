@@ -195,17 +195,12 @@ class ElectionInfo(object):
 
     nbhd_names = make_nbhd_names()
 
-    def __init__(self, areas_info):
-        """
-        Arguments:
-          areas_info: an AreasInfo object.
-
-        """
+    def __init__(self):
+        self.areas_info = None
         self.name = None
 
         self.choices = {}
         self.contests = {}
-        self.areas_info = areas_info
         self.precincts = {}
 
     def __repr__(self):
@@ -561,18 +556,19 @@ class ResultsParser(Parser):
             raise Exception(err)
 
 
-def make_election_info(path, areas_info):
+def parse_export_file(path):
     """
-    Parse the file, and create an ElectionInfo object.
+    Parse a WinEDS export file, and return an ElectionInfo object.
 
     """
-    election_info = ElectionInfo(areas_info)
+    election_info = ElectionInfo()
     parser = ElectionInfoParser(election_info)
     parser.parse_path(path)
 
     choices = election_info.choices
     contests = election_info.contests
 
+    # Set the choice_ids attribute on each contest.
     for choice_id, (contest_id, choice_name) in choices.items():
         contest = contests[contest_id]
         contest.choice_ids.add(choice_id)
@@ -605,8 +601,10 @@ def digest_input_files(name, precinct_index_path, wineds_path):
     # the object structure.
 
     # Pass #1
-    election_info = make_election_info(wineds_path, areas_info)
+    election_info = parse_export_file(wineds_path)
+    # TODO: remove the name and areas_info attributes.
     election_info.name = name
+    election_info.areas_info = areas_info
 
     # Check that the precincts in the precinct index file match the
     # precincts in the results file.
