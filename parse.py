@@ -275,7 +275,7 @@ class Parser(object):
         """
         Return an iterator over the lines of an input file.
 
-        Each iteration yields a 2-tuple: (line_no, line).
+        Each iteration sets self.line and self.line_no but yields nothing.
 
         """
         for line_no, line in enumerate(iter(f), start=1):
@@ -290,19 +290,20 @@ class Parser(object):
     def parse_line(self, line):
         raise NotImplementedError()
 
-    # TODO: DRY this up with the subclasses that override parse_body().
-    # For example, this function can take a line iterator, and parse_file()
-    # can be responsible for calling iter_lines().
-    def parse_body(self, f):
-        for x in self.iter_lines(f):
+    def parse_lines_remaining(self, lines):
+        for x in lines:
             self.parse_line(self.line)
+
+    def parse_lines(self, lines):
+        self.parse_lines_remaining(lines)
 
     def parse_file(self, f):
         with time_it("parsing %r" % self.name):
             log("parsing...\n  %r" % self.name)
             try:
                 with f:
-                    self.parse_body(f)
+                    lines = self.iter_lines(f)
+                    self.parse_lines(lines)
             except:
                 raise Exception("error while parsing line %d: %r" %
                                 (self.line_no, self.line))
@@ -355,11 +356,9 @@ class PrecinctIndexParser(Parser):
         self.add_precinct_to_area('neighborhoods', precinct_id, nbhd_label)
         self.areas_info.city.add(precinct_id)
 
-    def parse_body(self, f):
-        lines = self.iter_lines(f)
+    def parse_lines(self, lines):
         next(lines)  # Skip the header line.
-        for x in lines:
-            self.parse_line(self.line)
+        self.parse_lines_remaining(lines)
 
 
 def split_line(line):
@@ -862,6 +861,10 @@ class FilterParser(Parser):
 
     def parse_line(self, line):
         print(line)
+
+    def parse_lines(self, lines):
+        # TODO
+        self.parse_lines_remaining(lines)
 
 
 def make_test_file():
