@@ -197,7 +197,6 @@ class ElectionInfo(object):
 
     def __init__(self):
         self.areas_info = None
-        self.name = None
 
         self.choices = {}
         self.contests = {}
@@ -205,7 +204,7 @@ class ElectionInfo(object):
 
     def __repr__(self):
         return ("<ElectionInfo object: name=%r, %d contests, %d choices, %d precincts>" %
-                (self.name, len(self.contests), len(self.choices), len(self.precincts)))
+                (len(self.contests), len(self.choices), len(self.precincts)))
 
 
 class ElectionResults(object):
@@ -576,7 +575,7 @@ def parse_export_file(path):
     return election_info
 
 
-def digest_input_files(name, precinct_index_path, wineds_path):
+def digest_input_files(precinct_index_path, wineds_path):
     """
     Read the input files and return a 2-tuple of an ElectionInfo
     object and an ElectionResults object.
@@ -602,8 +601,6 @@ def digest_input_files(name, precinct_index_path, wineds_path):
 
     # Pass #1
     election_info = parse_export_file(wineds_path)
-    # TODO: remove the name and areas_info attributes.
-    election_info.name = name
     election_info.areas_info = areas_info
 
     # Check that the precincts in the precinct index file match the
@@ -824,7 +821,8 @@ class ContestWriter(Writer):
 
 class ResultsWriter(Writer):
 
-    def __init__(self, file):
+    def __init__(self, file, election_name):
+        self.election_name = election_name
         self.file = file
 
     def write_inner(self, election_info, results):
@@ -832,7 +830,7 @@ class ResultsWriter(Writer):
         results_contests = results.contests
 
         now = datetime.now()
-        self.write_ln(election_info.name)
+        self.write_ln(self.election_name)
         self.write_ln()
         # This looks like the following, for example:
         #   Report generated on: Friday, September 12, 2014 at 09:06:26 PM
@@ -862,14 +860,14 @@ class ResultsWriter(Writer):
 def inner_main(argv):
     try:
         # TODO: use argparse.
-        name, precinct_index_path, results_path = argv[1:]
+        election_name, precinct_index_path, results_path = argv[1:]
     except ValueError:
         err = "ERROR: incorrect number of arguments"
         exit_with_error("\n".join([err, __doc__, err]))
 
-    election_info, results = digest_input_files(name, precinct_index_path, results_path)
+    election_info, results = digest_input_files(precinct_index_path, results_path)
 
-    writer = ResultsWriter(file=sys.stdout)
+    writer = ResultsWriter(file=sys.stdout, election_name=election_name)
     writer.write(election_info, results)
 
 
