@@ -199,8 +199,6 @@ class ElectionInfo(object):
     nbhd_names = make_nbhd_names()
 
     def __init__(self):
-        self.areas_info = None
-
         self.choices = {}
         self.contests = {}
         self.precincts = {}
@@ -588,8 +586,8 @@ def parse_export_file(path):
 
 def digest_input_files(precinct_index_path, wineds_path):
     """
-    Read the input files and return a 2-tuple of an ElectionInfo
-    object and an ElectionResults object.
+    Read the input files and return a 3-tuple of objects of the following
+    classes: ElectionInfo, AreasInfo, ElectionResults.
 
     """
     areas_info = parse_precinct_file(precinct_index_path)
@@ -612,8 +610,9 @@ def digest_input_files(precinct_index_path, wineds_path):
 
     # Pass #1
     election_info = parse_export_file(wineds_path)
-    election_info.areas_info = areas_info
 
+    # TODO: move the following assertions into a parse_export_file_with_check()
+    # funcation (with a better function name).
     # Check that the precincts in the precinct index file match the
     # precincts in the results file.
     for i, (p1, p2) in enumerate(zip(sorted(areas_info.city),
@@ -631,7 +630,7 @@ def digest_input_files(precinct_index_path, wineds_path):
     parser = ResultsParser(results)
     parser.parse_path(wineds_path)
 
-    return election_info, results
+    return election_info, areas_info, results
 
 
 class Writer(object):
@@ -650,7 +649,7 @@ class ContestWriter(Writer):
         'Supervisorial'
     )
 
-    def __init__(self, file, election_info, results, contest_info, contest_results):
+    def __init__(self, file, election_info, areas_info, results, contest_info, contest_results):
         """
         Arguments:
 
@@ -661,6 +660,7 @@ class ContestWriter(Writer):
 
         """
         self.file = file
+        self.areas_info = areas_info
         self.contest_info = contest_info
         self.contest_results = contest_results
         self.election_info = election_info
@@ -748,7 +748,7 @@ class ContestWriter(Writer):
         Write a row for the city-wide totals.
 
         """
-        all_precinct_ids = self.election_info.areas_info.city
+        all_precinct_ids = self.areas_info.city
         # The area ID "City:0" is just a placeholder value so the column
         # value can have the same format as other rows in the summary.
         self.write_totals_row(header, "City:0", all_precinct_ids)
@@ -784,7 +784,7 @@ class ContestWriter(Writer):
         For example: the "Congressional" areas.
 
         """
-        areas_info = self.election_info.areas_info
+        areas_info = self.areas_info
         area_type = areas_info.get_area_type(district_type_name)
         make_area_name = areas_info.get_area_name_function(district_type_name)
         area_ids = sorted(area_type.keys())
@@ -805,7 +805,7 @@ class ContestWriter(Writer):
         # Alphabetize the pairs by the full name and not the label.
         nbhd_pairs = sorted(nbhd_pairs, key=lambda pair: pair[1])
 
-        neighborhoods_area = self.election_info.areas_info.neighborhoods
+        neighborhoods_area = self.areas_info.neighborhoods
         make_nbhd_name = lambda nbhd_id: nbhd_names[nbhd_id]
         nbhd_ids = [pair[0] for pair in nbhd_pairs]
 
@@ -836,7 +836,7 @@ class ResultsWriter(Writer):
         self.election_name = election_name
         self.file = file
 
-    def write_inner(self, election_info, results):
+    def write_inner(self, election_info, areas_info, results):
         info_contests = election_info.contests
         results_contests = results.contests
 
@@ -855,18 +855,18 @@ class ResultsWriter(Writer):
             contest_info = info_contests[contest_id]
             contest_results = results_contests[contest_id]
             try:
-                contest_writer = ContestWriter(self.file, election_info, results,
-                                               contest_info, contest_results)
+                contest_writer = ContestWriter(self.file, election_info, areas_info,
+                                               results, contest_info, contest_results)
                 contest_writer.write()
             except:
                 raise Exception("while processing contest: %s" % contest_info.name)
             self.write_ln()
             self.write_ln()
 
-    def write(self, election_info, results):
+    def write(self, election_info, areas_info, results):
         """Write the election results to the given file."""
         with time_it("writing output file"):
-            self.write_inner(election_info, results)
+            self.write_inner(election_info, areas_info, results)
 
 def inner_main(argv):
     try:
@@ -876,10 +876,11 @@ def inner_main(argv):
         err = "ERROR: incorrect number of arguments"
         exit_with_error("\n".join([err, __doc__, err]))
 
-    election_info, results = digest_input_files(precinct_index_path, results_path)
+    # TODO: consider combining these three things into a master object.
+    election_info, areas_info, results = digest_input_files(precinct_index_path, results_path)
 
     writer = ResultsWriter(file=sys.stdout, election_name=election_name)
-    writer.write(election_info, results)
+    writer.write(election_info, areas_info, results)
 
 
 class FilterParser(Parser):
