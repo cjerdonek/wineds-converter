@@ -29,6 +29,7 @@ current working directory.
 
 from contextlib import contextmanager
 from datetime import datetime
+import random
 import re
 import sys
 import timeit
@@ -160,6 +161,7 @@ class AreasInfo(object):
     def __init__(self):
         self.assembly = {}
         self.bart = {}
+        # TODO: rename to all_precincts or precinct_ids?
         self.city = set()  # all precinct IDs.
         self.congress = {}
         self.neighborhoods = {}
@@ -311,6 +313,13 @@ class Parser(object):
     def parse_path(self, path):
         log("opening...\n  %s" % path)
         return self.parse_file(open(path, "r", encoding="utf-8"))
+
+
+def parse_precinct_file(path):
+    parser = PrecinctIndexParser()
+    areas_info = parser.parse_path(path)
+    log("parsed: %d precincts" % len(areas_info.city))
+    return areas_info
 
 
 class PrecinctIndexParser(Parser):
@@ -562,8 +571,7 @@ def digest_input_files(name, precinct_index_path, wineds_path):
     object and an ElectionResults object.
 
     """
-    parser = PrecinctIndexParser()
-    areas_info = parser.parse_path(precinct_index_path)
+    areas_info = parse_precinct_file(precinct_index_path)
 
     # We parse the file in two passes to simplify the logic and make the
     # code easier to understand.
@@ -853,8 +861,6 @@ def inner_main(argv):
 
 class FilterParser(Parser):
 
-    name = "Precinct Index File (filtering)"
-
     def __init__(self, output_path):
         self.output_file = None
         self.output_path = output_path
@@ -875,19 +881,38 @@ class FilterParser(Parser):
             self.parse_lines_remaining(lines)
 
 
+class PrecinctFilterParser(FilterParser):
+
+    name = "Precinct Index File (filtering)"
+
+    def __init__(self, output_path, precinct_ids):
+        super().__init__(output_path)
+        self.precinct_ids = precinct_ids
+
+    def should_write(self, line):
+        # TODO: parse line and get precinct id.
+        print(self.precinct_ids)
+        exit()
+
+
 def make_test_file(args):
     log("running mode to make test file")
     output_path, = args
-    precincts_file = "data/election-2014-06-03/Precinct-Neighborhoods_20140321.csv"
-    parser = FilterParser(output_path)
-    parser.parse_path(precincts_file)
+    precincts_path = "data/election-2014-06-03/precincts_20140321.csv"
+
+    areas_info = parse_precinct_file(precincts_path)
+    all_precincts = areas_info.city
+    precincts = set(random.sample(all_precincts, 5))
+
+    parser = PrecinctFilterParser(output_path, precincts)
+    parser.parse_path(precincts_path)
 
 
 def main(argv):
     # Check length of argv to avoid the following when accessing argv[1]:
     # IndexError: list index out of range
     # TODO: use argparse.
-    if len(argv) > 1 and argv[1] == "test":
+    if len(argv) > 1 and argv[1] == "make_test_files":
         make_test_file(argv[2:])
         return
     # Skip a line for readability.
