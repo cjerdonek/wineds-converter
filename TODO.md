@@ -1,6 +1,7 @@
 TODO
 ====
 
+* Make PrecinctIndexParser parse the precinct names, too.
 * Address TODO's in the code
 * Try reading data from an Excel file
 * Try writing to an Excel file

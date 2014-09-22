@@ -269,9 +269,6 @@ class Parser(object):
     line_no = 0
     line = None
 
-    def get_parse_return_value(self):
-        return None
-
     def iter_lines(self, f):
         """
         Return an iterator over the lines of an input file.
@@ -288,15 +285,20 @@ class Parser(object):
             yield
         log("parsed: %d lines" % line_no)
 
+    def get_parse_return_value(self):
+        return None
+
+    def parse_first_line(self, line):
+        self.parse_line(line)
+
     def parse_line(self, line):
         raise NotImplementedError()
 
-    def parse_lines_remaining(self, lines):
+    def parse_lines(self, lines):
+        next(lines)
+        self.parse_first_line(self.line)
         for x in lines:
             self.parse_line(self.line)
-
-    def parse_lines(self, lines):
-        self.parse_lines_remaining(lines)
 
     def parse_file(self, f):
         with time_it("parsing %r" % self.name):
@@ -322,6 +324,12 @@ def parse_precinct_file(path):
     return areas_info
 
 
+def parse_precinct_index_line(line):
+    values = line.strip().split(",")
+    precinct_id = int(values[0])
+    return precinct_id, values
+
+
 class PrecinctIndexParser(Parser):
 
     """
@@ -339,6 +347,10 @@ class PrecinctIndexParser(Parser):
     def get_parse_return_value(self):
         return self.areas_info
 
+    def parse_first_line(self, line):
+        # Skip the header line.
+        pass
+
     def add_precinct_to_area(self, area_attr, precinct_id, area_id):
         area_type = getattr(self.areas_info, area_attr)
         try:
@@ -352,8 +364,7 @@ class PrecinctIndexParser(Parser):
         # Here are the column headers of the file:
         #   VotingPrecinctID,VotingPrecinctName,MailBallotPrecinct,BalType,
         #   Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
-        values = line.strip().split(",")
-        precinct_id = int(values[0])
+        precinct_id, values = parse_precinct_index_line(line)
         # Includes: Assembly,BART,Congressional,Neighborhood,Senatorial,Supervisorial
         values = values[4:]
         nbhd_label = values.pop(3)
@@ -363,10 +374,6 @@ class PrecinctIndexParser(Parser):
 
         self.add_precinct_to_area('neighborhoods', precinct_id, nbhd_label)
         self.areas_info.city.add(precinct_id)
-
-    def parse_lines(self, lines):
-        next(lines)  # Skip the header line.
-        self.parse_lines_remaining(lines)
 
 
 def split_line(line):
@@ -864,12 +871,14 @@ class FilterParser(Parser):
     def __init__(self, output_path):
         self.output_file = None
         self.output_path = output_path
+        self.write_line_count = 0
 
     def should_write(self, line):
         raise NotImplementedError()
 
     def write(self, line):
         self.output_file.write(line)
+        self.write_line_count += 1
 
     def parse_line(self, line):
         if self.should_write(line):
@@ -878,7 +887,9 @@ class FilterParser(Parser):
     def parse_lines(self, lines):
         with open(self.output_path, "w", encoding="utf-8") as f:
             self.output_file = f
-            self.parse_lines_remaining(lines)
+            # TODO: use the Hollywood principle instead of calling the base class method.
+            super().parse_lines(lines)
+        log("wrote: %d lines" % self.write_line_count)
 
 
 class PrecinctFilterParser(FilterParser):
@@ -889,10 +900,13 @@ class PrecinctFilterParser(FilterParser):
         super().__init__(output_path)
         self.precinct_ids = precinct_ids
 
+    def parse_first_line(self, line):
+        # Copy the header line.
+        self.write(line)
+
     def should_write(self, line):
-        # TODO: parse line and get precinct id.
-        print(self.precinct_ids)
-        exit()
+        precinct_id, values = parse_precinct_index_line(line)
+        return precinct_id in self.precinct_ids
 
 
 def make_test_file(args):
@@ -902,6 +916,7 @@ def make_test_file(args):
 
     areas_info = parse_precinct_file(precincts_path)
     all_precincts = areas_info.city
+    # TODO: pick a precinct from every district and neighborhood?
     precincts = set(random.sample(all_precincts, 5))
 
     parser = PrecinctFilterParser(output_path, precincts)
