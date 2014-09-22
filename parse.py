@@ -41,18 +41,6 @@ GRAND_TOTALS_HEADER = "Grand Totals"
 # necessary since field values can contain spaces (e.g. candidate names).
 SPLITTER = re.compile(r'\s{2,}')
 
-# A dictionary containing information about the types of areas whose
-# name can be generated from a format string and a district number.
-# This dictionary does not include the "city" and "neighborhood"
-# area types.
-DISTRICT_TYPE_INFO = {
-    'Assembly': ('assembly', '%sTH ASSEMBLY DISTRICT'),
-    'BART': ('bart', 'BART DISTRICT %s'),
-    'Congressional': ('congress', '%sTH CONGRESSIONAL DISTRICT'),
-    'Senatorial': ('senate', '%sTH SENATORIAL DISTRICT'),
-    'Supervisorial': ('supervisor', 'SUPERVISORIAL DISTRICT %s')
-}
-
 # This string contains a mapping from neighborhood labels in the
 # precinct-to-neighborhood file to the more human-friendly names that
 # appear in the Statement of Vote.
@@ -158,6 +146,18 @@ class AreasInfo(object):
 
     """
 
+    # A dictionary containing information about the types of areas whose
+    # name can be generated from a format string and a district number.
+    # This dictionary does not include the "city" and "neighborhood"
+    # area types.
+    DISTRICT_TYPE_INFO = {
+        'Assembly': ('assembly', '%sTH ASSEMBLY DISTRICT'),
+        'BART': ('bart', 'BART DISTRICT %s'),
+        'Congressional': ('congress', '%sTH CONGRESSIONAL DISTRICT'),
+        'Senatorial': ('senate', '%sTH SENATORIAL DISTRICT'),
+        'Supervisorial': ('supervisor', 'SUPERVISORIAL DISTRICT %s')
+    }
+
     def __init__(self):
         self.assembly = {}
         self.bart = {}
@@ -167,6 +167,14 @@ class AreasInfo(object):
         self.neighborhoods = {}
         self.senate = {}
         self.supervisor = {}
+
+    def get_area_type(self, district_type_name):
+        area_attr = self.DISTRICT_TYPE_INFO[district_type_name][0]
+        return getattr(self, area_attr)
+
+    def get_area_name_function(self, district_type_name):
+        format_str = self.DISTRICT_TYPE_INFO[district_type_name][1]
+        return lambda area_id: format_str % area_id
 
 
 class ElectionInfo(object):
@@ -351,8 +359,7 @@ class PrecinctIndexParser(Parser):
         # Skip the header line.
         pass
 
-    def add_precinct_to_area(self, area_attr, precinct_id, area_id):
-        area_type = getattr(self.areas_info, area_attr)
+    def add_precinct_to_area(self, area_type, area_id, precinct_id):
         try:
             precinct_ids = area_type[area_id]
         except KeyError:
@@ -369,10 +376,11 @@ class PrecinctIndexParser(Parser):
         values = values[4:]
         nbhd_label = values.pop(3)
         for district_type_name, area_id in zip(self.DISTRICT_HEADERS, values):
-            area_attr = DISTRICT_TYPE_INFO[district_type_name][0]
-            self.add_precinct_to_area(area_attr, precinct_id, int(area_id))
+            area_type = self.areas_info.get_area_type(district_type_name)
+            self.add_precinct_to_area(area_type, int(area_id), precinct_id)
 
-        self.add_precinct_to_area('neighborhoods', precinct_id, nbhd_label)
+        area_type = self.areas_info.neighborhoods
+        self.add_precinct_to_area(area_type, nbhd_label, precinct_id)
         self.areas_info.city.add(precinct_id)
 
 
@@ -769,10 +777,10 @@ class ContestWriter(Writer):
         For example: the "Congressional" areas.
 
         """
-        area_attr, format_name = DISTRICT_TYPE_INFO[district_type_name]
-        area_type = getattr(self.election_info.areas_info, area_attr)
+        areas_info = self.election_info.areas_info
+        area_type = areas_info.get_area_type(district_type_name)
+        make_area_name = areas_info.get_area_name_function(district_type_name)
         area_ids = sorted(area_type.keys())
-        make_area_name = lambda area_id: format_name % area_id
         self.write_area_rows(area_type, district_type_name, make_area_name, area_ids)
 
     def write_contest_summary(self):
@@ -868,6 +876,13 @@ def inner_main(argv):
 
 class FilterParser(Parser):
 
+    """
+    A class for copying a file while filtering out lines.
+
+    The should_write() method determines the filtering condition.
+
+    """
+
     def __init__(self, output_path):
         self.output_file = None
         self.output_path = output_path
@@ -916,6 +931,8 @@ def make_test_file(args):
 
     areas_info = parse_precinct_file(precincts_path)
     all_precincts = areas_info.city
+
+
     # TODO: pick a precinct from every district and neighborhood?
     precincts = set(random.sample(all_precincts, 5))
 
