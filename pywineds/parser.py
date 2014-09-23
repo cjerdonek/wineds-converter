@@ -819,19 +819,22 @@ class ContestWriter(Writer):
 
 class ResultsWriter(Writer):
 
-    def __init__(self, file, election_name):
+    def __init__(self, file, election_name, now=None):
+        if now is None:
+            now = datetime.now()
         self.election_name = election_name
         self.file = file
+        self.now = now
 
     def write_inner(self, election_info, areas_info, results):
         info_contests = election_info.contests
         results_contests = results.contests
 
-        now = datetime.now()
         self.write_ln(self.election_name)
         self.write_ln()
         # This looks like the following, for example:
         #   Report generated on: Friday, September 12, 2014 at 09:06:26 PM
+        now = self.now
         self.write_ln("Report generated on: %s %d, %s" %
                       (now.strftime("%A, %B"),
                        now.day,  # strftime lacks an option not to zero-pad the month.
@@ -855,12 +858,12 @@ class ResultsWriter(Writer):
             self.write_inner(election_info, areas_info, results)
 
 
-def convert(election_name, precincts_path, export_path, output_path):
+def convert(election_name, precincts_path, export_path, output_path, now=None):
     # TODO: consider combining these three things into a master object.
     election_info, areas_info, results = digest_input_files(precincts_path, export_path)
 
     with open(output_path, "w", encoding=FILE_ENCODING) as f:
-        writer = ResultsWriter(file=f, election_name=election_name)
+        writer = ResultsWriter(file=f, election_name=election_name, now=now)
         writer.write(election_info, areas_info, results)
 
 def inner_main(docstr, argv):
