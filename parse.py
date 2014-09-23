@@ -17,11 +17,14 @@ Arguments:
     This appears in the first line of the output file.
     An example value is "San Francisco June 3, 2014 Election".
 
-  PCT_INDEX_PATH: path to a CSV file mapping precincts to their
+  PRECINCTS.csv: path to a CSV file mapping precincts to their
     different districts and neighborhoods.
 
-  RESULTS_PATH: path to a WinEDS Reporting Tool output file that contains
-    vote totals for each precinct in each contest.
+  WINEDS.txt: path to a TXT export file from the WinEDS Reporting Tool.
+    The report contains vote totals for each precinct in each contest,
+    along with "registered voters" and "ballots cast" totals.
+
+  OUTPUT.tsv: desired output path.
 
 In the above, relative paths will be interpreted as relative to the
 current working directory.

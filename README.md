@@ -38,7 +38,7 @@ To run the script--
     $ python3 parse.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
 
 For additional usage notes, see the docstring of the main
-[`parse.py`](parse.py#L6) file.
+[`parse.py`](parse.py#L7) file.
 
 
 Testing
