@@ -1,327 +1,333 @@
-0001001111600781          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1116                                               
-0001001111900676          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1119                                               
-0001001114600826          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1146                                               
-0001001700200820          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7002                                               
+0001001110800827          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1108                                               
+0001001112700791          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1127                                               
+0001001115100000          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1151 MB                                            
+0001001115200764          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1152                                               
+0001001115300788          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1153                                               
 0001001700300792          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7003                                               
-0001001702900802          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7029                                               
+0001001702200888          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7022                                               
 0001001703400767          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7034                                               
-0001001704600389          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7046                                               
 0001001730400856          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7304                                               
-0001001732200743          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7322                                               
+0001001732800730          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7328                                               
+0001001733200710          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7332                                               
 0001001733500821          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7335                                               
-0001001734900773          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7349                                               
-0001001750100486          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7501                                               
-0001001751200570          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7512                                               
-0001001754200780          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7542                                               
-0001001755100629          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7551                                               
-0001001760400715          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7604                                               
-0001001761100805          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7611                                               
+0001001750400425          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7504                                               
+0001001750900853          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7509/7511                                          
+0001001751700822          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7517                                               
+0001001752700679          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7527/7528                                          
+0001001753300810          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7533                                               
+0001001760800435          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7608                                               
 0001001763400854          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7634                                               
-0001001764600880          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7646                                               
-0001001770700779          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7707                                               
+0001001764500577          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7645                                               
+0001001780300774          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7803                                               
 0001001780700672          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7807                                               
-0001001781300880          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7813                                               
-0001001784800861          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7848                                               
-0001001785300805          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7853                                               
-0001001790800921          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7908                                               
-0001001792200796          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7922                                               
-0001001793600798          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7936                                               
-0001001793900670          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7939                                               
-0001001794600854          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7946                                               
-0001001910200834          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9102                                               
-0001001912300766          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9123                                               
-0001001914300831          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9143                                               
-0001001923500839          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9235                                               
-0001001925400818          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9254                                               
-0001001925500486          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9255                                               
-0001001940200860          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9402                                               
-0001001941700676          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9417                                               
-0001001943300839          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9433                                               
-0001001943400889          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9434                                               
-0001001952100841          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9521                                               
+0001001785400845          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7854                                               
+0001001786800799          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7868                                               
+0001001791100832          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7911                                               
+0001001791600810          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7916                                               
+0001001793100703          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7931                                               
+0001001793700808          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7937                                               
+0001001794300801          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7943                                               
+0001001794700814          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7947                                               
+0001001795600628          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7956                                               
+0001001910800705          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9108                                               
+0001001913400720          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9134                                               
+0001001914200838          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9142                                               
+0001001914500793          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9145                                               
+0001001922100608          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9221                                               
+0001001923100915          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9231                                               
+0001001924800752          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9248                                               
+0001001943200851          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9432                                               
+0001001944100895          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9441                                               
+0001001951400852          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9514/9522                                          
 0001001970700725          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9707                                               
-0001001972800883          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9728                                               
-0001001973400569          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9734                                               
-0001001973900791          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9739                                               
+0001001970800826          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9708                                               
+0001001971100575          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9711                                               
+0001001973800672          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9738                                               
+0001001974100631          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9741                                               
 0001001990000000          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 9900 MB                                            
-0002001111600205          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 1116                                               
-0002001111900167          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 1119                                               
-0002001114600252          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 1146                                               
-0002001700200219          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7002                                               
+0002001110800252          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 1108                                               
+0002001112700233          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 1127                                               
+0002001115100000          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 1151 MB                                            
+0002001115200247          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 1152                                               
+0002001115300219          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 1153                                               
 0002001700300267          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7003                                               
-0002001702900132          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7029                                               
+0002001702200197          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7022                                               
 0002001703400072          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7034                                               
-0002001704600120          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7046                                               
 0002001730400278          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7304                                               
-0002001732200258          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7322                                               
+0002001732800266          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7328                                               
+0002001733200181          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7332                                               
 0002001733500255          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7335                                               
-0002001734900232          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7349                                               
-0002001750100133          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7501                                               
-0002001751200163          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7512                                               
-0002001754200201          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7542                                               
-0002001755100190          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7551                                               
-0002001760400185          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7604                                               
-0002001761100208          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7611                                               
+0002001750400133          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7504                                               
+0002001750900293          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7509/7511                                          
+0002001751700209          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7517                                               
+0002001752700211          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7527/7528                                          
+0002001753300201          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7533                                               
+0002001760800120          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7608                                               
 0002001763400265          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7634                                               
-0002001764600221          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7646                                               
-0002001770700340          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7707                                               
+0002001764500197          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7645                                               
+0002001780300338          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7803                                               
 0002001780700209          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7807                                               
-0002001781300313          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7813                                               
-0002001784800313          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7848                                               
-0002001785300280          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7853                                               
-0002001790800322          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7908                                               
-0002001792200226          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7922                                               
-0002001793600316          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7936                                               
-0002001793900248          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7939                                               
-0002001794600288          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7946                                               
-0002001910200239          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9102                                               
-0002001912300206          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9123                                               
-0002001914300250          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9143                                               
-0002001923500250          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9235                                               
-0002001925400205          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9254                                               
-0002001925500105          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9255                                               
-0002001940200204          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9402                                               
-0002001941700179          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9417                                               
-0002001943300239          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9433                                               
-0002001943400270          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9434                                               
-0002001952100222          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9521                                               
+0002001785400285          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7854                                               
+0002001786800319          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7868                                               
+0002001791100217          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7911                                               
+0002001791600250          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7916                                               
+0002001793100312          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7931                                               
+0002001793700289          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7937                                               
+0002001794300277          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7943                                               
+0002001794700230          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7947                                               
+0002001795600201          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7956                                               
+0002001910800165          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9108                                               
+0002001913400184          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9134                                               
+0002001914200198          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9142                                               
+0002001914500230          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9145                                               
+0002001922100236          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9221                                               
+0002001923100283          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9231                                               
+0002001924800192          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9248                                               
+0002001943200260          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9432                                               
+0002001944100264          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9441                                               
+0002001951400177          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9514/9522                                          
 0002001970700247          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9707                                               
-0002001972800335          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9728                                               
-0002001973400248          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9734                                               
-0002001973900142          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9739                                               
+0002001970800244          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9708                                               
+0002001971100230          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9711                                               
+0002001973800197          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9738                                               
+0002001974100003          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9741                                               
 0002001990000000          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 9900 MB                                            
-0120045111600017          State Treasurer                                         ELLEN H. BROWN                        Pct 1116                      CALIFORNIA               
-0120045111900024          State Treasurer                                         ELLEN H. BROWN                        Pct 1119                      CALIFORNIA               
-0120045114600030          State Treasurer                                         ELLEN H. BROWN                        Pct 1146                      CALIFORNIA               
-0120045700200020          State Treasurer                                         ELLEN H. BROWN                        Pct 7002                      CALIFORNIA               
+0120045110800023          State Treasurer                                         ELLEN H. BROWN                        Pct 1108                      CALIFORNIA               
+0120045112700024          State Treasurer                                         ELLEN H. BROWN                        Pct 1127                      CALIFORNIA               
+0120045115100000          State Treasurer                                         ELLEN H. BROWN                        Pct 1151 MB                   CALIFORNIA               
+0120045115200032          State Treasurer                                         ELLEN H. BROWN                        Pct 1152                      CALIFORNIA               
+0120045115300021          State Treasurer                                         ELLEN H. BROWN                        Pct 1153                      CALIFORNIA               
 0120045700300024          State Treasurer                                         ELLEN H. BROWN                        Pct 7003                      CALIFORNIA               
-0120045702900022          State Treasurer                                         ELLEN H. BROWN                        Pct 7029                      CALIFORNIA               
+0120045702200017          State Treasurer                                         ELLEN H. BROWN                        Pct 7022                      CALIFORNIA               
 0120045703400009          State Treasurer                                         ELLEN H. BROWN                        Pct 7034                      CALIFORNIA               
-0120045704600016          State Treasurer                                         ELLEN H. BROWN                        Pct 7046                      CALIFORNIA               
 0120045730400033          State Treasurer                                         ELLEN H. BROWN                        Pct 7304                      CALIFORNIA               
-0120045732200010          State Treasurer                                         ELLEN H. BROWN                        Pct 7322                      CALIFORNIA               
+0120045732800011          State Treasurer                                         ELLEN H. BROWN                        Pct 7328                      CALIFORNIA               
+0120045733200019          State Treasurer                                         ELLEN H. BROWN                        Pct 7332                      CALIFORNIA               
 0120045733500012          State Treasurer                                         ELLEN H. BROWN                        Pct 7335                      CALIFORNIA               
-0120045734900024          State Treasurer                                         ELLEN H. BROWN                        Pct 7349                      CALIFORNIA               
-0120045750100003          State Treasurer                                         ELLEN H. BROWN                        Pct 7501                      CALIFORNIA               
-0120045751200017          State Treasurer                                         ELLEN H. BROWN                        Pct 7512                      CALIFORNIA               
-0120045754200033          State Treasurer                                         ELLEN H. BROWN                        Pct 7542                      CALIFORNIA               
-0120045755100017          State Treasurer                                         ELLEN H. BROWN                        Pct 7551                      CALIFORNIA               
-0120045760400027          State Treasurer                                         ELLEN H. BROWN                        Pct 7604                      CALIFORNIA               
-0120045761100040          State Treasurer                                         ELLEN H. BROWN                        Pct 7611                      CALIFORNIA               
+0120045750400006          State Treasurer                                         ELLEN H. BROWN                        Pct 7504                      CALIFORNIA               
+0120045750900026          State Treasurer                                         ELLEN H. BROWN                        Pct 7509/7511                 CALIFORNIA               
+0120045751700017          State Treasurer                                         ELLEN H. BROWN                        Pct 7517                      CALIFORNIA               
+0120045752700020          State Treasurer                                         ELLEN H. BROWN                        Pct 7527/7528                 CALIFORNIA               
+0120045753300037          State Treasurer                                         ELLEN H. BROWN                        Pct 7533                      CALIFORNIA               
+0120045760800014          State Treasurer                                         ELLEN H. BROWN                        Pct 7608                      CALIFORNIA               
 0120045763400025          State Treasurer                                         ELLEN H. BROWN                        Pct 7634                      CALIFORNIA               
-0120045764600014          State Treasurer                                         ELLEN H. BROWN                        Pct 7646                      CALIFORNIA               
-0120045770700024          State Treasurer                                         ELLEN H. BROWN                        Pct 7707                      CALIFORNIA               
+0120045764500011          State Treasurer                                         ELLEN H. BROWN                        Pct 7645                      CALIFORNIA               
+0120045780300028          State Treasurer                                         ELLEN H. BROWN                        Pct 7803                      CALIFORNIA               
 0120045780700017          State Treasurer                                         ELLEN H. BROWN                        Pct 7807                      CALIFORNIA               
-0120045781300032          State Treasurer                                         ELLEN H. BROWN                        Pct 7813                      CALIFORNIA               
-0120045784800026          State Treasurer                                         ELLEN H. BROWN                        Pct 7848                      CALIFORNIA               
-0120045785300016          State Treasurer                                         ELLEN H. BROWN                        Pct 7853                      CALIFORNIA               
-0120045790800050          State Treasurer                                         ELLEN H. BROWN                        Pct 7908                      CALIFORNIA               
-0120045792200044          State Treasurer                                         ELLEN H. BROWN                        Pct 7922                      CALIFORNIA               
-0120045793600039          State Treasurer                                         ELLEN H. BROWN                        Pct 7936                      CALIFORNIA               
-0120045793900029          State Treasurer                                         ELLEN H. BROWN                        Pct 7939                      CALIFORNIA               
-0120045794600024          State Treasurer                                         ELLEN H. BROWN                        Pct 7946                      CALIFORNIA               
-0120045910200015          State Treasurer                                         ELLEN H. BROWN                        Pct 9102                      CALIFORNIA               
-0120045912300016          State Treasurer                                         ELLEN H. BROWN                        Pct 9123                      CALIFORNIA               
-0120045914300030          State Treasurer                                         ELLEN H. BROWN                        Pct 9143                      CALIFORNIA               
-0120045923500013          State Treasurer                                         ELLEN H. BROWN                        Pct 9235                      CALIFORNIA               
-0120045925400011          State Treasurer                                         ELLEN H. BROWN                        Pct 9254                      CALIFORNIA               
-0120045925500010          State Treasurer                                         ELLEN H. BROWN                        Pct 9255                      CALIFORNIA               
-0120045940200034          State Treasurer                                         ELLEN H. BROWN                        Pct 9402                      CALIFORNIA               
-0120045941700023          State Treasurer                                         ELLEN H. BROWN                        Pct 9417                      CALIFORNIA               
-0120045943300010          State Treasurer                                         ELLEN H. BROWN                        Pct 9433                      CALIFORNIA               
-0120045943400028          State Treasurer                                         ELLEN H. BROWN                        Pct 9434                      CALIFORNIA               
-0120045952100032          State Treasurer                                         ELLEN H. BROWN                        Pct 9521                      CALIFORNIA               
+0120045785400029          State Treasurer                                         ELLEN H. BROWN                        Pct 7854                      CALIFORNIA               
+0120045786800029          State Treasurer                                         ELLEN H. BROWN                        Pct 7868                      CALIFORNIA               
+0120045791100035          State Treasurer                                         ELLEN H. BROWN                        Pct 7911                      CALIFORNIA               
+0120045791600044          State Treasurer                                         ELLEN H. BROWN                        Pct 7916                      CALIFORNIA               
+0120045793100042          State Treasurer                                         ELLEN H. BROWN                        Pct 7931                      CALIFORNIA               
+0120045793700032          State Treasurer                                         ELLEN H. BROWN                        Pct 7937                      CALIFORNIA               
+0120045794300028          State Treasurer                                         ELLEN H. BROWN                        Pct 7943                      CALIFORNIA               
+0120045794700021          State Treasurer                                         ELLEN H. BROWN                        Pct 7947                      CALIFORNIA               
+0120045795600014          State Treasurer                                         ELLEN H. BROWN                        Pct 7956                      CALIFORNIA               
+0120045910800020          State Treasurer                                         ELLEN H. BROWN                        Pct 9108                      CALIFORNIA               
+0120045913400019          State Treasurer                                         ELLEN H. BROWN                        Pct 9134                      CALIFORNIA               
+0120045914200028          State Treasurer                                         ELLEN H. BROWN                        Pct 9142                      CALIFORNIA               
+0120045914500014          State Treasurer                                         ELLEN H. BROWN                        Pct 9145                      CALIFORNIA               
+0120045922100010          State Treasurer                                         ELLEN H. BROWN                        Pct 9221                      CALIFORNIA               
+0120045923100026          State Treasurer                                         ELLEN H. BROWN                        Pct 9231                      CALIFORNIA               
+0120045924800019          State Treasurer                                         ELLEN H. BROWN                        Pct 9248                      CALIFORNIA               
+0120045943200021          State Treasurer                                         ELLEN H. BROWN                        Pct 9432                      CALIFORNIA               
+0120045944100020          State Treasurer                                         ELLEN H. BROWN                        Pct 9441                      CALIFORNIA               
+0120045951400026          State Treasurer                                         ELLEN H. BROWN                        Pct 9514/9522                 CALIFORNIA               
 0120045970700019          State Treasurer                                         ELLEN H. BROWN                        Pct 9707                      CALIFORNIA               
-0120045972800025          State Treasurer                                         ELLEN H. BROWN                        Pct 9728                      CALIFORNIA               
-0120045973400009          State Treasurer                                         ELLEN H. BROWN                        Pct 9734                      CALIFORNIA               
-0120045973900017          State Treasurer                                         ELLEN H. BROWN                        Pct 9739                      CALIFORNIA               
+0120045970800024          State Treasurer                                         ELLEN H. BROWN                        Pct 9708                      CALIFORNIA               
+0120045971100020          State Treasurer                                         ELLEN H. BROWN                        Pct 9711                      CALIFORNIA               
+0120045973800017          State Treasurer                                         ELLEN H. BROWN                        Pct 9738                      CALIFORNIA               
+0120045974100000          State Treasurer                                         ELLEN H. BROWN                        Pct 9741                      CALIFORNIA               
 0120045990000000          State Treasurer                                         ELLEN H. BROWN                        Pct 9900 MB                   CALIFORNIA               
-0120046111600012          State Treasurer                                         GREG CONLON                           Pct 1116                      CALIFORNIA               
-0120046111900011          State Treasurer                                         GREG CONLON                           Pct 1119                      CALIFORNIA               
-0120046114600032          State Treasurer                                         GREG CONLON                           Pct 1146                      CALIFORNIA               
-0120046700200024          State Treasurer                                         GREG CONLON                           Pct 7002                      CALIFORNIA               
+0120046110800015          State Treasurer                                         GREG CONLON                           Pct 1108                      CALIFORNIA               
+0120046112700031          State Treasurer                                         GREG CONLON                           Pct 1127                      CALIFORNIA               
+0120046115100000          State Treasurer                                         GREG CONLON                           Pct 1151 MB                   CALIFORNIA               
+0120046115200026          State Treasurer                                         GREG CONLON                           Pct 1152                      CALIFORNIA               
+0120046115300042          State Treasurer                                         GREG CONLON                           Pct 1153                      CALIFORNIA               
 0120046700300021          State Treasurer                                         GREG CONLON                           Pct 7003                      CALIFORNIA               
-0120046702900011          State Treasurer                                         GREG CONLON                           Pct 7029                      CALIFORNIA               
+0120046702200014          State Treasurer                                         GREG CONLON                           Pct 7022                      CALIFORNIA               
 0120046703400003          State Treasurer                                         GREG CONLON                           Pct 7034                      CALIFORNIA               
-0120046704600013          State Treasurer                                         GREG CONLON                           Pct 7046                      CALIFORNIA               
 0120046730400040          State Treasurer                                         GREG CONLON                           Pct 7304                      CALIFORNIA               
-0120046732200014          State Treasurer                                         GREG CONLON                           Pct 7322                      CALIFORNIA               
+0120046732800017          State Treasurer                                         GREG CONLON                           Pct 7328                      CALIFORNIA               
+0120046733200019          State Treasurer                                         GREG CONLON                           Pct 7332                      CALIFORNIA               
 0120046733500043          State Treasurer                                         GREG CONLON                           Pct 7335                      CALIFORNIA               
-0120046734900029          State Treasurer                                         GREG CONLON                           Pct 7349                      CALIFORNIA               
-0120046750100025          State Treasurer                                         GREG CONLON                           Pct 7501                      CALIFORNIA               
-0120046751200026          State Treasurer                                         GREG CONLON                           Pct 7512                      CALIFORNIA               
-0120046754200010          State Treasurer                                         GREG CONLON                           Pct 7542                      CALIFORNIA               
-0120046755100009          State Treasurer                                         GREG CONLON                           Pct 7551                      CALIFORNIA               
-0120046760400019          State Treasurer                                         GREG CONLON                           Pct 7604                      CALIFORNIA               
-0120046761100019          State Treasurer                                         GREG CONLON                           Pct 7611                      CALIFORNIA               
+0120046750400015          State Treasurer                                         GREG CONLON                           Pct 7504                      CALIFORNIA               
+0120046750900036          State Treasurer                                         GREG CONLON                           Pct 7509/7511                 CALIFORNIA               
+0120046751700009          State Treasurer                                         GREG CONLON                           Pct 7517                      CALIFORNIA               
+0120046752700031          State Treasurer                                         GREG CONLON                           Pct 7527/7528                 CALIFORNIA               
+0120046753300015          State Treasurer                                         GREG CONLON                           Pct 7533                      CALIFORNIA               
+0120046760800011          State Treasurer                                         GREG CONLON                           Pct 7608                      CALIFORNIA               
 0120046763400027          State Treasurer                                         GREG CONLON                           Pct 7634                      CALIFORNIA               
-0120046764600024          State Treasurer                                         GREG CONLON                           Pct 7646                      CALIFORNIA               
-0120046770700045          State Treasurer                                         GREG CONLON                           Pct 7707                      CALIFORNIA               
+0120046764500036          State Treasurer                                         GREG CONLON                           Pct 7645                      CALIFORNIA               
+0120046780300021          State Treasurer                                         GREG CONLON                           Pct 7803                      CALIFORNIA               
 0120046780700005          State Treasurer                                         GREG CONLON                           Pct 7807                      CALIFORNIA               
-0120046781300016          State Treasurer                                         GREG CONLON                           Pct 7813                      CALIFORNIA               
-0120046784800014          State Treasurer                                         GREG CONLON                           Pct 7848                      CALIFORNIA               
-0120046785300033          State Treasurer                                         GREG CONLON                           Pct 7853                      CALIFORNIA               
-0120046790800032          State Treasurer                                         GREG CONLON                           Pct 7908                      CALIFORNIA               
-0120046792200018          State Treasurer                                         GREG CONLON                           Pct 7922                      CALIFORNIA               
-0120046793600019          State Treasurer                                         GREG CONLON                           Pct 7936                      CALIFORNIA               
-0120046793900011          State Treasurer                                         GREG CONLON                           Pct 7939                      CALIFORNIA               
-0120046794600027          State Treasurer                                         GREG CONLON                           Pct 7946                      CALIFORNIA               
-0120046910200044          State Treasurer                                         GREG CONLON                           Pct 9102                      CALIFORNIA               
-0120046912300034          State Treasurer                                         GREG CONLON                           Pct 9123                      CALIFORNIA               
-0120046914300019          State Treasurer                                         GREG CONLON                           Pct 9143                      CALIFORNIA               
-0120046923500073          State Treasurer                                         GREG CONLON                           Pct 9235                      CALIFORNIA               
-0120046925400029          State Treasurer                                         GREG CONLON                           Pct 9254                      CALIFORNIA               
-0120046925500022          State Treasurer                                         GREG CONLON                           Pct 9255                      CALIFORNIA               
-0120046940200024          State Treasurer                                         GREG CONLON                           Pct 9402                      CALIFORNIA               
-0120046941700036          State Treasurer                                         GREG CONLON                           Pct 9417                      CALIFORNIA               
-0120046943300043          State Treasurer                                         GREG CONLON                           Pct 9433                      CALIFORNIA               
-0120046943400042          State Treasurer                                         GREG CONLON                           Pct 9434                      CALIFORNIA               
-0120046952100018          State Treasurer                                         GREG CONLON                           Pct 9521                      CALIFORNIA               
+0120046785400023          State Treasurer                                         GREG CONLON                           Pct 7854                      CALIFORNIA               
+0120046786800030          State Treasurer                                         GREG CONLON                           Pct 7868                      CALIFORNIA               
+0120046791100014          State Treasurer                                         GREG CONLON                           Pct 7911                      CALIFORNIA               
+0120046791600009          State Treasurer                                         GREG CONLON                           Pct 7916                      CALIFORNIA               
+0120046793100015          State Treasurer                                         GREG CONLON                           Pct 7931                      CALIFORNIA               
+0120046793700014          State Treasurer                                         GREG CONLON                           Pct 7937                      CALIFORNIA               
+0120046794300032          State Treasurer                                         GREG CONLON                           Pct 7943                      CALIFORNIA               
+0120046794700025          State Treasurer                                         GREG CONLON                           Pct 7947                      CALIFORNIA               
+0120046795600023          State Treasurer                                         GREG CONLON                           Pct 7956                      CALIFORNIA               
+0120046910800017          State Treasurer                                         GREG CONLON                           Pct 9108                      CALIFORNIA               
+0120046913400023          State Treasurer                                         GREG CONLON                           Pct 9134                      CALIFORNIA               
+0120046914200021          State Treasurer                                         GREG CONLON                           Pct 9142                      CALIFORNIA               
+0120046914500029          State Treasurer                                         GREG CONLON                           Pct 9145                      CALIFORNIA               
+0120046922100079          State Treasurer                                         GREG CONLON                           Pct 9221                      CALIFORNIA               
+0120046923100043          State Treasurer                                         GREG CONLON                           Pct 9231                      CALIFORNIA               
+0120046924800032          State Treasurer                                         GREG CONLON                           Pct 9248                      CALIFORNIA               
+0120046943200031          State Treasurer                                         GREG CONLON                           Pct 9432                      CALIFORNIA               
+0120046944100037          State Treasurer                                         GREG CONLON                           Pct 9441                      CALIFORNIA               
+0120046951400015          State Treasurer                                         GREG CONLON                           Pct 9514/9522                 CALIFORNIA               
 0120046970700040          State Treasurer                                         GREG CONLON                           Pct 9707                      CALIFORNIA               
-0120046972800087          State Treasurer                                         GREG CONLON                           Pct 9728                      CALIFORNIA               
-0120046973400068          State Treasurer                                         GREG CONLON                           Pct 9734                      CALIFORNIA               
-0120046973900019          State Treasurer                                         GREG CONLON                           Pct 9739                      CALIFORNIA               
+0120046970800030          State Treasurer                                         GREG CONLON                           Pct 9708                      CALIFORNIA               
+0120046971100037          State Treasurer                                         GREG CONLON                           Pct 9711                      CALIFORNIA               
+0120046973800039          State Treasurer                                         GREG CONLON                           Pct 9738                      CALIFORNIA               
+0120046974100000          State Treasurer                                         GREG CONLON                           Pct 9741                      CALIFORNIA               
 0120046990000000          State Treasurer                                         GREG CONLON                           Pct 9900 MB                   CALIFORNIA               
-0120047111600151          State Treasurer                                         JOHN CHIANG                           Pct 1116                      CALIFORNIA               
-0120047111900115          State Treasurer                                         JOHN CHIANG                           Pct 1119                      CALIFORNIA               
-0120047114600171          State Treasurer                                         JOHN CHIANG                           Pct 1146                      CALIFORNIA               
-0120047700200148          State Treasurer                                         JOHN CHIANG                           Pct 7002                      CALIFORNIA               
+0120047110800191          State Treasurer                                         JOHN CHIANG                           Pct 1108                      CALIFORNIA               
+0120047112700158          State Treasurer                                         JOHN CHIANG                           Pct 1127                      CALIFORNIA               
+0120047115100000          State Treasurer                                         JOHN CHIANG                           Pct 1151 MB                   CALIFORNIA               
+0120047115200169          State Treasurer                                         JOHN CHIANG                           Pct 1152                      CALIFORNIA               
+0120047115300141          State Treasurer                                         JOHN CHIANG                           Pct 1153                      CALIFORNIA               
 0120047700300185          State Treasurer                                         JOHN CHIANG                           Pct 7003                      CALIFORNIA               
-0120047702900086          State Treasurer                                         JOHN CHIANG                           Pct 7029                      CALIFORNIA               
+0120047702200146          State Treasurer                                         JOHN CHIANG                           Pct 7022                      CALIFORNIA               
 0120047703400056          State Treasurer                                         JOHN CHIANG                           Pct 7034                      CALIFORNIA               
-0120047704600082          State Treasurer                                         JOHN CHIANG                           Pct 7046                      CALIFORNIA               
 0120047730400167          State Treasurer                                         JOHN CHIANG                           Pct 7304                      CALIFORNIA               
-0120047732200198          State Treasurer                                         JOHN CHIANG                           Pct 7322                      CALIFORNIA               
+0120047732800193          State Treasurer                                         JOHN CHIANG                           Pct 7328                      CALIFORNIA               
+0120047733200120          State Treasurer                                         JOHN CHIANG                           Pct 7332                      CALIFORNIA               
 0120047733500168          State Treasurer                                         JOHN CHIANG                           Pct 7335                      CALIFORNIA               
-0120047734900148          State Treasurer                                         JOHN CHIANG                           Pct 7349                      CALIFORNIA               
-0120047750100083          State Treasurer                                         JOHN CHIANG                           Pct 7501                      CALIFORNIA               
-0120047751200108          State Treasurer                                         JOHN CHIANG                           Pct 7512                      CALIFORNIA               
-0120047754200136          State Treasurer                                         JOHN CHIANG                           Pct 7542                      CALIFORNIA               
-0120047755100146          State Treasurer                                         JOHN CHIANG                           Pct 7551                      CALIFORNIA               
-0120047760400120          State Treasurer                                         JOHN CHIANG                           Pct 7604                      CALIFORNIA               
-0120047761100122          State Treasurer                                         JOHN CHIANG                           Pct 7611                      CALIFORNIA               
+0120047750400100          State Treasurer                                         JOHN CHIANG                           Pct 7504                      CALIFORNIA               
+0120047750900201          State Treasurer                                         JOHN CHIANG                           Pct 7509/7511                 CALIFORNIA               
+0120047751700155          State Treasurer                                         JOHN CHIANG                           Pct 7517                      CALIFORNIA               
+0120047752700134          State Treasurer                                         JOHN CHIANG                           Pct 7527/7528                 CALIFORNIA               
+0120047753300123          State Treasurer                                         JOHN CHIANG                           Pct 7533                      CALIFORNIA               
+0120047760800081          State Treasurer                                         JOHN CHIANG                           Pct 7608                      CALIFORNIA               
 0120047763400178          State Treasurer                                         JOHN CHIANG                           Pct 7634                      CALIFORNIA               
-0120047764600157          State Treasurer                                         JOHN CHIANG                           Pct 7646                      CALIFORNIA               
-0120047770700245          State Treasurer                                         JOHN CHIANG                           Pct 7707                      CALIFORNIA               
+0120047764500116          State Treasurer                                         JOHN CHIANG                           Pct 7645                      CALIFORNIA               
+0120047780300248          State Treasurer                                         JOHN CHIANG                           Pct 7803                      CALIFORNIA               
 0120047780700159          State Treasurer                                         JOHN CHIANG                           Pct 7807                      CALIFORNIA               
-0120047781300225          State Treasurer                                         JOHN CHIANG                           Pct 7813                      CALIFORNIA               
-0120047784800225          State Treasurer                                         JOHN CHIANG                           Pct 7848                      CALIFORNIA               
-0120047785300203          State Treasurer                                         JOHN CHIANG                           Pct 7853                      CALIFORNIA               
-0120047790800194          State Treasurer                                         JOHN CHIANG                           Pct 7908                      CALIFORNIA               
-0120047792200131          State Treasurer                                         JOHN CHIANG                           Pct 7922                      CALIFORNIA               
-0120047793600221          State Treasurer                                         JOHN CHIANG                           Pct 7936                      CALIFORNIA               
-0120047793900180          State Treasurer                                         JOHN CHIANG                           Pct 7939                      CALIFORNIA               
-0120047794600208          State Treasurer                                         JOHN CHIANG                           Pct 7946                      CALIFORNIA               
-0120047910200156          State Treasurer                                         JOHN CHIANG                           Pct 9102                      CALIFORNIA               
-0120047912300138          State Treasurer                                         JOHN CHIANG                           Pct 9123                      CALIFORNIA               
-0120047914300175          State Treasurer                                         JOHN CHIANG                           Pct 9143                      CALIFORNIA               
-0120047923500125          State Treasurer                                         JOHN CHIANG                           Pct 9235                      CALIFORNIA               
-0120047925400145          State Treasurer                                         JOHN CHIANG                           Pct 9254                      CALIFORNIA               
-0120047925500064          State Treasurer                                         JOHN CHIANG                           Pct 9255                      CALIFORNIA               
-0120047940200132          State Treasurer                                         JOHN CHIANG                           Pct 9402                      CALIFORNIA               
-0120047941700109          State Treasurer                                         JOHN CHIANG                           Pct 9417                      CALIFORNIA               
-0120047943300158          State Treasurer                                         JOHN CHIANG                           Pct 9433                      CALIFORNIA               
-0120047943400183          State Treasurer                                         JOHN CHIANG                           Pct 9434                      CALIFORNIA               
-0120047952100141          State Treasurer                                         JOHN CHIANG                           Pct 9521                      CALIFORNIA               
+0120047785400194          State Treasurer                                         JOHN CHIANG                           Pct 7854                      CALIFORNIA               
+0120047786800230          State Treasurer                                         JOHN CHIANG                           Pct 7868                      CALIFORNIA               
+0120047791100144          State Treasurer                                         JOHN CHIANG                           Pct 7911                      CALIFORNIA               
+0120047791600174          State Treasurer                                         JOHN CHIANG                           Pct 7916                      CALIFORNIA               
+0120047793100215          State Treasurer                                         JOHN CHIANG                           Pct 7931                      CALIFORNIA               
+0120047793700201          State Treasurer                                         JOHN CHIANG                           Pct 7937                      CALIFORNIA               
+0120047794300179          State Treasurer                                         JOHN CHIANG                           Pct 7943                      CALIFORNIA               
+0120047794700158          State Treasurer                                         JOHN CHIANG                           Pct 7947                      CALIFORNIA               
+0120047795600142          State Treasurer                                         JOHN CHIANG                           Pct 7956                      CALIFORNIA               
+0120047910800111          State Treasurer                                         JOHN CHIANG                           Pct 9108                      CALIFORNIA               
+0120047913400118          State Treasurer                                         JOHN CHIANG                           Pct 9134                      CALIFORNIA               
+0120047914200139          State Treasurer                                         JOHN CHIANG                           Pct 9142                      CALIFORNIA               
+0120047914500166          State Treasurer                                         JOHN CHIANG                           Pct 9145                      CALIFORNIA               
+0120047922100113          State Treasurer                                         JOHN CHIANG                           Pct 9221                      CALIFORNIA               
+0120047923100181          State Treasurer                                         JOHN CHIANG                           Pct 9231                      CALIFORNIA               
+0120047924800116          State Treasurer                                         JOHN CHIANG                           Pct 9248                      CALIFORNIA               
+0120047943200183          State Treasurer                                         JOHN CHIANG                           Pct 9432                      CALIFORNIA               
+0120047944100173          State Treasurer                                         JOHN CHIANG                           Pct 9441                      CALIFORNIA               
+0120047951400120          State Treasurer                                         JOHN CHIANG                           Pct 9514/9522                 CALIFORNIA               
 0120047970700165          State Treasurer                                         JOHN CHIANG                           Pct 9707                      CALIFORNIA               
-0120047972800194          State Treasurer                                         JOHN CHIANG                           Pct 9728                      CALIFORNIA               
-0120047973400147          State Treasurer                                         JOHN CHIANG                           Pct 9734                      CALIFORNIA               
-0120047973900093          State Treasurer                                         JOHN CHIANG                           Pct 9739                      CALIFORNIA               
+0120047970800156          State Treasurer                                         JOHN CHIANG                           Pct 9708                      CALIFORNIA               
+0120047971100154          State Treasurer                                         JOHN CHIANG                           Pct 9711                      CALIFORNIA               
+0120047973800124          State Treasurer                                         JOHN CHIANG                           Pct 9738                      CALIFORNIA               
+0120047974100003          State Treasurer                                         JOHN CHIANG                           Pct 9741                      CALIFORNIA               
 0120047990000000          State Treasurer                                         JOHN CHIANG                           Pct 9900 MB                   CALIFORNIA               
-0145078111600023          US Representative, District 14                          ROBIN CHEW                            Pct 1116                      14TH CONGRESSIONAL DISTRI
-0145078111900018          US Representative, District 14                          ROBIN CHEW                            Pct 1119                      14TH CONGRESSIONAL DISTRI
-0145078972800100          US Representative, District 14                          ROBIN CHEW                            Pct 9728                      14TH CONGRESSIONAL DISTRI
-0145078973400058          US Representative, District 14                          ROBIN CHEW                            Pct 9734                      14TH CONGRESSIONAL DISTRI
-0145078973900016          US Representative, District 14                          ROBIN CHEW                            Pct 9739                      14TH CONGRESSIONAL DISTRI
-0145079111600163          US Representative, District 14                          JACKIE SPEIER                         Pct 1116                      14TH CONGRESSIONAL DISTRI
-0145079111900138          US Representative, District 14                          JACKIE SPEIER                         Pct 1119                      14TH CONGRESSIONAL DISTRI
-0145079972800223          US Representative, District 14                          JACKIE SPEIER                         Pct 9728                      14TH CONGRESSIONAL DISTRI
-0145079973400182          US Representative, District 14                          JACKIE SPEIER                         Pct 9734                      14TH CONGRESSIONAL DISTRI
-0145079973900123          US Representative, District 14                          JACKIE SPEIER                         Pct 9739                      14TH CONGRESSIONAL DISTRI
-0150081114600103          State Assembly, District 17                             DAVID CHIU                            Pct 1146                      17TH ASSEMBLY DISTRICT   
-0150081700200093          State Assembly, District 17                             DAVID CHIU                            Pct 7002                      17TH ASSEMBLY DISTRICT   
+0145078110800025          US Representative, District 14                          ROBIN CHEW                            Pct 1108                      14TH CONGRESSIONAL DISTRI
+0145078112700045          US Representative, District 14                          ROBIN CHEW                            Pct 1127                      14TH CONGRESSIONAL DISTRI
+0145078973800032          US Representative, District 14                          ROBIN CHEW                            Pct 9738                      14TH CONGRESSIONAL DISTRI
+0145078974100000          US Representative, District 14                          ROBIN CHEW                            Pct 9741                      14TH CONGRESSIONAL DISTRI
+0145079110800213          US Representative, District 14                          JACKIE SPEIER                         Pct 1108                      14TH CONGRESSIONAL DISTRI
+0145079112700171          US Representative, District 14                          JACKIE SPEIER                         Pct 1127                      14TH CONGRESSIONAL DISTRI
+0145079973800161          US Representative, District 14                          JACKIE SPEIER                         Pct 9738                      14TH CONGRESSIONAL DISTRI
+0145079974100003          US Representative, District 14                          JACKIE SPEIER                         Pct 9741                      14TH CONGRESSIONAL DISTRI
+0150081115100000          State Assembly, District 17                             DAVID CHIU                            Pct 1151 MB                   17TH ASSEMBLY DISTRICT   
+0150081115200125          State Assembly, District 17                             DAVID CHIU                            Pct 1152                      17TH ASSEMBLY DISTRICT   
+0150081115300101          State Assembly, District 17                             DAVID CHIU                            Pct 1153                      17TH ASSEMBLY DISTRICT   
 0150081700300107          State Assembly, District 17                             DAVID CHIU                            Pct 7003                      17TH ASSEMBLY DISTRICT   
-0150081702900057          State Assembly, District 17                             DAVID CHIU                            Pct 7029                      17TH ASSEMBLY DISTRICT   
+0150081702200098          State Assembly, District 17                             DAVID CHIU                            Pct 7022                      17TH ASSEMBLY DISTRICT   
 0150081703400042          State Assembly, District 17                             DAVID CHIU                            Pct 7034                      17TH ASSEMBLY DISTRICT   
-0150081704600051          State Assembly, District 17                             DAVID CHIU                            Pct 7046                      17TH ASSEMBLY DISTRICT   
 0150081730400150          State Assembly, District 17                             DAVID CHIU                            Pct 7304                      17TH ASSEMBLY DISTRICT   
-0150081732200210          State Assembly, District 17                             DAVID CHIU                            Pct 7322                      17TH ASSEMBLY DISTRICT   
+0150081732800193          State Assembly, District 17                             DAVID CHIU                            Pct 7328                      17TH ASSEMBLY DISTRICT   
+0150081733200087          State Assembly, District 17                             DAVID CHIU                            Pct 7332                      17TH ASSEMBLY DISTRICT   
 0150081733500138          State Assembly, District 17                             DAVID CHIU                            Pct 7335                      17TH ASSEMBLY DISTRICT   
-0150081734900127          State Assembly, District 17                             DAVID CHIU                            Pct 7349                      17TH ASSEMBLY DISTRICT   
-0150081750100075          State Assembly, District 17                             DAVID CHIU                            Pct 7501                      17TH ASSEMBLY DISTRICT   
-0150081751200060          State Assembly, District 17                             DAVID CHIU                            Pct 7512                      17TH ASSEMBLY DISTRICT   
-0150081754200072          State Assembly, District 17                             DAVID CHIU                            Pct 7542                      17TH ASSEMBLY DISTRICT   
-0150081755100077          State Assembly, District 17                             DAVID CHIU                            Pct 7551                      17TH ASSEMBLY DISTRICT   
-0150081760400076          State Assembly, District 17                             DAVID CHIU                            Pct 7604                      17TH ASSEMBLY DISTRICT   
-0150081761100099          State Assembly, District 17                             DAVID CHIU                            Pct 7611                      17TH ASSEMBLY DISTRICT   
+0150081750400062          State Assembly, District 17                             DAVID CHIU                            Pct 7504                      17TH ASSEMBLY DISTRICT   
+0150081750900146          State Assembly, District 17                             DAVID CHIU                            Pct 7509/7511                 17TH ASSEMBLY DISTRICT   
+0150081751700074          State Assembly, District 17                             DAVID CHIU                            Pct 7517                      17TH ASSEMBLY DISTRICT   
+0150081752700094          State Assembly, District 17                             DAVID CHIU                            Pct 7527/7528                 17TH ASSEMBLY DISTRICT   
+0150081753300070          State Assembly, District 17                             DAVID CHIU                            Pct 7533                      17TH ASSEMBLY DISTRICT   
+0150081760800068          State Assembly, District 17                             DAVID CHIU                            Pct 7608                      17TH ASSEMBLY DISTRICT   
 0150081763400161          State Assembly, District 17                             DAVID CHIU                            Pct 7634                      17TH ASSEMBLY DISTRICT   
-0150081764600112          State Assembly, District 17                             DAVID CHIU                            Pct 7646                      17TH ASSEMBLY DISTRICT   
-0150081770700181          State Assembly, District 17                             DAVID CHIU                            Pct 7707                      17TH ASSEMBLY DISTRICT   
+0150081764500104          State Assembly, District 17                             DAVID CHIU                            Pct 7645                      17TH ASSEMBLY DISTRICT   
+0150081780300159          State Assembly, District 17                             DAVID CHIU                            Pct 7803                      17TH ASSEMBLY DISTRICT   
 0150081780700073          State Assembly, District 17                             DAVID CHIU                            Pct 7807                      17TH ASSEMBLY DISTRICT   
-0150081781300103          State Assembly, District 17                             DAVID CHIU                            Pct 7813                      17TH ASSEMBLY DISTRICT   
-0150081784800145          State Assembly, District 17                             DAVID CHIU                            Pct 7848                      17TH ASSEMBLY DISTRICT   
-0150081785300134          State Assembly, District 17                             DAVID CHIU                            Pct 7853                      17TH ASSEMBLY DISTRICT   
-0150081790800091          State Assembly, District 17                             DAVID CHIU                            Pct 7908                      17TH ASSEMBLY DISTRICT   
-0150081792200060          State Assembly, District 17                             DAVID CHIU                            Pct 7922                      17TH ASSEMBLY DISTRICT   
-0150081793600094          State Assembly, District 17                             DAVID CHIU                            Pct 7936                      17TH ASSEMBLY DISTRICT   
-0150081793900090          State Assembly, District 17                             DAVID CHIU                            Pct 7939                      17TH ASSEMBLY DISTRICT   
-0150081794600140          State Assembly, District 17                             DAVID CHIU                            Pct 7946                      17TH ASSEMBLY DISTRICT   
+0150081785400130          State Assembly, District 17                             DAVID CHIU                            Pct 7854                      17TH ASSEMBLY DISTRICT   
+0150081786800160          State Assembly, District 17                             DAVID CHIU                            Pct 7868                      17TH ASSEMBLY DISTRICT   
+0150081791100066          State Assembly, District 17                             DAVID CHIU                            Pct 7911                      17TH ASSEMBLY DISTRICT   
+0150081791600073          State Assembly, District 17                             DAVID CHIU                            Pct 7916                      17TH ASSEMBLY DISTRICT   
+0150081793100106          State Assembly, District 17                             DAVID CHIU                            Pct 7931                      17TH ASSEMBLY DISTRICT   
+0150081793700070          State Assembly, District 17                             DAVID CHIU                            Pct 7937                      17TH ASSEMBLY DISTRICT   
+0150081794300112          State Assembly, District 17                             DAVID CHIU                            Pct 7943                      17TH ASSEMBLY DISTRICT   
+0150081794700124          State Assembly, District 17                             DAVID CHIU                            Pct 7947                      17TH ASSEMBLY DISTRICT   
+0150081795600110          State Assembly, District 17                             DAVID CHIU                            Pct 7956                      17TH ASSEMBLY DISTRICT   
 0150081990000000          State Assembly, District 17                             DAVID CHIU                            Pct 9900 MB                   17TH ASSEMBLY DISTRICT   
-0150082114600109          State Assembly, District 17                             DAVID CAMPOS                          Pct 1146                      17TH ASSEMBLY DISTRICT   
-0150082700200087          State Assembly, District 17                             DAVID CAMPOS                          Pct 7002                      17TH ASSEMBLY DISTRICT   
+0150082115100000          State Assembly, District 17                             DAVID CAMPOS                          Pct 1151 MB                   17TH ASSEMBLY DISTRICT   
+0150082115200089          State Assembly, District 17                             DAVID CAMPOS                          Pct 1152                      17TH ASSEMBLY DISTRICT   
+0150082115300074          State Assembly, District 17                             DAVID CAMPOS                          Pct 1153                      17TH ASSEMBLY DISTRICT   
 0150082700300131          State Assembly, District 17                             DAVID CAMPOS                          Pct 7003                      17TH ASSEMBLY DISTRICT   
-0150082702900061          State Assembly, District 17                             DAVID CAMPOS                          Pct 7029                      17TH ASSEMBLY DISTRICT   
+0150082702200083          State Assembly, District 17                             DAVID CAMPOS                          Pct 7022                      17TH ASSEMBLY DISTRICT   
 0150082703400024          State Assembly, District 17                             DAVID CAMPOS                          Pct 7034                      17TH ASSEMBLY DISTRICT   
-0150082704600054          State Assembly, District 17                             DAVID CAMPOS                          Pct 7046                      17TH ASSEMBLY DISTRICT   
 0150082730400084          State Assembly, District 17                             DAVID CAMPOS                          Pct 7304                      17TH ASSEMBLY DISTRICT   
-0150082732200022          State Assembly, District 17                             DAVID CAMPOS                          Pct 7322                      17TH ASSEMBLY DISTRICT   
+0150082732800038          State Assembly, District 17                             DAVID CAMPOS                          Pct 7328                      17TH ASSEMBLY DISTRICT   
+0150082733200068          State Assembly, District 17                             DAVID CAMPOS                          Pct 7332                      17TH ASSEMBLY DISTRICT   
 0150082733500074          State Assembly, District 17                             DAVID CAMPOS                          Pct 7335                      17TH ASSEMBLY DISTRICT   
-0150082734900063          State Assembly, District 17                             DAVID CAMPOS                          Pct 7349                      17TH ASSEMBLY DISTRICT   
-0150082750100025          State Assembly, District 17                             DAVID CAMPOS                          Pct 7501                      17TH ASSEMBLY DISTRICT   
-0150082751200070          State Assembly, District 17                             DAVID CAMPOS                          Pct 7512                      17TH ASSEMBLY DISTRICT   
-0150082754200111          State Assembly, District 17                             DAVID CAMPOS                          Pct 7542                      17TH ASSEMBLY DISTRICT   
-0150082755100095          State Assembly, District 17                             DAVID CAMPOS                          Pct 7551                      17TH ASSEMBLY DISTRICT   
-0150082760400081          State Assembly, District 17                             DAVID CAMPOS                          Pct 7604                      17TH ASSEMBLY DISTRICT   
-0150082761100072          State Assembly, District 17                             DAVID CAMPOS                          Pct 7611                      17TH ASSEMBLY DISTRICT   
+0150082750400042          State Assembly, District 17                             DAVID CAMPOS                          Pct 7504                      17TH ASSEMBLY DISTRICT   
+0150082750900105          State Assembly, District 17                             DAVID CAMPOS                          Pct 7509/7511                 17TH ASSEMBLY DISTRICT   
+0150082751700104          State Assembly, District 17                             DAVID CAMPOS                          Pct 7517                      17TH ASSEMBLY DISTRICT   
+0150082752700080          State Assembly, District 17                             DAVID CAMPOS                          Pct 7527/7528                 17TH ASSEMBLY DISTRICT   
+0150082753300103          State Assembly, District 17                             DAVID CAMPOS                          Pct 7533                      17TH ASSEMBLY DISTRICT   
+0150082760800035          State Assembly, District 17                             DAVID CAMPOS                          Pct 7608                      17TH ASSEMBLY DISTRICT   
 0150082763400065          State Assembly, District 17                             DAVID CAMPOS                          Pct 7634                      17TH ASSEMBLY DISTRICT   
-0150082764600067          State Assembly, District 17                             DAVID CAMPOS                          Pct 7646                      17TH ASSEMBLY DISTRICT   
-0150082770700098          State Assembly, District 17                             DAVID CAMPOS                          Pct 7707                      17TH ASSEMBLY DISTRICT   
+0150082764500052          State Assembly, District 17                             DAVID CAMPOS                          Pct 7645                      17TH ASSEMBLY DISTRICT   
+0150082780300143          State Assembly, District 17                             DAVID CAMPOS                          Pct 7803                      17TH ASSEMBLY DISTRICT   
 0150082780700119          State Assembly, District 17                             DAVID CAMPOS                          Pct 7807                      17TH ASSEMBLY DISTRICT   
-0150082781300177          State Assembly, District 17                             DAVID CAMPOS                          Pct 7813                      17TH ASSEMBLY DISTRICT   
-0150082784800137          State Assembly, District 17                             DAVID CAMPOS                          Pct 7848                      17TH ASSEMBLY DISTRICT   
-0150082785300106          State Assembly, District 17                             DAVID CAMPOS                          Pct 7853                      17TH ASSEMBLY DISTRICT   
-0150082790800193          State Assembly, District 17                             DAVID CAMPOS                          Pct 7908                      17TH ASSEMBLY DISTRICT   
-0150082792200151          State Assembly, District 17                             DAVID CAMPOS                          Pct 7922                      17TH ASSEMBLY DISTRICT   
-0150082793600196          State Assembly, District 17                             DAVID CAMPOS                          Pct 7936                      17TH ASSEMBLY DISTRICT   
-0150082793900141          State Assembly, District 17                             DAVID CAMPOS                          Pct 7939                      17TH ASSEMBLY DISTRICT   
-0150082794600106          State Assembly, District 17                             DAVID CAMPOS                          Pct 7946                      17TH ASSEMBLY DISTRICT   
+0150082785400113          State Assembly, District 17                             DAVID CAMPOS                          Pct 7854                      17TH ASSEMBLY DISTRICT   
+0150082786800114          State Assembly, District 17                             DAVID CAMPOS                          Pct 7868                      17TH ASSEMBLY DISTRICT   
+0150082791100139          State Assembly, District 17                             DAVID CAMPOS                          Pct 7911                      17TH ASSEMBLY DISTRICT   
+0150082791600159          State Assembly, District 17                             DAVID CAMPOS                          Pct 7916                      17TH ASSEMBLY DISTRICT   
+0150082793100185          State Assembly, District 17                             DAVID CAMPOS                          Pct 7931                      17TH ASSEMBLY DISTRICT   
+0150082793700187          State Assembly, District 17                             DAVID CAMPOS                          Pct 7937                      17TH ASSEMBLY DISTRICT   
+0150082794300140          State Assembly, District 17                             DAVID CAMPOS                          Pct 7943                      17TH ASSEMBLY DISTRICT   
+0150082794700067          State Assembly, District 17                             DAVID CAMPOS                          Pct 7947                      17TH ASSEMBLY DISTRICT   
+0150082795600056          State Assembly, District 17                             DAVID CAMPOS                          Pct 7956                      17TH ASSEMBLY DISTRICT   
 0150082990000000          State Assembly, District 17                             DAVID CAMPOS                          Pct 9900 MB                   17TH ASSEMBLY DISTRICT   
-0150083114600025          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 1146                      17TH ASSEMBLY DISTRICT   
-0150083700200023          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7002                      17TH ASSEMBLY DISTRICT   
+0150083115100000          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 1151 MB                   17TH ASSEMBLY DISTRICT   
+0150083115200021          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 1152                      17TH ASSEMBLY DISTRICT   
+0150083115300039          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 1153                      17TH ASSEMBLY DISTRICT   
 0150083700300017          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7003                      17TH ASSEMBLY DISTRICT   
-0150083702900010          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7029                      17TH ASSEMBLY DISTRICT   
+0150083702200010          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7022                      17TH ASSEMBLY DISTRICT   
 0150083703400002          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7034                      17TH ASSEMBLY DISTRICT   
-0150083704600011          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7046                      17TH ASSEMBLY DISTRICT   
 0150083730400032          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7304                      17TH ASSEMBLY DISTRICT   
-0150083732200016          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7322                      17TH ASSEMBLY DISTRICT   
+0150083732800016          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7328                      17TH ASSEMBLY DISTRICT   
+0150083733200017          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7332                      17TH ASSEMBLY DISTRICT   
 0150083733500034          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7335                      17TH ASSEMBLY DISTRICT   
-0150083734900026          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7349                      17TH ASSEMBLY DISTRICT   
-0150083750100019          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7501                      17TH ASSEMBLY DISTRICT   
-0150083751200025          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7512                      17TH ASSEMBLY DISTRICT   
-0150083754200008          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7542                      17TH ASSEMBLY DISTRICT   
-0150083755100011          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7551                      17TH ASSEMBLY DISTRICT   
-0150083760400018          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7604                      17TH ASSEMBLY DISTRICT   
-0150083761100023          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7611                      17TH ASSEMBLY DISTRICT   
+0150083750400018          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7504                      17TH ASSEMBLY DISTRICT   
+0150083750900023          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7509/7511                 17TH ASSEMBLY DISTRICT   
+0150083751700012          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7517                      17TH ASSEMBLY DISTRICT   
+0150083752700024          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7527/7528                 17TH ASSEMBLY DISTRICT   
+0150083753300016          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7533                      17TH ASSEMBLY DISTRICT   
+0150083760800009          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7608                      17TH ASSEMBLY DISTRICT   
 0150083763400020          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7634                      17TH ASSEMBLY DISTRICT   
-0150083764600024          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7646                      17TH ASSEMBLY DISTRICT   
-0150083770700045          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7707                      17TH ASSEMBLY DISTRICT   
+0150083764500028          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7645                      17TH ASSEMBLY DISTRICT   
+0150083780300016          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7803                      17TH ASSEMBLY DISTRICT   
 0150083780700005          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7807                      17TH ASSEMBLY DISTRICT   
-0150083781300012          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7813                      17TH ASSEMBLY DISTRICT   
-0150083784800008          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7848                      17TH ASSEMBLY DISTRICT   
-0150083785300023          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7853                      17TH ASSEMBLY DISTRICT   
-0150083790800019          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7908                      17TH ASSEMBLY DISTRICT   
-0150083792200008          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7922                      17TH ASSEMBLY DISTRICT   
-0150083793600011          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7936                      17TH ASSEMBLY DISTRICT   
-0150083793900009          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7939                      17TH ASSEMBLY DISTRICT   
-0150083794600026          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7946                      17TH ASSEMBLY DISTRICT   
+0150083785400025          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7854                      17TH ASSEMBLY DISTRICT   
+0150083786800031          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7868                      17TH ASSEMBLY DISTRICT   
+0150083791100006          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7911                      17TH ASSEMBLY DISTRICT   
+0150083791600005          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7916                      17TH ASSEMBLY DISTRICT   
+0150083793100012          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7931                      17TH ASSEMBLY DISTRICT   
+0150083793700016          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7937                      17TH ASSEMBLY DISTRICT   
+0150083794300018          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7943                      17TH ASSEMBLY DISTRICT   
+0150083794700026          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7947                      17TH ASSEMBLY DISTRICT   
+0150083795600024          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7956                      17TH ASSEMBLY DISTRICT   
 0150083990000000          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 9900 MB                   17TH ASSEMBLY DISTRICT   
