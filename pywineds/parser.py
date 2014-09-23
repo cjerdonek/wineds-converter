@@ -6,6 +6,7 @@ import re
 import sys
 import timeit
 
+FILE_ENCODING = "utf-8"
 WRITER_DELIMITER = "\t"
 GRAND_TOTALS_HEADER = "Grand Totals"
 
@@ -139,7 +140,7 @@ class AreasInfo(object):
     nbhd_names = make_nbhd_names()
 
     def __init__(self):
-        # A dictionary of precinct_id to precinct_name.
+        # A dict of integer precinct ID to precinct name.
         self.precincts = {}
 
         self.assembly = {}
@@ -161,7 +162,7 @@ class AreasInfo(object):
         return lambda area_id: format_str % area_id
 
 
-# TODO: rename to ReportInfo?
+# TODO: rename to ContestsInfo?
 class ElectionInfo(object):
 
     """
@@ -295,7 +296,7 @@ class Parser(object):
 
     def parse_path(self, path):
         log("opening...\n  %s" % path)
-        return self.parse_file(open(path, "r", encoding="utf-8"))
+        return self.parse_file(open(path, "r", encoding=FILE_ENCODING))
 
 
 def parse_precinct_file(path):
@@ -853,20 +854,24 @@ class ResultsWriter(Writer):
         with time_it("writing output file"):
             self.write_inner(election_info, areas_info, results)
 
-def inner_main(argv):
+
+def convert(election_name, precincts_path, export_path, output_path):
+    # TODO: consider combining these three things into a master object.
+    election_info, areas_info, results = digest_input_files(precincts_path, export_path)
+
+    with open(output_path, "w", encoding=FILE_ENCODING) as f:
+        writer = ResultsWriter(file=f, election_name=election_name)
+        writer.write(election_info, areas_info, results)
+
+def inner_main(docstr, argv):
     try:
         # TODO: use argparse.
-        election_name, precinct_index_path, results_path = argv[1:]
+        election_name, precincts_path, export_path, output_path = argv[1:]
     except ValueError:
         err = "ERROR: incorrect number of arguments"
-        exit_with_error("\n".join([err, __doc__, err]))
+        exit_with_error("\n".join([err, docstr, err]))
 
-    # TODO: consider combining these three things into a master object.
-    election_info, areas_info, results = digest_input_files(precinct_index_path, results_path)
-
-    # TODO: look into how to control the encoding when writing to stdout.
-    writer = ResultsWriter(file=sys.stdout, election_name=election_name)
-    writer.write(election_info, areas_info, results)
+    convert(election_name, precincts_path, export_path, output_path)
 
 
 class FilterParser(Parser):
@@ -991,7 +996,7 @@ def make_test_export(args):
     parser.parse_path(export_path)
 
 
-def main(argv):
+def main(docstr, argv):
     # Check length of argv to avoid the following when accessing argv[1]:
     # IndexError: list index out of range
     # TODO: use argparse.
@@ -1007,4 +1012,4 @@ def main(argv):
     # Skip a line for readability.
     log()
     with time_it("full program"):
-        inner_main(argv)
+        inner_main(docstr, argv)

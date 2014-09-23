@@ -32,4 +32,4 @@ import sys
 from pywineds.parser import main
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main(__doc__, sys.argv)
