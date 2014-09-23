@@ -9,7 +9,7 @@ def parse_test_file(now=None):
     p = Path(__file__).parents[1] / 'data/test'
 
     precincts_path, exports_path, expected_path = (str(p / name) for name in
-        ("precincts.csv", "export.txt", "out.tsv"))
+        ("precincts.csv", "wineds.txt", "output.tsv"))
 
     output_path = "temp.txt"
 
