@@ -120,6 +120,7 @@ class ContestInfo(object):
 
     """
 
+    # TODO: include ID?
     def __init__(self, name, district_name):
         self.choice_ids = set()
         self.precinct_ids = set()
@@ -627,6 +628,14 @@ def digest_input_files(precinct_index_path, wineds_path):
         except AssertionError:
             exit_with_error("precinct %d differs: %r != %r" % (i, p1, p2))
 
+    # Log the contests parsed.
+    contests = election_info.contests
+    log("parsed %d contests:" % len(contests))
+    for contest_id in sorted(contests.keys()):
+        contest = contests[contest_id]
+        log(" %3d: %s - %s (%d choices)" %
+            (contest_id, contest.name, contest.district_name, len(contest.choice_ids)))
+
     # Construct the results object.
     results = ElectionResults()
     init_results(election_info, results)
@@ -946,8 +955,10 @@ class ExportFilterParser(FilterParser):
         self.precinct_ids = precinct_ids
 
     def should_write(self, line):
-        # TODO: parse the line and examine the precinct and contest ID.
-        return self.line_no < 10
+        data = split_line(line)[0]
+        choice_id, contest_id, precinct_id, vote_total = parse_data_chunk(data)
+        return ((precinct_id in self.precinct_ids) and
+                (contest_id in self.contest_ids))
 
 
 def make_test_precincts(args):
@@ -989,7 +1000,17 @@ def make_test_export(args):
     precincts_path, export_path = args
     areas_info = parse_precinct_file(precincts_path)
 
-    parser = ExportFilterParser(precinct_ids=set(), contest_ids=set(),
+    precinct_ids = set(areas_info.precincts.keys())
+    # We include the following contests because they provide a mixture
+    # of full-city and partial-city contests:
+    #   1: Registered voters
+    #   2: Ballots cast
+    # 120: State Treasurer - CALIFORNIA (3 choices)
+    # 145: US Representative, District 14 - 14TH CONGRESSIONAL DISTRI (2 choices)
+    # 150: State Assembly, District 17 - 17TH ASSEMBLY DISTRICT (3 choices)
+    contest_ids = set((1, 2, 120, 145, 150))
+
+    parser = ExportFilterParser(precinct_ids=precinct_ids, contest_ids=contest_ids,
                                 output_file=sys.stdout)
     parser.parse_path(export_path)
 
