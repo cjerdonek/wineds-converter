@@ -57,7 +57,7 @@ New Format
 
 To see an example of what the new output format looks like, see the
 "expected" output file of the end-to-end test located at
-[`data/test/out.tsv`](data/test/out.tsv).
+[`data/test/output.tsv`](data/test/output.tsv).
 
 The format is largely self-explanatory.
 
