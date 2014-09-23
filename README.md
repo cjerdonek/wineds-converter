@@ -37,6 +37,14 @@ For usage notes, see the docstring of the main [`parse.py`](parse.py#L6)
 file.
 
 
+Testing
+-------
+
+To test the script--
+
+    $ python3 pywineds/test_parser.py
+
+
 New Format
 ----------
 

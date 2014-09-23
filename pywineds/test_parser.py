@@ -24,6 +24,11 @@ class EndToEndTest(unittest.TestCase):
     def assert_files_equal(self, actual_file, expected_file):
         for line_no, (line1, line2) in enumerate(zip(actual_file, expected_file), start=1):
             self.assertEqual(line1, line2, msg=("at line %d in actual and expected files, respectively" % line_no))
+        # Check that neither file has lines remaining.
+        for f, name in ((actual_file, "actual"), (expected_file, "expected")):
+            msg = "%r file has more lines than the other starting at line %d" % (name, line_no + 1)
+            with self.assertRaises(StopIteration, msg=msg):
+                next(f)
 
     def test_end_to_end(self):
         now = datetime(2014, 9, 22, 22, 30, 13)
