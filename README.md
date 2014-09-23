@@ -27,7 +27,8 @@ The script is written for Python 3 and was developed using Python 3.4.
 
 You can download Python [from here][python-download].
 
-Then just clone this repo or download the individual file `parse.py`.
+Then just clone this repo and follow the usage instructions below.
+Currently, there are no third-party dependencies.
 
 
 Usage
