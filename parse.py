@@ -863,9 +863,10 @@ class ResultsWriter(Writer):
                       (now.strftime("%A, %B"),
                        now.day,  # strftime lacks an option not to zero-pad the month.
                        now.strftime("%Y at %I:%M:%S %p")))
-        self.write_ln()
-        self.write_ln()
+
         for contest_id in sorted(info_contests.keys()):
+            self.write_ln()
+            self.write_ln()
             contest_info = info_contests[contest_id]
             contest_results = results_contests[contest_id]
             try:
@@ -874,8 +875,6 @@ class ResultsWriter(Writer):
                 contest_writer.write()
             except:
                 raise Exception("while processing contest: %s" % contest_info.name)
-            self.write_ln()
-            self.write_ln()
 
     def write(self, election_info, areas_info, results):
         """Write the election results to the given file."""
@@ -973,7 +972,9 @@ def make_test_precincts(args):
     areas_info = parse_precinct_file(precincts_path)
     all_precincts = areas_info.city
 
-    precincts = set()
+    # Include the two "duplicated" precincts so that we can test
+    # this edge case.
+    precincts = set((7509, 7527))
     def choose_from_area_type(area_type, precincts):
         for area_precincts in area_type.values():
             precinct, = random.sample(area_precincts, 1)
@@ -985,7 +986,7 @@ def make_test_precincts(args):
         choose_from_area_type(area_type, precincts)
     choose_from_area_type(areas_info.neighborhoods, precincts)
 
-    print("randomly chose: %d precincts" % len(precincts))
+    log("randomly chose: %d precincts" % len(precincts))
 
     parser = PrecinctFilterParser(precincts, output_file=sys.stdout)
     parser.parse_path(precincts_path)
@@ -1003,12 +1004,15 @@ def make_test_export(args):
     precinct_ids = set(areas_info.precincts.keys())
     # We include the following contests because they provide a mixture
     # of full-city and partial-city contests:
+    #
     #   1: Registered voters
     #   2: Ballots cast
     # 120: State Treasurer - CALIFORNIA (3 choices)
     # 145: US Representative, District 14 - 14TH CONGRESSIONAL DISTRI (2 choices)
     # 150: State Assembly, District 17 - 17TH ASSEMBLY DISTRICT (3 choices)
-    contest_ids = set((1, 2, 120, 145, 150))
+    # 180: Local Measure A - CITY/COUNTY OF SAN FRANCI (2 choices)
+    #
+    contest_ids = set((1, 2, 120, 145, 150, 180))
 
     parser = ExportFilterParser(precinct_ids=precinct_ids, contest_ids=contest_ids,
                                 output_file=sys.stdout)
