@@ -33,8 +33,12 @@ Then just clone this repo or download the individual file `parse.py`.
 Usage
 -----
 
-For usage notes, see the docstring of the main [`parse.py`](parse.py#L6)
-file.
+To run the script--
+
+    $ python3 parse.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
+
+For additional usage notes, see the docstring of the main
+[`parse.py`](parse.py#L6) file.
 
 
 Testing
@@ -44,42 +48,18 @@ To test the script--
 
     $ python3 pywineds/test_parser.py
 
+This runs an end-to-end test whose input and output files are located
+in the [`data/test`](data/test) directory.
+
 
 New Format
 ----------
 
-This section documents the new format (i.e. the destination or target
-format of the conversion).
+To see an example of what the new output format looks like, see the
+"expected" output file of the end-to-end test located at
+[`data/test/out.tsv`](data/test/out.tsv).
 
-Here is a snippet of what a file in the new format looks like.  The
-data rows in the file are tab-delimited.  The string `***` can be used
-to detect the first line of the section starting a new contest.
-
-    San Francisco Election - June 3, 2014
-
-    Report generated on: Tuesday, June 17, 2014 at 04:30:15 PM
-
-
-    *** Governor - CALIFORNIA
-    VotingPrecinctName  VotingPrecinctID  Precincts  Registration  Ballots Cast  Turnout (%)  [...CANDIDATE NAMES...]
-    Pct 1101      1101      1     484     141  29.13     3     0  ...
-    Pct 1102      1102      1     873     286  32.76    13     1  ...
-    [...OTHER PRECINCTS...]
-    Pct 9902 MB   9902      1       0       0   0.00     0     0  ...
-    Grand Totals  City:0  597  435757  129399  29.70  4683  1223  ...
-
-    District Grand Totals
-    DistrictName  DistrictLabel  Precincts  Registration >>
-     >> Ballots Cast  Turnout (%)  [...CANDIDATE NAMES...]
-    12TH CONGRESSIONAL DISTRICT  Congressional:12  522  385648  114107 >>
-     >> 29.59  4286  1135  ...
-    [...OTHER DISTRICTS...]
-    [...CITY/COUNTY...]
-    [...NEIGHBORHOODS...]
-    Grand Totals                 City:0            597  435757  129399 >>
-     >> 29.70  4683  1223  ...
-
-    [...ADDITIONAL CONTESTS IN SAME FORMAT AS ABOVE...]
+The format is largely self-explanatory.
 
 
 Source Format (WinEDS)

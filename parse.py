@@ -4,7 +4,7 @@
 #
 
 """
-Usage: python3 parse.py ELECTION_NAME PCT_INDEX_PATH RESULTS_PATH > out.tsv
+Usage: python3 parse.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
 
 Parses the given files and writes a new output file to stdout.
 
