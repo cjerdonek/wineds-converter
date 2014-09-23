@@ -34,7 +34,7 @@ Currently, there are no third-party dependencies.
 Usage
 -----
 
-To run the script--
+To run the script, run the following from the repo root--
 
     $ python3 parse.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
 
@@ -45,7 +45,7 @@ For additional usage notes, see the docstring of the main
 Testing
 -------
 
-To test the script--
+To test the script, run the following from the repo root--
 
     $ python3 pywineds/test_parser.py
 
