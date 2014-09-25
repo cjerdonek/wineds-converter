@@ -1,6 +1,8 @@
 WinEDS Converter
 ================
 
+[![Build Status](https://travis-ci.org/cjerdonek/wineds-converter.svg?branch=master)][travis-ci-project-page]
+
 This repository contains an open-source Python 3 script to convert
 WinEDS 4.0 output into a simpler format.  WinEDS is an election
 management system owned by [Dominion Voting Systems][dominion].
@@ -116,3 +118,4 @@ Chris Jerdonek (<chris.jerdonek@gmail.com>)
 [python-download]: https://www.python.org/downloads/
 [sf-elections]: http://sfelections.org
 [travis-ci]: https://travis-ci.org/
+[travis-ci-project-page]: https://travis-ci.org/cjerdonek/wineds-converter
