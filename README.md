@@ -51,8 +51,8 @@ To test the script, run the following from the repo root--
 
     $ python3.4 pywineds/test_parser.py
 
-This runs an end-to-end test whose input and output files are located
-in the [`data/test`](data/test) directory.
+This runs an end-to-end test whose input and expected output files are
+located in the [`data/test`](data/test) directory.
 
 Tests are also run automatically on [Travis CI][travis-ci].
 
