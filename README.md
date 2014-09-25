@@ -25,7 +25,7 @@ size 487 KB.
 Setting up
 ----------
 
-The script is written for Python 3 and was developed using Python 3.4.
+The script was written for Python 3.4.
 
 You can download Python [from here][python-download].
 
@@ -38,7 +38,7 @@ Usage
 
 To run the script, run the following from the repo root--
 
-    $ python3 parse.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
+    $ python3.4 parse.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
 
 For additional usage notes, see the docstring of the main
 [`parse.py`](parse.py#L7) file.
@@ -49,7 +49,7 @@ Testing
 
 To test the script, run the following from the repo root--
 
-    $ python3 pywineds/test_parser.py
+    $ python3.4 pywineds/test_parser.py
 
 This runs an end-to-end test whose input and output files are located
 in the [`data/test`](data/test) directory.

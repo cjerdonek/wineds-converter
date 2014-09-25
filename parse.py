@@ -4,7 +4,7 @@
 #
 
 """
-Usage: python3 parse.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
+Usage: python3.4 parse.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
 
 Parses the given files and writes a new output file to stdout.
 
