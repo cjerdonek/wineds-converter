@@ -52,6 +52,7 @@ To test the script, run the following from the repo root--
 This runs an end-to-end test whose input and output files are located
 in the [`data/test`](data/test) directory.
 
+Tests are also run automatically on [Travis CI][travis-ci].
 
 New Format
 ----------
@@ -114,3 +115,4 @@ Chris Jerdonek (<chris.jerdonek@gmail.com>)
 [dominion]: http://www.dominionvoting.com/
 [python-download]: https://www.python.org/downloads/
 [sf-elections]: http://sfelections.org
+[travis-ci]: https://travis-ci.org/
