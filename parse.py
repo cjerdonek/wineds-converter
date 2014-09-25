@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# **THIS SCRIPT IS WRITTEN FOR PYTHON 3.**
+# **THIS SCRIPT IS WRITTEN FOR PYTHON 3.4.**
 #
 
 """
