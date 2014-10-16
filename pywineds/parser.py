@@ -86,6 +86,39 @@ def exit_with_error(msg):
     exit(1)
 
 
+# TODO: remove this function?
+def split_line(line):
+    """Return a list of field values in the line."""
+    return SPLITTER.split(line.strip())
+
+
+# TODO: start using this.
+def split_line_fixed(line):
+    """
+    Split a line from a WinEDS Reporting Tool output file into parts.
+
+    The Reporting Tool outputs lines with fixed-width columns.  This function
+    is necessary because not all columns have space between them.
+    For example, "13TH CONGRESSIONAL DISTRITC-Election Day Reporting"
+    divides before "TC-Election".
+
+    A sample line:
+
+        0010073990000000PF        US Representative, District 13                          \
+        LAWERENCE N. ALLEN                    Pct 9900 MB                   \
+        13TH CONGRESSIONAL DISTRITC-Election Day Reporting
+
+    """
+    # data_field, contest_name, choice_name, precinct_name, district_name, [reporting_type]
+    data_field = line[:26].strip()
+    contest_name = line[26:82].strip()
+    choice_name = line[82:120].strip()
+    precinct_name = line[120:150].strip()
+    district_name = line[150:175].strip()
+    reporting_type = line[175:].strip()
+    return data_field, contest_name, choice_name, precinct_name, district_name, reporting_type
+
+
 class ContestInfo(object):
 
     """
@@ -364,11 +397,6 @@ class PrecinctIndexParser(Parser):
         area_type = self.areas_info.neighborhoods
         self.add_precinct_to_area(area_type, nbhd_label, precinct_id)
         self.areas_info.city.add(precinct_id)
-
-
-def split_line(line):
-    """Return a list of field values in the line."""
-    return SPLITTER.split(line.strip())
 
 
 def parse_data_chunk(chunk):
@@ -974,7 +1002,9 @@ def make_test_precincts(args):
 
 def make_test_export(args):
     """
-    Create a small data export file for end-to-end testing purposes.
+    Create a small WinEDS output file for end-to-end testing purposes.
+
+    The test output file is written to stdout.
 
     """
     log("making test export file")
@@ -982,6 +1012,7 @@ def make_test_export(args):
     areas_info = parse_precinct_file(precincts_path)
 
     precinct_ids = set(areas_info.precincts.keys())
+
     # We include the following contests because they provide a mixture
     # of full-city and partial-city contests:
     #

@@ -3,7 +3,21 @@ from datetime import datetime
 from pathlib import Path
 import unittest
 
-from parser import convert
+from parser import convert, split_line_fixed
+
+
+class ModuleTest(unittest.TestCase):
+
+    def test_split_line_fixed(self):
+        line = ("0010073990000000PF        US Representative, District 13                          "
+                "LAWERENCE N. ALLEN                    Pct 9900 MB                   "
+                "13TH CONGRESSIONAL DISTRITC-Election Day Reporting     \n")
+        actual = split_line_fixed(line)
+        expected = ('0010073990000000PF', 'US Representative, District 13',
+                    'LAWERENCE N. ALLEN', 'Pct 9900 MB', '13TH CONGRESSIONAL DISTRI',
+                    'TC-Election Day Reporting')
+        self.assertEqual(actual, expected)
+
 
 def parse_test_file(now=None):
     p = Path(__file__).parents[1] / 'data/test'
