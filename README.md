@@ -72,7 +72,12 @@ Source Format (WinEDS)
 This section contains information about the output format of a TXT
 export from the WinEDS Reporting Tool.
 
-The file seems to be UTF-8 encoded.
+The lines seem to have fixed-width columns.  In particular, not all
+columns are separated by white space.  For example, one actual file
+had this substring: "13TH CONGRESSIONAL DISTRITC-Election Day Reporting".
+In this case, the column division is between "DISTRI" and "TC-Election".
+
+We assume the file is UTF-8 encoded, though we have not confirmed this yet.
 
 Here are a few sample lines from an actual output file (the strings of
 several spaces between columns were replaced by strings of two spaces):
@@ -83,13 +88,21 @@ several spaces between columns were replaced by strings of two spaces):
     ...
     0175098110100082  State Proposition 42  Yes  Pct 1101  CALIFORNIA
 
+And from a "complete" file (i.e. with VBM breakdown):
+
+    0100001110100000GRN  Governor  LUIS J. RODRIGUEZ  Pct 1101  CALIFORNIA \
+      TC-Election Day Reporting
+
 For description purposes, we rewrite the last line as follows:
 
-    0CCCHHHPPPPTTTTT  CONTEST_NAME  CHOICE_NAME  PRECINCT_NAME  DISTRICT_NAME
+    0CCCHHHPPPPTTTTT[PTY]  CONTEST_NAME  CHOICE_NAME  PRECINCT_NAME \
+      DISTRICT_NAME  [REPORTING_TYPE]
 
 The `DISTRICT_NAME` column is a description of the area associated
 with the contest.  This column is absent for the "REGISTERED VOTERS"
-and "BALLOTS CAST" rows.
+and "BALLOTS CAST" rows.  The `REPORTING_TYPE` column is not present for all
+export files.  Its value can be either `TC-Election Day Reporting`,
+`TC-VBM Reporting`, or the empty string.
 
 Here is a key for the meaning of the first block (with values for the
 example above in parentheses).  The ID's can all be interpreted as
@@ -99,6 +112,8 @@ integers rather than strings.
 * `HHH` = Choice ID (`098` or 98 for "Yes" [on 42])
 * `PPPP` = Precinct ID (`1101` for "Pct 1101")
 * `TTTTT` = Vote total (`00082` for 82)
+* `[PTY]` = Party abbreviation of the candidate (optional and variable-length,
+  e.g. "DEM", "REP", "NON, "PF", etc.)
 
 
 License
