@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 import unittest
 
-from parser import convert, split_line_fixed
+from parser import convert, parse_data_chunk, split_line_fixed
 
 
 class ModuleTest(unittest.TestCase):
@@ -17,6 +17,11 @@ class ModuleTest(unittest.TestCase):
                     'LAWERENCE N. ALLEN', 'Pct 9900 MB', '13TH CONGRESSIONAL DISTRI',
                     'TC-Election Day Reporting')
         self.assertEqual(actual, expected)
+
+    def test_parse_data_chunk(self):
+        self.assertEqual(parse_data_chunk("0001001110100484"), (1, 1, 1101, 484))
+        self.assertEqual(parse_data_chunk("0100016113100001NON"), (16, 100, 1131, 1))
+        self.assertEqual(parse_data_chunk("01000167208000-1NON"), (16, 100, 7208, -1))
 
 
 def parse_test_file(now=None):

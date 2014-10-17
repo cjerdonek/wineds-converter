@@ -410,7 +410,7 @@ def parse_data_chunk(chunk):
     contest_id = int(chunk[1:4])
     choice_id = int(chunk[4:7])
     precinct_id = int(chunk[7:11])
-    vote_total = int(chunk[11:16])
+    vote_total = -1 if chunk[11:16] == "000-1" else int(chunk[11:16])
     return choice_id, contest_id, precinct_id, vote_total
 
 
@@ -952,6 +952,7 @@ class PrecinctFilterParser(FilterParser):
         return precinct_id in self.precinct_ids
 
 
+# TODO: make this work for all input formats (with fixed split_line).
 class ExportFilterParser(FilterParser):
 
     name = "Results Export File (filtering)"

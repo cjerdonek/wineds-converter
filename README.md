@@ -115,6 +115,18 @@ integers rather than strings.
 * `[PTY]` = Party abbreviation of the candidate (optional and variable-length,
   e.g. "DEM", "REP", "NON, "PF", etc.)
 
+There are also some lines with initial fields of the form--
+
+    01000167208000-1NON       Governor
+
+
+Developing
+----------
+
+There are some commands to assist with developing, for example to create
+smaller output files for testing purposes.  For a list of these, see the
+code and comments near the `main()` function, where `sys.argv` is parsed.
+
 
 License
 -------
