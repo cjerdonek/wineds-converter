@@ -401,7 +401,7 @@ class PrecinctIndexParser(Parser):
 
 def parse_data_chunk(chunk):
     """Parse the 16-character string beginning each line."""
-    # 0AAACCCPPPPTTTTT
+    # 0AAACCCPPPPTTTTT[PTY]
     #
     # AAA   = contest_id
     # CCC   = choice_id
@@ -411,7 +411,8 @@ def parse_data_chunk(chunk):
     choice_id = int(chunk[4:7])
     precinct_id = int(chunk[7:11])
     vote_total = -1 if chunk[11:16] == "000-1" else int(chunk[11:16])
-    return choice_id, contest_id, precinct_id, vote_total
+    party = chunk[16:]
+    return choice_id, contest_id, precinct_id, vote_total, party
 
 
 class ElectionInfoParser(Parser):
@@ -470,7 +471,9 @@ class ElectionInfoParser(Parser):
         # Validate our assumptions about the initial data chunk.
         assert len(data) == 16
         assert data[0] == '0'
-        choice_id, contest_id, precinct_id, vote_total = parse_data_chunk(data)
+        choice_id, contest_id, precinct_id, vote_total, party = parse_data_chunk(data)
+        # We don't need to know the vote_total here.
+        del vote_total, party
 
         # Store the precinct_id if it is new, otherwise check that it
         # matches the precinct name stored before.
@@ -546,13 +549,19 @@ class ResultsParser(Parser):
 
     def parse_line(self, line):
         data = split_line(line)[0]
-        choice_id, contest_id, precinct_id, vote_total = parse_data_chunk(data)
+        choice_id, contest_id, precinct_id, vote_total, party = parse_data_chunk(data)
+        # We do not use party yet.
+        del party
+        if vote_total < 0:
+            assert vote_total == -1
+            raise Exception("negative vote total: %r" % vote_total)
         if contest_id < 3:
             if contest_id == 1:
                 precinct_totals = self.registered
-            else:
-                # Then contest_id equals 2.
+            elif contest_id == 2:
                 precinct_totals = self.voted
+            else:
+                raise Exception("unrecognized contest ID: %r" % contest_id)
             precinct_totals[precinct_id] = vote_total
             return
         # Otherwise, we have a normal contest.

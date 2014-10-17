@@ -19,9 +19,9 @@ class ModuleTest(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_parse_data_chunk(self):
-        self.assertEqual(parse_data_chunk("0001001110100484"), (1, 1, 1101, 484))
-        self.assertEqual(parse_data_chunk("0100016113100001NON"), (16, 100, 1131, 1))
-        self.assertEqual(parse_data_chunk("01000167208000-1NON"), (16, 100, 7208, -1))
+        self.assertEqual(parse_data_chunk("0001001110100484"), (1, 1, 1101, 484, ''))
+        self.assertEqual(parse_data_chunk("0100016113100001NON"), (16, 100, 1131, 1, 'NON'))
+        self.assertEqual(parse_data_chunk("01000167208000-1NON"), (16, 100, 7208, -1, 'NON'))
 
 
 def parse_test_file(now=None):
