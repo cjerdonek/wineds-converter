@@ -90,13 +90,12 @@ def exit_with_error(msg):
     exit(1)
 
 
-# TODO: remove this function?
+# We do not currently need this function for anything.
 def split_line(line):
     """Return a list of field values in the line."""
     return SPLITTER.split(line.strip())
 
 
-# TODO: start using this.
 def split_line_fixed(line):
     """
     Split a line from a WinEDS Reporting Tool output file into parts.
@@ -385,8 +384,8 @@ class PrecinctIndexParser(Parser):
         precinct_id, values = parse_precinct_index_line(line)
         precinct_name = values[1]
         if precinct_id in self.areas_info.precincts:
-            log.warn(("precinct_id %d occurred again in line:\n"
-                      " [#%d]: %s") % (precinct_id, self.line_no, line.strip()))
+            log.warning(("precinct_id %d occurred again in line:\n"
+                        " [#%d]: %s") % (precinct_id, self.line_no, line.strip()))
             return
 
         self.areas_info.precincts[precinct_id] = precinct_name
@@ -457,20 +456,8 @@ class ElectionInfoParser(Parser):
         afterwards.
 
         """
-        fields = split_line(line)
-        try:
-            data, contest_name, choice_name, precinct_name, district_name = fields
-        except ValueError:
-            # Then this line must be one of the summary lines that lack a
-            # final district_name column (since these rows have no contest
-            # associated with them):
-            #   0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
-            #   0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
-            try:
-                data, contest_name, choice_name, precinct_name = fields
-            except ValueError:
-                raise Exception("error unpacking fields: %r" % fields)
-            district_name = None
+        fields = split_line_fixed(line)
+        data, contest_name, choice_name, precinct_name, district_name, reporting_type = fields
 
         # Validate our assumptions about the initial data chunk.
         assert len(data) == 16
@@ -488,9 +475,15 @@ class ElectionInfoParser(Parser):
         except KeyError:
             precincts[precinct_id] = precinct_name
 
-        if district_name is None:
-            # Then validate our assumptions about the summary line and
-            # skip storing any contest or choices.
+        if not district_name:
+            # Then this line must be one of the summary lines that lack a
+            # final district_name column (since these rows have no contest
+            # associated with them):
+            #   0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
+            #   0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
+            #
+            # In this case, we validate our assumptions about the summary
+            # line and skip storing any contest or choices.
             assert choice_id == 1
             assert contest_id in (1, 2)
             if contest_id == 1:
@@ -509,7 +502,11 @@ class ElectionInfoParser(Parser):
         try:
             contest = contests[contest_id]
             assert contest_name == contest.name
-            assert district_name == contest.district_name
+            try:
+                assert district_name == contest.district_name
+            except AssertionError:
+                raise Exception("district_name=%r, contest.district_name=%s" %
+                                (district_name, contest.district_name))
         except KeyError:
             contest = ContestInfo(name=contest_name, district_name=district_name)
             contests[contest_id] = contest
@@ -552,7 +549,7 @@ class ResultsParser(Parser):
         self.voted = results.voted
 
     def parse_line(self, line):
-        data = split_line(line)[0]
+        data = split_line_fixed(line)[0]
         choice_id, contest_id, precinct_id, vote_total, party = parse_data_chunk(data)
         # We do not use party yet.
         del party
@@ -974,7 +971,6 @@ class PrecinctFilterParser(FilterParser):
         return precinct_id in self.precinct_ids
 
 
-# TODO: make this work for all input formats (with fixed split_line).
 class ExportFilterParser(FilterParser):
 
     name = "Results Export File (filtering)"
@@ -985,11 +981,11 @@ class ExportFilterParser(FilterParser):
         self.precinct_ids = precinct_ids
 
     def should_write(self, line):
-        data = split_line(line)[0]
+        data = split_line_fixed(line)[0]
         choice_id, contest_id, precinct_id, vote_total, party = parse_data_chunk(data)
         if vote_total < 0:
-            log.warn("negative vote total %r: contest=%r, precinct=%r" %
-                     (vote_total, contest_id, precinct_id))
+            log.warning("negative vote total %r: contest=%r, precinct=%r" %
+                        (vote_total, contest_id, precinct_id))
         return ((precinct_id in self.precinct_ids) and
                 (contest_id in self.contest_ids))
 

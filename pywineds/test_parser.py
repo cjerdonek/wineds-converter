@@ -8,7 +8,19 @@ from parser import convert, parse_data_chunk, split_line_fixed
 
 class ModuleTest(unittest.TestCase):
 
-    def test_split_line_fixed(self):
+    def test_split_line_fixed__simple(self):
+        """Check parsing a "simple" line (i.e. 175 characters long)."""
+        line = ("0001001110800827          REGISTERED VOTERS - TOTAL"
+                "                               VOTERS"
+                "                                Pct 1108"
+                "                                               \n")
+        actual = split_line_fixed(line)
+        expected = ('0001001110800827', 'REGISTERED VOTERS - TOTAL',
+                    'VOTERS', 'Pct 1108', '', '')
+        self.assertEqual(actual, expected)
+
+    def test_split_line_fixed__complete(self):
+        """Check parsing a "complete" line (i.e. 205 characters long)."""
         line = ("0010073990000000PF        US Representative, District 13                          "
                 "LAWERENCE N. ALLEN                    Pct 9900 MB                   "
                 "13TH CONGRESSIONAL DISTRITC-Election Day Reporting     \n")
