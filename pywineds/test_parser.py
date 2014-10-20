@@ -25,10 +25,12 @@ class ModuleTest(unittest.TestCase):
 
 
 def parse_test_file(now=None):
-    p = Path(__file__).parents[1] / 'test_data'
+    test_dir = Path(__file__).parents[1] / 'test_data'
 
-    precincts_path, exports_path, expected_path = (str(p / name) for name in
-        ("precincts.csv", "wineds.txt", "output.tsv"))
+    precincts_path = str(test_dir / "precincts.csv")
+    test_dir /= "simple"
+    exports_path, expected_path = (str(test_dir / name) for name in
+        ("wineds_results.txt", "output.tsv"))
 
     output_path = "temp.txt"
 
