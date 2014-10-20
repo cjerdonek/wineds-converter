@@ -600,6 +600,26 @@ def parse_export_file(path):
     return election_info
 
 
+def parse_export_file_with_check(areas_info, wineds_path):
+    election_info = parse_export_file(wineds_path)
+
+    # Check that the precincts in the precinct index file match the
+    # precincts in the results file.
+    for i, (precinct_id, wineds_precinct_id) in enumerate(zip(sorted(areas_info.city),
+                                     sorted(election_info.precincts.keys())), start=1):
+        try:
+            assert precinct_id == wineds_precinct_id
+        except AssertionError:
+            if precinct_id < wineds_precinct_id:
+                msg = "WinEDS file does not contain precinct id %d" % precinct_id
+            else:
+                msg = "WinEDS file contains unknown precinct id %d" % precinct_id
+            msg += ": %s" % wineds_path
+            raise Exception(msg)
+
+    return election_info
+
+
 def digest_input_files(precinct_index_path, wineds_path):
     """
     Read the input files and return a 3-tuple of objects of the following
@@ -625,18 +645,7 @@ def digest_input_files(precinct_index_path, wineds_path):
     # the object structure.
 
     # Pass #1
-    election_info = parse_export_file(wineds_path)
-
-    # TODO: move the following assertions into a parse_export_file_with_check()
-    # funcation (with a better function name).
-    # Check that the precincts in the precinct index file match the
-    # precincts in the results file.
-    for i, (p1, p2) in enumerate(zip(sorted(areas_info.city),
-                                     sorted(election_info.precincts.keys())), start=1):
-        try:
-            assert p1 == p2
-        except AssertionError:
-            exit_with_error("precinct %d differs: %r != %r" % (i, p1, p2))
+    election_info = parse_export_file_with_check(areas_info, wineds_path)
 
     # Log the contests parsed.
     contests = election_info.contests
@@ -973,7 +982,9 @@ class ExportFilterParser(FilterParser):
 
     def should_write(self, line):
         data = split_line(line)[0]
-        choice_id, contest_id, precinct_id, vote_total = parse_data_chunk(data)
+        choice_id, contest_id, precinct_id, vote_total, party = parse_data_chunk(data)
+        if vote_total < 0:
+            log("negative vote total %r: contest=%r, precinct=%r" % (vote_total, contest_id, precinct_id))
         return ((precinct_id in self.precinct_ids) and
                 (contest_id in self.contest_ids))
 
