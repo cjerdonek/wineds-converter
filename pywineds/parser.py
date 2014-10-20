@@ -1,6 +1,7 @@
 
 from contextlib import contextmanager
 from datetime import datetime
+import logging
 import random
 import re
 import sys
@@ -46,6 +47,17 @@ W TWIN PKS:WEST OF TWIN PEAKS
 WST ADDITION:WESTERN ADDITION
 """
 
+
+log = logging.getLogger("wineds")
+
+
+def configure_log():
+    level = logging.DEBUG
+    fmt = "%(name)s: [%(levelname)s] %(message)s"
+    logging.basicConfig(format=fmt, level=level)
+    log.info("logging configured: level=%s" % logging.getLevelName(level))
+
+
 def make_nbhd_names():
     """
     Return a dict mapping neighborhood labels to human-friendly names.
@@ -56,14 +68,6 @@ def make_nbhd_names():
         label, name = s.split(":")
         data[label] = name
     return data
-
-
-# TODO: use Python's logging module.
-def log(s=None):
-    """Write to stderr."""
-    if s is None:
-        s = ""
-    print(s, file=sys.stderr)
 
 
 @contextmanager
@@ -78,11 +82,11 @@ def time_it(task_desc):
     start_time = timeit.default_timer()
     yield
     elapsed = timeit.default_timer() - start_time
-    log("elapsed (%s): %.4f seconds" % (task_desc, elapsed))
+    log.info("elapsed (%s): %.4f seconds" % (task_desc, elapsed))
 
 
 def exit_with_error(msg):
-    log(msg)
+    log.info(msg)
     exit(1)
 
 
@@ -298,7 +302,7 @@ class Parser(object):
             # we need as instance attributes instead.  This is more
             # convenient for things like our Parser exception handler.
             yield
-        log("parsed: %d lines" % line_no)
+        log.info("parsed: %d lines" % line_no)
 
     def get_parse_return_value(self):
         return None
@@ -317,7 +321,7 @@ class Parser(object):
 
     def parse_file(self, f):
         with time_it("parsing %r" % self.name):
-            log("parsing...\n  %r" % self.name)
+            log.info("parsing...\n  %r" % self.name)
             try:
                 with f:
                     lines = self.iter_lines(f)
@@ -328,14 +332,14 @@ class Parser(object):
         return self.get_parse_return_value()
 
     def parse_path(self, path):
-        log("opening...\n  %s" % path)
+        log.info("opening...\n  %s" % path)
         return self.parse_file(open(path, "r", encoding=FILE_ENCODING))
 
 
 def parse_precinct_file(path):
     parser = PrecinctIndexParser()
     areas_info = parser.parse_path(path)
-    log("parsed: %d precincts" % len(areas_info.city))
+    log.info("parsed: %d precincts" % len(areas_info.city))
     return areas_info
 
 
@@ -381,8 +385,8 @@ class PrecinctIndexParser(Parser):
         precinct_id, values = parse_precinct_index_line(line)
         precinct_name = values[1]
         if precinct_id in self.areas_info.precincts:
-            log(("WARN: precinct_id %d occurred again in line:\n"
-                 " [#%d]: %s") % (precinct_id, self.line_no, line.strip()))
+            log.warn(("precinct_id %d occurred again in line:\n"
+                      " [#%d]: %s") % (precinct_id, self.line_no, line.strip()))
             return
 
         self.areas_info.precincts[precinct_id] = precinct_name
@@ -649,11 +653,11 @@ def digest_input_files(precinct_index_path, wineds_path):
 
     # Log the contests parsed.
     contests = election_info.contests
-    log("parsed %d contests:" % len(contests))
+    log.info("parsed %d contests:" % len(contests))
     for contest_id in sorted(contests.keys()):
         contest = contests[contest_id]
-        log(" %3d: %s - %s (%d choices)" %
-            (contest_id, contest.name, contest.district_name, len(contest.choice_ids)))
+        log.info(" %3d: %s - %s (%d choices)" %
+                 (contest_id, contest.name, contest.district_name, len(contest.choice_ids)))
 
     # Construct the results object.
     results = ElectionResults()
@@ -803,7 +807,7 @@ class ContestWriter(Writer):
             assert type(area_precinct_ids) is set
             if area_precinct_ids.isdisjoint(contest_precinct_ids):
                 # Then no precincts in the district overlapped the contest, so skip it.
-                log("   no precincts: %s" % (area_name, ))
+                log.info("   no precincts: %s" % (area_name, ))
                 continue
             try:
                 self.write_totals_row(area_name, area_label, area_precinct_ids)
@@ -847,8 +851,8 @@ class ContestWriter(Writer):
 
     def write(self):
         contest_name = self.contest_info.name
-        log("writing contest: %s (%d precincts)" %
-            (contest_name, len(self.precinct_ids)))
+        log.info("writing contest: %s (%d precincts)" %
+                 (contest_name, len(self.precinct_ids)))
         # TODO: move this assertion earlier in the script?
         assert type(self.precinct_ids) is set
         # Begin each contest with a distinctive string.  We use 3 stars.
@@ -950,7 +954,7 @@ class FilterParser(Parser):
     def parse_lines(self, lines):
         # TODO: use the Hollywood principle instead of calling the base class method.
         super().parse_lines(lines)
-        log("wrote: %d lines" % self.write_line_count)
+        log.info("wrote: %d lines" % self.write_line_count)
 
 
 class PrecinctFilterParser(FilterParser):
@@ -984,7 +988,8 @@ class ExportFilterParser(FilterParser):
         data = split_line(line)[0]
         choice_id, contest_id, precinct_id, vote_total, party = parse_data_chunk(data)
         if vote_total < 0:
-            log("negative vote total %r: contest=%r, precinct=%r" % (vote_total, contest_id, precinct_id))
+            log.warn("negative vote total %r: contest=%r, precinct=%r" %
+                     (vote_total, contest_id, precinct_id))
         return ((precinct_id in self.precinct_ids) and
                 (contest_id in self.contest_ids))
 
@@ -994,7 +999,7 @@ def make_test_precincts(args):
     Create a small precinct file for end-to-end testing purposes.
 
     """
-    log("making test precinct file")
+    log.info("making test precinct file")
     assert not args
     precincts_path = "data/election-2014-06-03/precincts_20140321.csv"
 
@@ -1015,7 +1020,7 @@ def make_test_precincts(args):
         choose_from_area_type(area_type, precincts)
     choose_from_area_type(areas_info.neighborhoods, precincts)
 
-    log("randomly chose: %d precincts" % len(precincts))
+    log.info("randomly chose: %d precincts" % len(precincts))
 
     parser = PrecinctFilterParser(precincts, output_file=sys.stdout)
     parser.parse_path(precincts_path)
@@ -1028,7 +1033,7 @@ def make_test_export(args):
     The test output file is written to stdout.
 
     """
-    log("making test export file")
+    log.info("making test export file")
     precincts_path, export_path = args
     areas_info = parse_precinct_file(precincts_path)
 
@@ -1052,6 +1057,7 @@ def make_test_export(args):
 
 
 def main(docstr, argv):
+    configure_log()
     # Check length of argv to avoid the following when accessing argv[1]:
     # IndexError: list index out of range
     # TODO: use argparse.
@@ -1064,7 +1070,5 @@ def main(docstr, argv):
             make_test_export(argv[2:])
             return
 
-    # Skip a line for readability.
-    log()
     with time_it("full program"):
         inner_main(docstr, argv)
