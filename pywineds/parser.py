@@ -230,13 +230,16 @@ class ElectionInfo(object):
     """
 
     def __init__(self):
-        self.choices = {}
-        self.contests = {}
-        self.precincts = {}
         # The following get set to integers if the WinEDS file contains
         # undervotes and overvotes.
         self.overvote_id = None
         self.undervote_id = None
+
+        self.has_reporting_type = None
+
+        self.choices = {}
+        self.contests = {}
+        self.precincts = {}
 
     def __repr__(self):
         return ("<ElectionInfo object: %d contests, %d choices, %d precincts>" %
@@ -284,12 +287,14 @@ def init_results(info, results):
     contests = results.contests
     registered = results.registered
     voted = results.voted
+    has_reporting_type = info.has_reporting_type
 
     for contest_id, contest_info in info.contests.items():
         contest_results = {}
         contests[contest_id] = contest_results
         for precinct_id in contest_info.precinct_ids:
-            cp_results = {}  # stands for contest_precinct_results
+            # cp_results stands for contest_precinct_results
+            cp_results = [{}, {}] if has_reporting_type else {}
             contest_results[precinct_id] = cp_results
 
     # Initialize the election-wide result attributes.
@@ -444,8 +449,6 @@ class ElectionInfoParser(Parser):
           info: an ElectionInfo object.
 
         """
-        self.has_reporting_type = None
-
         self.election_info = info
         # The following values are for convenience.
         self.contests = info.contests
@@ -467,7 +470,7 @@ class ElectionInfoParser(Parser):
                 self.election_info.overvote_id = choice_id
             else:
                 raise AssertionError("unexpected choice name for contest id None: %r" % choice_name)
-            log.info("setting %r id to: %d" % (choice_name, choice_id))
+            log.info("setting id=%r for: %r" % (choice_id, choice_name))
         self.choices[choice_id] = choice
 
     def parse_first_line(self, line):
@@ -478,7 +481,7 @@ class ElectionInfoParser(Parser):
             raise Exception("unexpected number of characters in first line: %d" % char_count)
         has_reporting_type = (char_count == 205)
         log.info("detected file format: has_reporting_type=%r" % has_reporting_type)
-        self.has_reporting_type = has_reporting_type
+        self.election_info.has_reporting_type = has_reporting_type
         super().parse_first_line(line)
 
     def parse_line(self, line):
@@ -591,17 +594,22 @@ class ResultsParser(Parser):
         self.registered = results.registered
         self.voted = results.voted
 
-    def add_vote_total(self, precinct_totals, choice_id, vote_total):
+    def get_sub_totals(self, totals, reporting_type):
+        raise NotImplementedError()
+
+    def add_vote_total(self, totals, id_, vote_total):
         try:
-            precinct_totals[choice_id]
+            totals[id_]
         except KeyError:
-            precinct_totals[choice_id] = vote_total
+            totals[id_] = vote_total
         else:
-            raise Exception("vote total for choice id %d was already stored" % choice_id)
+            raise Exception("total for id=%d was already stored" % id_)
 
     def parse_line(self, line):
-        data = split_line_fixed(line)[0]
-        choice_id, contest_id, precinct_id, vote_total, party = parse_data_chunk(data)
+        fields = split_line_fixed(line)
+        reporting_type = fields[-1]
+
+        choice_id, contest_id, precinct_id, vote_total, party = parse_data_chunk(fields[0])
         # We do not use party yet.
         del party
         if vote_total < 0:
@@ -620,10 +628,17 @@ class ResultsParser(Parser):
             return
         # Otherwise, we have a normal contest.
 
-        # TODO: define row_totals() function that differs for the two file types.
-        #   One subdivides each precinct into the two types.
         precinct_totals = self.contests[contest_id][precinct_id]
+        sub_totals = self.get_sub_totals(precinct_totals, reporting_type)
         self.add_vote_total(precinct_totals, choice_id, vote_total)
+
+
+class SimpleResultsParser(ResultsParser):
+
+    name = "Simple Results File (pass #2, for vote totals)"
+
+    def get_sub_totals(self, totals, reporting_type):
+        return totals
 
 
 def parse_export_file(path):
@@ -713,7 +728,8 @@ def digest_input_files(precinct_index_path, wineds_path):
     init_results(election_info, results)
 
     # Pass #2
-    parser = ResultsParser(results)
+    cls = CompleteResultsParser if election_info.has_reporting_type else SimpleResultsParser
+    parser = cls(results)
     parser.parse_path(wineds_path)
 
     return election_info, areas_info, results
