@@ -619,13 +619,19 @@ def parse_export_file(path):
     parser.parse_path(path)
 
     choices = election_info.choices
-    contests = election_info.contests
+    contest_map = election_info.contests
 
-    # Set the choice_ids attribute on each contest.
+    # Add the available choices to each contest.
     for choice_id, (contest_id, choice_name) in choices.items():
-        contest = contests[contest_id]
-        contest.choice_ids.add(choice_id)
-        # TODO: add over/undervotes if the IDs are set.
+        if contest_id is None:
+            # Then the choice is an undervote or overvote and applies
+            # to all contests.
+            contests = contest_map.values()
+        else:
+            contests = (contest_map[contest_id], )
+
+        for contest in contests:
+            contest.choice_ids.add(choice_id)
 
     return election_info
 
