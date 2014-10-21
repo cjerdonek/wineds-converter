@@ -49,7 +49,7 @@ Testing
 
 To test the script, run the following from the repo root--
 
-    $ python3.4 pywineds/test_parser.py
+    $ python3.4 -m pywineds.test_parser
 
 This runs an end-to-end test whose input and expected output files are
 located in the [`data/test`](data/test) directory.

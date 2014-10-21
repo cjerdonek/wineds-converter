@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 import unittest
 
-from parser import convert, parse_data_chunk, split_line_fixed
+from pywineds.parser import convert, parse_data_chunk, split_line_fixed
 
 
 class ModuleTest(unittest.TestCase):
