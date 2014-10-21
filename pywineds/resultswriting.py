@@ -4,6 +4,7 @@ Supports writing results files.
 
 """
 
+from datetime import datetime
 import logging
 
 from pywineds.utils import time_it
