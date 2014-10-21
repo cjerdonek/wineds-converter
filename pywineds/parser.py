@@ -217,6 +217,10 @@ class ElectionInfo(object):
         self.choices = {}
         self.contests = {}
         self.precincts = {}
+        # The following get set to integers if the WinEDS file contains
+        # undervotes and overvotes.
+        self.overvote_id = None
+        self.undervote_id = None
 
     def __repr__(self):
         return ("<ElectionInfo object: %d contests, %d choices, %d precincts>" %
@@ -320,7 +324,7 @@ class Parser(object):
 
     def parse_file(self, f):
         with time_it("parsing %r" % self.name):
-            log.info("parsing...\n  %r" % self.name)
+            log.info("parsing: %r" % self.name)
             try:
                 with f:
                     lines = self.iter_lines(f)
@@ -331,7 +335,7 @@ class Parser(object):
         return self.get_parse_return_value()
 
     def parse_path(self, path):
-        log.info("opening...\n  %s" % path)
+        log.info("opening: %s" % path)
         return self.parse_file(open(path, "r", encoding=FILE_ENCODING))
 
 
@@ -439,9 +443,29 @@ class ElectionInfoParser(Parser):
           info: an ElectionInfo object.
 
         """
+        self.election_info = info
+        # The following values are for convenience.
         self.contests = info.contests
         self.choices = info.choices
         self.precincts = info.precincts
+
+    def make_choice(self, contest_id, choice_name):
+        """Create the "choice" object for a given choice name, etc."""
+        if choice_name in ('Under Vote', 'Over Vote'):
+            contest_id = None
+        return contest_id, choice_name
+
+    def save_choice(self, choice_id, contest_id, choice_name):
+        choice = self.make_choice(contest_id, choice_name)
+        if choice[0] is None:
+            if choice_name == "Under Vote":
+                self.election_info.undervote_id = choice_id
+            elif choice_name == "Over Vote":
+                self.election_info.overvote_id = choice_id
+            else:
+                raise AssertionError("unexpected choice name for contest id None: %r" % choice_name)
+            log.info("setting %r id to: %d" % (choice_name, choice_id))
+        self.choices[choice_id] = choice
 
     def parse_line(self, line):
         """
@@ -460,7 +484,10 @@ class ElectionInfoParser(Parser):
         data, contest_name, choice_name, precinct_name, district_name, reporting_type = fields
 
         # Validate our assumptions about the initial data chunk.
-        assert len(data) == 16
+        #
+        # If the party is present in the "data" string, then the length
+        # will be longer than 16.
+        assert len(data) >= 16
         assert data[0] == '0'
         choice_id, contest_id, precinct_id, vote_total, party = parse_data_chunk(data)
         # We don't need to know the vote_total here.
@@ -511,17 +538,18 @@ class ElectionInfoParser(Parser):
             contest = ContestInfo(name=contest_name, district_name=district_name)
             contests[contest_id] = contest
 
-        choices = self.choices
         try:
-            choice = choices[choice_id]
-            try:
-                assert choice == (contest_id, choice_name)
-            except AssertionError:
-                raise Exception("choice mismatch for choice ID %d: %r != %r" %
-                                (choice_id, choice, (contest_id, choice_name)))
+            prior_choice = self.choices[choice_id]
         except KeyError:
-            choice = (contest_id, choice_name)
-            choices[choice_id] = choice
+            self.save_choice(choice_id, contest_id, choice_name)
+        else:
+            new_choice = self.make_choice(contest_id, choice_name)
+            try:
+                assert new_choice == prior_choice
+            except AssertionError:
+                raise Exception("choice id %d (name=%r) for contest id %d already assigned to: "
+                                "contest_id=%r, choice_name=%r" %
+                                (choice_id, choice_name, contest_id, prior_choice[0], prior_choice[1]))
 
         # The following line is a no-op for contest choices after the
         # first in a precinct.
@@ -531,9 +559,9 @@ class ElectionInfoParser(Parser):
 class ResultsParser(Parser):
 
     """
-    In addition to parsing the file, this class's parse() method also
-    performs validation on the file to ensure that all of our assumptions
-    about the file format and data are correct.
+    When parsing, this class does not validate the file in the same way
+    that the ElectionInfoParser does.
+
     """
 
     name = "Results File (pass #2, for vote totals)"
@@ -597,6 +625,7 @@ def parse_export_file(path):
     for choice_id, (contest_id, choice_name) in choices.items():
         contest = contests[contest_id]
         contest.choice_ids.add(choice_id)
+        # TODO: add over/undervotes if the IDs are set.
 
     return election_info
 

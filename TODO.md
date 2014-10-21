@@ -1,6 +1,7 @@
 TODO
 ====
 
+* Do not store the contest ID for all choices (undervote and overvote).
 * Detect whether the file is "complete" or not based on the number
   of characters in the first line.
 * Make PrecinctIndexParser parse the precinct names, too.
