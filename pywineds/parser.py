@@ -90,6 +90,22 @@ def exit_with_error(msg):
     exit(1)
 
 
+def parse_data_chunk(chunk):
+    """Parse the 16+ character string beginning each line."""
+    # 0AAACCCPPPPTTTTT[PTY]
+    #
+    # AAA   = contest_id
+    # CCC   = choice_id
+    # PPPP  = precinct_id
+    # TTTTT = choice_total
+    contest_id = int(chunk[1:4])
+    choice_id = int(chunk[4:7])
+    precinct_id = int(chunk[7:11])
+    vote_total = -1 if chunk[11:16] == "000-1" else int(chunk[11:16])
+    party = chunk[16:]
+    return choice_id, contest_id, precinct_id, vote_total, party
+
+
 # We do not currently need this function for anything.
 def split_line(line):
     """Return a list of field values in the line."""
@@ -275,8 +291,6 @@ def init_results(info, results):
         for precinct_id in contest_info.precinct_ids:
             cp_results = {}  # stands for contest_precinct_results
             contest_results[precinct_id] = cp_results
-            for choice_id in contest_info.choice_ids:
-                cp_results[choice_id] = 0
 
     # Initialize the election-wide result attributes.
     for precinct_id in info.precincts.keys():
@@ -290,6 +304,9 @@ class Parser(object):
 
     line_no = 0
     line = None
+
+    def log_line(self, msg):
+        return '%s:\n>>> [L%d]:"%s"' % (msg, self.line_no, self.line.strip())
 
     def iter_lines(self, f):
         """
@@ -388,8 +405,8 @@ class PrecinctIndexParser(Parser):
         precinct_id, values = parse_precinct_index_line(line)
         precinct_name = values[1]
         if precinct_id in self.areas_info.precincts:
-            log.warning(("precinct_id %d occurred again in line:\n"
-                        " [#%d]: %s") % (precinct_id, self.line_no, line.strip()))
+            text = self.log_line("precinct_id %d occurred again in line" % precinct_id)
+            log.warning(text)
             return
 
         self.areas_info.precincts[precinct_id] = precinct_name
@@ -404,22 +421,6 @@ class PrecinctIndexParser(Parser):
         area_type = self.areas_info.neighborhoods
         self.add_precinct_to_area(area_type, nbhd_label, precinct_id)
         self.areas_info.city.add(precinct_id)
-
-
-def parse_data_chunk(chunk):
-    """Parse the 16-character string beginning each line."""
-    # 0AAACCCPPPPTTTTT[PTY]
-    #
-    # AAA   = contest_id
-    # CCC   = choice_id
-    # PPPP  = precinct_id
-    # TTTTT = choice_total
-    contest_id = int(chunk[1:4])
-    choice_id = int(chunk[4:7])
-    precinct_id = int(chunk[7:11])
-    vote_total = -1 if chunk[11:16] == "000-1" else int(chunk[11:16])
-    party = chunk[16:]
-    return choice_id, contest_id, precinct_id, vote_total, party
 
 
 class ElectionInfoParser(Parser):
@@ -443,6 +444,8 @@ class ElectionInfoParser(Parser):
           info: an ElectionInfo object.
 
         """
+        self.has_reporting_type = None
+
         self.election_info = info
         # The following values are for convenience.
         self.contests = info.contests
@@ -466,6 +469,17 @@ class ElectionInfoParser(Parser):
                 raise AssertionError("unexpected choice name for contest id None: %r" % choice_name)
             log.info("setting %r id to: %d" % (choice_name, choice_id))
         self.choices[choice_id] = choice
+
+    def parse_first_line(self, line):
+        char_count = len(line.rstrip('\r\n'))
+        try:
+            assert char_count in (175, 205)
+        except AssertionError:
+            raise Exception("unexpected number of characters in first line: %d" % char_count)
+        has_reporting_type = (char_count == 205)
+        log.info("detected file format: has_reporting_type=%r" % has_reporting_type)
+        self.has_reporting_type = has_reporting_type
+        super().parse_first_line(line)
 
     def parse_line(self, line):
         """
@@ -528,15 +542,20 @@ class ElectionInfoParser(Parser):
         contests = self.contests
         try:
             contest = contests[contest_id]
+        except KeyError:
+            contest = ContestInfo(name=contest_name, district_name=district_name)
+            contests[contest_id] = contest
+        else:
             assert contest_name == contest.name
             try:
                 assert district_name == contest.district_name
             except AssertionError:
                 raise Exception("district_name=%r, contest.district_name=%s" %
                                 (district_name, contest.district_name))
-        except KeyError:
-            contest = ContestInfo(name=contest_name, district_name=district_name)
-            contests[contest_id] = contest
+
+        # The following line is a no-op for contest choices after the
+        # first in a precinct.
+        contest.precinct_ids.add(precinct_id)
 
         try:
             prior_choice = self.choices[choice_id]
@@ -550,10 +569,6 @@ class ElectionInfoParser(Parser):
                 raise Exception("choice id %d (name=%r) for contest id %d already assigned to: "
                                 "contest_id=%r, choice_name=%r" %
                                 (choice_id, choice_name, contest_id, prior_choice[0], prior_choice[1]))
-
-        # The following line is a no-op for contest choices after the
-        # first in a precinct.
-        contest.precinct_ids.add(precinct_id)
 
 
 class ResultsParser(Parser):
@@ -576,14 +591,24 @@ class ResultsParser(Parser):
         self.registered = results.registered
         self.voted = results.voted
 
+    def add_vote_total(self, precinct_totals, choice_id, vote_total):
+        try:
+            precinct_totals[choice_id]
+        except KeyError:
+            precinct_totals[choice_id] = vote_total
+        else:
+            raise Exception("vote total for choice id %d was already stored" % choice_id)
+
     def parse_line(self, line):
         data = split_line_fixed(line)[0]
         choice_id, contest_id, precinct_id, vote_total, party = parse_data_chunk(data)
         # We do not use party yet.
         del party
         if vote_total < 0:
-            assert vote_total == -1
-            raise Exception("negative vote total: %r" % vote_total)
+            text = self.log_line("negative ballot total %d: choice_id=%d, "
+                                 "contest_id=%d, precinct_id=%d" %
+                                 (vote_total, choice_id, contest_id, precinct_id))
+            log.warning(text)
         if contest_id < 3:
             if contest_id == 1:
                 precinct_totals = self.registered
@@ -595,18 +620,10 @@ class ResultsParser(Parser):
             return
         # Otherwise, we have a normal contest.
 
-        # TODO: simplify and complete the error handling below.
-        try:
-            self.contests[contest_id][precinct_id][choice_id] += vote_total
-        except KeyError:
-            err = ("error adding vote total for chunk with: "
-                   "contest_id=%d, precinct_id=%d, choice_id=%d, vote_total=%d" %
-                   (contest_id, precinct_id, choice_id, vote_total))
-            try:
-                contest_results = self.contests[contest_id]
-            except KeyError:
-                err = "contest_id not found in results: " + err
-            raise Exception(err)
+        # TODO: define row_totals() function that differs for the two file types.
+        #   One subdivides each precinct into the two types.
+        precinct_totals = self.contests[contest_id][precinct_id]
+        self.add_vote_total(precinct_totals, choice_id, vote_total)
 
 
 def parse_export_file(path):
