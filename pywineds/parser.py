@@ -598,6 +598,15 @@ class ResultsParser(Parser):
         raise NotImplementedError()
 
     def add_vote_total(self, totals, id_, vote_total):
+        """
+        Arguments:
+          totals: a dict mapping keys to integer vote totals.
+
+        """
+        try:
+            assert isinstance(totals, dict)
+        except AssertionError:
+            raise Exception("totals has unexpected type: %r" % totals)
         try:
             totals[id_]
         except KeyError:
@@ -629,8 +638,8 @@ class ResultsParser(Parser):
         # Otherwise, we have a normal contest.
 
         precinct_totals = self.contests[contest_id][precinct_id]
-        sub_totals = self.get_sub_totals(precinct_totals, reporting_type)
-        self.add_vote_total(precinct_totals, choice_id, vote_total)
+        choice_totals = self.get_sub_totals(precinct_totals, reporting_type)
+        self.add_vote_total(choice_totals, choice_id, vote_total)
 
 
 class SimpleResultsParser(ResultsParser):
@@ -639,6 +648,20 @@ class SimpleResultsParser(ResultsParser):
 
     def get_sub_totals(self, totals, reporting_type):
         return totals
+
+
+class CompleteResultsParser(ResultsParser):
+
+    name = "Complete Results File (pass #2, for vote totals)"
+
+    def get_sub_totals(self, totals, reporting_type):
+        if reporting_type == "TC-Election Day Reporting":
+            i = 0
+        elif reporting_type == "TC-VBM Reporting":
+            i = 1
+        else:
+            raise Exception("unexpected reporting_type: %r" % reporting_type)
+        return totals[i]
 
 
 def parse_export_file(path):
@@ -728,7 +751,8 @@ def digest_input_files(precinct_index_path, wineds_path):
     init_results(election_info, results)
 
     # Pass #2
-    cls = CompleteResultsParser if election_info.has_reporting_type else SimpleResultsParser
+    cls = (CompleteResultsParser if election_info.has_reporting_type else
+           SimpleResultsParser)
     parser = cls(results)
     parser.parse_path(wineds_path)
 
@@ -932,6 +956,14 @@ class ContestWriter(Writer):
         self.write_contest_summary()
 
 
+class SimpleContestWriter(ContestWriter):
+    pass
+
+
+class CompleteContestWriter(ContestWriter):
+    pass
+
+
 class ResultsWriter(Writer):
 
     def __init__(self, file, election_name, now=None):
@@ -976,6 +1008,10 @@ class ResultsWriter(Writer):
 def convert(election_name, precincts_path, export_path, output_path, now=None):
     # TODO: consider combining these three things into a master object.
     election_info, areas_info, results = digest_input_files(precincts_path, export_path)
+
+    cls = (CompleteResultsParser if election_info.has_reporting_type else
+           SimpleResultsParser)
+    parser = cls(results)
 
     with open(output_path, "w", encoding=FILE_ENCODING) as f:
         writer = ResultsWriter(file=f, election_name=election_name, now=now)

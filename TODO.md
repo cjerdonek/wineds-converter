@@ -1,9 +1,7 @@
 TODO
 ====
 
-* Do not store the contest ID for all choices (undervote and overvote).
-* Detect whether the file is "complete" or not based on the number
-  of characters in the first line.
+* Put writers into a "writing" module.
 * Make PrecinctIndexParser parse the precinct names, too.
 * Address TODO's in the code
 * Try reading data from an Excel file
