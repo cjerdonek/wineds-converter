@@ -7,7 +7,7 @@ Supports writing results files.
 from datetime import datetime
 import logging
 
-from pywineds.utils import time_it, REPORTING_INDICES_SIMPLE
+from pywineds.utils import time_it, REPORTING_INDICES_SIMPLE, REPORTING_INDICES_COMPLETE
 
 
 GRAND_TOTALS_HEADER = "Grand Totals"
@@ -168,7 +168,7 @@ class ContestWriter(Writer):
             assert type(area_precinct_ids) is set
             if area_precinct_ids.isdisjoint(contest_precinct_ids):
                 # Then no precincts in the district overlapped the contest, so skip it.
-                log.info("   no precincts: %s" % (area_name, ))
+                log.info("  skipping area: contest has no precincts in: %s" % (area_name, ))
                 continue
             try:
                 self.write_totals_row(area_precinct_ids, [area_name, area_label], self.reporting_indices)
@@ -222,7 +222,7 @@ class ContestWriter(Writer):
         # file with a script (since it gives people an easy way to find
         # where the lines for each contest start).
         self.write_ln("*** %s - %s" % (contest_name, self.contest_info.district_name))
-        self.write_totals_row_header("VotingPrecinctName", "VotingPrecinctID")
+        self.write_totals_row_header("PrecinctName", "PrecinctID")
         self.write_precincts()
         self.write_ln()
         self.write_contest_summary()
@@ -234,7 +234,7 @@ class SimpleContestWriter(ContestWriter):
         """Write the row or rows for a single precinct."""
         # Convert precinct_id into an iterable with one element in order
         # to use write_totals_row().
-        self.write_totals_row((precinct_id, ), [precinct_name, precinct_id],
+        self.write_totals_row((precinct_id, ), (precinct_name, precinct_id),
                               REPORTING_INDICES_SIMPLE)
 
 
@@ -242,12 +242,9 @@ class CompleteContestWriter(ContestWriter):
 
     def write_precinct(self, precinct_id, precinct_name):
         """Write the row or rows for a single precinct."""
-        # TODO
-        precinct_name = self.election_info.precincts[precinct_id]
-        # Convert precinct_id into an iterable with one element in order
-        # to use write_totals_row().
-        self.write_totals_row((precinct_id, ), [precinct_name, precinct_id],
-                              get_subtotals=lambda totals: (totals[0], ))
+        for r_index in REPORTING_INDICES_COMPLETE:
+            self.write_totals_row((precinct_id, ), (precinct_name, precinct_id),
+                                  (r_index, ))
 
 
 class ResultsWriter(Writer):
