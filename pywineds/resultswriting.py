@@ -58,7 +58,7 @@ class ContestWriter(Writer):
         """
         return self.contest_info.precinct_ids
 
-    def write_row(self, *values):
+    def write_row(self, values):
         self.write_ln(WRITER_DELIMITER.join([str(v) for v in values]))
 
     def write_totals_row_header(self, name_header, id_header):
@@ -69,8 +69,9 @@ class ContestWriter(Writer):
         choices = self.election_info.choices
         # Each choices value is a 2-tuple of (contest_id, choice_name).
         choice_names = (choices[choice_id][1] for choice_id in self.sorted_choice_ids)
-        self.write_row(name_header, id_header, "Precincts", "Registration",
-                       "Ballots Cast", "Turnout (%)", *choice_names)
+        values = [name_header, id_header, "Precincts", "Registration",
+                  "Ballots Cast", "Turnout (%)"] + list(choice_names)
+        self.write_row(values)
 
     def write_totals_row(self, area_name, area_id, area_precinct_ids):
         """
@@ -124,7 +125,8 @@ class ContestWriter(Writer):
         assert totals[0] > 0
         # Prevent division by zero.
         totals[3] = "0.00" if totals[1] == 0 else "{:.2%}".format(totals[2] / totals[1])[:-1]
-        self.write_row(area_name, area_id, *totals)
+        values = [area_name, area_id] + totals
+        self.write_row(values)
 
     def write_grand_totals_row(self, header):
         """
