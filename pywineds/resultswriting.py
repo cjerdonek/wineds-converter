@@ -7,7 +7,7 @@ Supports writing results files.
 from datetime import datetime
 import logging
 
-from pywineds.utils import time_it
+from pywineds.utils import time_it, REPORTING_INDICES_SIMPLE
 
 
 GRAND_TOTALS_HEADER = "Grand Totals"
@@ -58,6 +58,10 @@ class ContestWriter(Writer):
         """
         return self.contest_info.precinct_ids
 
+    @property
+    def reporting_indices(self):
+        return self.results.reporting_indices
+
     def write_row(self, values):
         self.write_ln(WRITER_DELIMITER.join([str(v) for v in values]))
 
@@ -73,12 +77,13 @@ class ContestWriter(Writer):
                   "Ballots Cast", "Turnout (%)"] + list(choice_names)
         self.write_row(values)
 
-    def write_totals_row(self, area_precinct_ids, first_fields, get_subtotals=None):
+    def write_totals_row(self, area_precinct_ids, first_fields, reporting_indices):
         """
         Write a row for a contest, for a participating district or area.
 
-        For example, the area can be a precinct or district, like
-        "Pct 9503/9504" or "12TH CONGRESSIONAL DISTRICT".
+        The area can be a precinct or district, for example, like
+        "Pct 9503/9504" or "12TH CONGRESSIONAL DISTRICT".  It can also
+        be a single precinct.
 
         The columns in the row are--
 
@@ -98,8 +103,6 @@ class ContestWriter(Writer):
           area_precinct_ids: an iterable of precinct IDs in the given area.
 
         """
-        if get_subtotals is None:
-            get_subtotals = lambda totals: (totals, )
         # Add four extra columns for:
         # precinct count, registration, ballots cast, and percent turnout.
         extra_columns = 4
@@ -119,12 +122,18 @@ class ContestWriter(Writer):
 
             totals[0] += 1
             totals[1] += registered[precinct_id]
-            subtotals = get_subtotals(voted[precinct_id])
-            for subtotal in subtotals:
-                totals[2] += subtotal
+            precinct_voted = voted[precinct_id]
+            for r_index in reporting_indices:
+                try:
+                    totals[2] += precinct_voted[r_index]
+                except KeyError:
+                    raise Exception("foo: %r" % voted)
 
-            for i, choice_id in enumerate(choice_ids, start=extra_columns):
-                totals[i] += precinct_results[choice_id]
+                for i, choice_id in enumerate(choice_ids, start=extra_columns):
+                    try:
+                        totals[i] += precinct_results[r_index][choice_id]
+                    except KeyError:
+                        raise Exception("foo: %r" % precinct_results)
 
         assert totals[0] > 0
         # Prevent division by zero.
@@ -140,7 +149,7 @@ class ContestWriter(Writer):
         all_precinct_ids = self.areas_info.city
         # The area ID "City:0" is just a placeholder value so the column
         # value can have the same format as other rows in the summary.
-        self.write_totals_row(all_precinct_ids, (header, "City:0"))
+        self.write_totals_row(all_precinct_ids, (header, "City:0"), self.reporting_indices)
 
     def write_precincts(self):
         """Write the rows for all precincts."""
@@ -162,7 +171,7 @@ class ContestWriter(Writer):
                 log.info("   no precincts: %s" % (area_name, ))
                 continue
             try:
-                self.write_totals_row(area_precinct_ids, [area_name, area_label])
+                self.write_totals_row(area_precinct_ids, [area_name, area_label], self.reporting_indices)
             except:
                 raise Exception("while processing area: %s" % area_name)
 
@@ -225,7 +234,8 @@ class SimpleContestWriter(ContestWriter):
         """Write the row or rows for a single precinct."""
         # Convert precinct_id into an iterable with one element in order
         # to use write_totals_row().
-        self.write_totals_row((precinct_id, ), [precinct_name, precinct_id])
+        self.write_totals_row((precinct_id, ), [precinct_name, precinct_id],
+                              REPORTING_INDICES_SIMPLE)
 
 
 class CompleteContestWriter(ContestWriter):
@@ -236,7 +246,8 @@ class CompleteContestWriter(ContestWriter):
         precinct_name = self.election_info.precincts[precinct_id]
         # Convert precinct_id into an iterable with one element in order
         # to use write_totals_row().
-        self.write_totals_row((precinct_id, ), [precinct_name, precinct_id])
+        self.write_totals_row((precinct_id, ), [precinct_name, precinct_id],
+                              get_subtotals=lambda totals: (totals[0], ))
 
 
 class ResultsWriter(Writer):

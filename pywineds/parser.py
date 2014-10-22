@@ -5,7 +5,8 @@ import re
 import sys
 
 from pywineds.resultswriting import ResultsWriter
-from pywineds.utils import time_it
+from pywineds import utils
+from pywineds.utils import time_it, REPORTING_INDICES
 
 
 FILE_ENCODING = "utf-8"
@@ -254,6 +255,10 @@ class ElectionResults(object):
     """
 
     def __init__(self):
+        # When set, this should be an iterable of keys that will be used
+        # within the "contests" and "voted" dicts to subdivide the vote totals.
+        self.reporting_indices = None
+
         self.contests = {}
         self.registered = {}
         self.voted = {}
@@ -271,20 +276,25 @@ def init_results(info, results):
     contests = results.contests
     registered = results.registered
     voted = results.voted
-    has_reporting_type = info.has_reporting_type
+
+    reporting_indices = (utils.REPORTING_INDICES_COMPLETE if info.has_reporting_type else
+                         utils.REPORTING_INDICES_SIMPLE)
+    results.reporting_indices = reporting_indices
 
     for contest_id, contest_info in info.contests.items():
         contest_results = {}
         contests[contest_id] = contest_results
         for precinct_id in contest_info.precinct_ids:
             # cp_results stands for contest_precinct_results
-            cp_results = [{}, {}] if has_reporting_type else {}
+            # It is a dict of reporting-type index to: dict of
+            # choice_id to vote total.
+            cp_results = {k: dict() for k in reporting_indices}
             contest_results[precinct_id] = cp_results
 
     # Initialize the election-wide result attributes.
     for precinct_id in info.precincts.keys():
-        registered[precinct_id] = 0
-        voted[precinct_id] = 0
+        # This is a dict of reporting-type index to ballots cast.
+        voted[precinct_id] = {}
 
     return results
 
@@ -578,10 +588,7 @@ class ResultsParser(Parser):
         self.registered = results.registered
         self.voted = results.voted
 
-    def get_sub_totals(self, totals, reporting_type):
-        raise NotImplementedError()
-
-    def add_vote_total(self, totals, id_, vote_total):
+    def add_vote_total(self, totals, key, vote_total):
         """
         Arguments:
           totals: a dict mapping keys to integer vote totals.
@@ -592,15 +599,16 @@ class ResultsParser(Parser):
         except AssertionError:
             raise Exception("totals has unexpected type: %r" % totals)
         try:
-            totals[id_]
+            totals[key]
         except KeyError:
-            totals[id_] = vote_total
+            totals[key] = vote_total
         else:
-            raise Exception("total for id=%d was already stored" % id_)
+            raise Exception("total for key=%d was already stored" % (key, ))
 
     def parse_line(self, line):
         fields = split_line_fixed(line)
         reporting_type = fields[-1]
+        r_index = REPORTING_INDICES[reporting_type]
 
         choice_id, contest_id, precinct_id, vote_total, party = parse_data_chunk(fields[0])
         # We do not use party yet.
@@ -610,42 +618,18 @@ class ResultsParser(Parser):
                                  "contest_id=%d, precinct_id=%d" %
                                  (vote_total, choice_id, contest_id, precinct_id))
             log.warning(text)
-        if contest_id < 3:
-            if contest_id == 1:
-                precinct_totals = self.registered
-            elif contest_id == 2:
-                precinct_totals = self.voted
-            else:
-                raise Exception("unrecognized contest ID: %r" % contest_id)
-            precinct_totals[precinct_id] = vote_total
-            return
-        # Otherwise, we have a normal contest.
-
-        precinct_totals = self.contests[contest_id][precinct_id]
-        choice_totals = self.get_sub_totals(precinct_totals, reporting_type)
-        self.add_vote_total(choice_totals, choice_id, vote_total)
-
-
-class SimpleResultsParser(ResultsParser):
-
-    name = "Simple Results File (pass #2, for vote totals)"
-
-    def get_sub_totals(self, totals, reporting_type):
-        return totals
-
-
-class CompleteResultsParser(ResultsParser):
-
-    name = "Complete Results File (pass #2, for vote totals)"
-
-    def get_sub_totals(self, totals, reporting_type):
-        if reporting_type == "TC-Election Day Reporting":
-            i = 0
-        elif reporting_type == "TC-VBM Reporting":
-            i = 1
+        if contest_id == 1:
+            totals = self.registered
+            totals_key = precinct_id
+        elif contest_id == 2:
+            totals = self.voted[precinct_id]
+            totals_key = r_index
         else:
-            raise Exception("unexpected reporting_type: %r" % reporting_type)
-        return totals[i]
+            # Otherwise, we have a normal contest with candidates.
+            totals = self.contests[contest_id][precinct_id][r_index]
+            totals_key = choice_id
+
+        self.add_vote_total(totals, totals_key, vote_total)
 
 
 def parse_export_file(path):
@@ -735,9 +719,9 @@ def digest_input_files(precinct_index_path, wineds_path):
     init_results(election_info, results)
 
     # Pass #2
-    cls = (CompleteResultsParser if election_info.has_reporting_type else
-           SimpleResultsParser)
-    parser = cls(results)
+    # cls = (CompleteResultsParser if election_info.has_reporting_type else
+    #        SimpleResultsParser)
+    parser = ResultsParser(results)
     parser.parse_path(wineds_path)
 
     return election_info, areas_info, results
