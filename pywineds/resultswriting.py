@@ -73,7 +73,7 @@ class ContestWriter(Writer):
                   "Ballots Cast", "Turnout (%)"] + list(choice_names)
         self.write_row(values)
 
-    def write_totals_row(self, area_name, area_id, area_precinct_ids):
+    def write_totals_row(self, area_precinct_ids, first_fields, get_subtotals=None):
         """
         Write a row for a contest, for a participating district or area.
 
@@ -98,6 +98,8 @@ class ContestWriter(Writer):
           area_precinct_ids: an iterable of precinct IDs in the given area.
 
         """
+        if get_subtotals is None:
+            get_subtotals = lambda totals: (totals, )
         # Add four extra columns for:
         # precinct count, registration, ballots cast, and percent turnout.
         extra_columns = 4
@@ -117,7 +119,9 @@ class ContestWriter(Writer):
 
             totals[0] += 1
             totals[1] += registered[precinct_id]
-            totals[2] += voted[precinct_id]
+            subtotals = get_subtotals(voted[precinct_id])
+            for subtotal in subtotals:
+                totals[2] += subtotal
 
             for i, choice_id in enumerate(choice_ids, start=extra_columns):
                 totals[i] += precinct_results[choice_id]
@@ -125,7 +129,7 @@ class ContestWriter(Writer):
         assert totals[0] > 0
         # Prevent division by zero.
         totals[3] = "0.00" if totals[1] == 0 else "{:.2%}".format(totals[2] / totals[1])[:-1]
-        values = [area_name, area_id] + totals
+        values = list(first_fields) + totals
         self.write_row(values)
 
     def write_grand_totals_row(self, header):
@@ -136,20 +140,14 @@ class ContestWriter(Writer):
         all_precinct_ids = self.areas_info.city
         # The area ID "City:0" is just a placeholder value so the column
         # value can have the same format as other rows in the summary.
-        self.write_totals_row(header, "City:0", all_precinct_ids)
-
-    def write_precinct(self, precinct_id):
-        """Write the row or rows for a single precinct."""
-        precinct_name = self.election_info.precincts[precinct_id]
-        # Convert precinct_id into an iterable with one element in order
-        # to use write_totals_row().
-        self.write_totals_row(precinct_name, precinct_id, (precinct_id, ))
+        self.write_totals_row(all_precinct_ids, (header, "City:0"))
 
     def write_precincts(self):
         """Write the rows for all precincts."""
         precincts = self.election_info.precincts
         for precinct_id in sorted(self.precinct_ids):
-            self.write_precinct(precinct_id)
+            precinct_name = precincts[precinct_id]
+            self.write_precinct(precinct_id, precinct_name)
         self.write_grand_totals_row(GRAND_TOTALS_HEADER)
 
     def write_area_rows(self, area_type, area_type_name, make_area_name, area_ids):
@@ -164,7 +162,7 @@ class ContestWriter(Writer):
                 log.info("   no precincts: %s" % (area_name, ))
                 continue
             try:
-                self.write_totals_row(area_name, area_label, area_precinct_ids)
+                self.write_totals_row(area_precinct_ids, [area_name, area_label])
             except:
                 raise Exception("while processing area: %s" % area_name)
 
@@ -222,11 +220,23 @@ class ContestWriter(Writer):
 
 
 class SimpleContestWriter(ContestWriter):
-    pass
+
+    def write_precinct(self, precinct_id, precinct_name):
+        """Write the row or rows for a single precinct."""
+        # Convert precinct_id into an iterable with one element in order
+        # to use write_totals_row().
+        self.write_totals_row((precinct_id, ), [precinct_name, precinct_id])
 
 
 class CompleteContestWriter(ContestWriter):
-    pass
+
+    def write_precinct(self, precinct_id, precinct_name):
+        """Write the row or rows for a single precinct."""
+        # TODO
+        precinct_name = self.election_info.precincts[precinct_id]
+        # Convert precinct_id into an iterable with one element in order
+        # to use write_totals_row().
+        self.write_totals_row((precinct_id, ), [precinct_name, precinct_id])
 
 
 class ResultsWriter(Writer):
