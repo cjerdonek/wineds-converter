@@ -165,7 +165,7 @@ class ContestWriter(Writer):
             precinct_name = precincts[precinct_id]
             self.write_precinct(precinct_id, precinct_name)
 
-    def write_post_precincts(self):
+    def write_post_precincts(self, header):
         pass
 
     def write_area_rows(self, area_type, area_type_name, make_area_name, area_ids):

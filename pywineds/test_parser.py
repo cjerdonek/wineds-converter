@@ -36,17 +36,17 @@ class ModuleTest(unittest.TestCase):
         self.assertEqual(parse_data_chunk("01000167208000-1NON"), (16, 100, 7208, -1, 'NON'))
 
 
-def parse_test_file(now=None):
+def parse_test_file(label, name, now=None):
     test_dir = Path(__file__).parents[1] / 'test_data'
 
     precincts_path = str(test_dir / "precincts.csv")
-    test_dir /= "simple"
-    exports_path, expected_path = (str(test_dir / name) for name in
-        ("wineds_results.txt", "output.tsv"))
+    test_dir /= label
+    input_name = "wineds_%s.txt" % label
+    exports_path, expected_path = (str(test_dir / name) for name in (input_name, "output.tsv"))
 
     output_path = "temp.txt"
 
-    convert(election_name="Test Election", precincts_path=precincts_path,
+    convert(election_name=name, precincts_path=precincts_path,
             export_path=exports_path, output_path=output_path, now=now)
 
     return output_path, expected_path
@@ -63,15 +63,21 @@ class EndToEndTest(unittest.TestCase):
             with self.assertRaises(StopIteration, msg=msg):
                 next(f)
 
-    def test_end_to_end(self):
+    def check_end_to_end(self, label, name):
         now = datetime(2014, 9, 22, 22, 30, 13)
-        actual_path, expected_path = parse_test_file(now)
+        actual_path, expected_path = parse_test_file(label, name, now)
         def read(path):
             return open(path, "r", encoding="utf-8")
 
         with read(actual_path) as actual_file, \
               read(expected_path) as expected_file:
             self.assert_files_equal(actual_file, expected_file)
+
+    def test_end_to_end__simple(self):
+        self.check_end_to_end("simple", "Test Election")
+
+    def test_end_to_end__complete(self):
+        self.check_end_to_end("complete", "Test Election (Complete Data)")
 
 
 if __name__ == "__main__":
