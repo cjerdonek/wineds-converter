@@ -747,10 +747,6 @@ def convert(election_name, precincts_path, export_path, output_path, now=None):
     # TODO: consider combining these three things into a master object.
     election_info, areas_info, results = digest_input_files(precincts_path, export_path)
 
-    cls = (CompleteResultsParser if election_info.has_reporting_type else
-           SimpleResultsParser)
-    parser = cls(results)
-
     with open(output_path, "w", encoding=FILE_ENCODING) as f:
         writer = ResultsWriter(file=f, election_name=election_name, now=now)
         writer.write(election_info, areas_info, results)
