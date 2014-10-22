@@ -87,7 +87,6 @@ class ContestWriter(Writer):
         values.extend(choice_names)
         self.write_row(values)
 
-
     def write_totals_row(self, area_precinct_ids, area_name, area_label, reporting_indices):
         """
         Write a row for a contest, for a participating district or area.
@@ -147,15 +146,17 @@ class ContestWriter(Writer):
         values.extend(totals)
         self.write_row(values)
 
-    def write_grand_totals_row(self, header):
+    def write_grand_totals_row(self, header, reporting_indices=None):
         """
         Write a row for the city-wide totals.
 
         """
+        if reporting_indices is None:
+            reporting_indices = self.reporting_indices
         all_precinct_ids = self.areas_info.city
         # The area ID "City:0" is just a placeholder value so the column
         # value can have the same format as other rows in the summary.
-        self.write_totals_row(all_precinct_ids, header, "City:0", self.reporting_indices)
+        self.write_totals_row(all_precinct_ids, header, "City:0", reporting_indices)
 
     def write_precincts(self):
         """Write the rows for all precincts."""
@@ -163,6 +164,9 @@ class ContestWriter(Writer):
         for precinct_id in sorted(self.precinct_ids):
             precinct_name = precincts[precinct_id]
             self.write_precinct(precinct_id, precinct_name)
+
+    def write_post_precincts(self):
+        pass
 
     def write_area_rows(self, area_type, area_type_name, make_area_name, area_ids):
         contest_precinct_ids = self.precinct_ids
@@ -229,6 +233,7 @@ class ContestWriter(Writer):
         self.write_ln("*** %s - %s" % (contest_name, self.contest_info.district_name))
         self.write_totals_row_header("PrecinctName", "PrecinctID")
         self.write_precincts()
+        self.write_post_precincts(GRAND_TOTALS_HEADER)
         self.write_grand_totals_row(GRAND_TOTALS_HEADER)
         self.write_ln()
         self.write_contest_summary()
@@ -264,6 +269,10 @@ class CompleteContestWriter(ContestWriter):
         """Write the row or rows for a single precinct."""
         for r_index in REPORTING_INDICES_COMPLETE:
             self.write_totals_row((precinct_id, ), precinct_name, precinct_id, (r_index, ))
+
+    def write_post_precincts(self, header):
+        for r_index in REPORTING_INDICES_COMPLETE:
+            self.write_grand_totals_row(GRAND_TOTALS_HEADER, (r_index, ))
 
 
 class ResultsWriter(Writer):
