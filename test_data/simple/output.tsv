@@ -4,7 +4,7 @@ Report generated on: Monday, September 22, 2014 at 10:30:13 PM
 
 
 *** State Treasurer - CALIFORNIA
-VotingPrecinctName	VotingPrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	ELLEN H. BROWN	GREG CONLON	JOHN CHIANG
+PrecinctName	PrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	ELLEN H. BROWN	GREG CONLON	JOHN CHIANG
 Pct 1108	1108	1	827	252	30.47	23	15	191
 Pct 1127	1127	1	791	233	29.46	24	31	158
 Pct 1151 MB	1151	1	0	0	0.00	0	0	0
@@ -109,7 +109,7 @@ Grand Totals	City:0	48	34558	10299	29.80	996	1157	6961
 
 
 *** US Representative, District 14 - 14TH CONGRESSIONAL DISTRI
-VotingPrecinctName	VotingPrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	ROBIN CHEW	JACKIE SPEIER
+PrecinctName	PrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	ROBIN CHEW	JACKIE SPEIER
 Pct 1108	1108	1	827	252	30.47	25	213
 Pct 1127	1127	1	791	233	29.46	45	171
 Pct 9738	9738	1	672	197	29.32	32	161
@@ -132,7 +132,7 @@ Grand Totals	City:0	4	2921	685	23.45	102	548
 
 
 *** State Assembly, District 17 - 17TH ASSEMBLY DISTRICT
-VotingPrecinctName	VotingPrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	DAVID CHIU	DAVID CAMPOS	DAVID CARLOS SALAVERRY
+PrecinctName	PrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	DAVID CHIU	DAVID CAMPOS	DAVID CARLOS SALAVERRY
 Pct 1151 MB	1151	1	0	0	0.00	0	0	0
 Pct 1152	1152	1	764	247	32.33	125	89	21
 Pct 1153	1153	1	788	219	27.79	101	74	39
@@ -207,7 +207,7 @@ Grand Totals	City:0	31	21582	6704	31.06	3087	2726	541
 
 
 *** Local Measure A - CITY/COUNTY OF SAN FRANCI
-VotingPrecinctName	VotingPrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	Yes	No
+PrecinctName	PrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	Yes	No
 Pct 1108	1108	1	827	252	30.47	189	53
 Pct 1127	1127	1	791	233	29.46	147	64
 Pct 1151 MB	1151	1	0	0	0.00	0	0

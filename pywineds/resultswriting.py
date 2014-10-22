@@ -7,7 +7,9 @@ Supports writing results files.
 from datetime import datetime
 import logging
 
-from pywineds.utils import time_it, REPORTING_INDICES_SIMPLE, REPORTING_INDICES_COMPLETE
+from pywineds import utils
+from pywineds.utils import (time_it, REPORTING_INDICES, REPORTING_INDICES_SIMPLE,
+                            REPORTING_INDICES_COMPLETE)
 
 
 GRAND_TOTALS_HEADER = "Grand Totals"
@@ -62,6 +64,12 @@ class ContestWriter(Writer):
     def reporting_indices(self):
         return self.results.reporting_indices
 
+    def extra_header_names(self):
+        return ()
+
+    def make_first_fields(self, area_name, area_label, reporting_indices):
+        return (area_name, area_label)
+
     def write_row(self, values):
         self.write_ln(WRITER_DELIMITER.join([str(v) for v in values]))
 
@@ -73,11 +81,14 @@ class ContestWriter(Writer):
         choices = self.election_info.choices
         # Each choices value is a 2-tuple of (contest_id, choice_name).
         choice_names = (choices[choice_id][1] for choice_id in self.sorted_choice_ids)
-        values = [name_header, id_header, "Precincts", "Registration",
-                  "Ballots Cast", "Turnout (%)"] + list(choice_names)
+        values = [name_header]
+        values.extend(self.extra_header_names())
+        values.extend([id_header, "Precincts", "Registration", "Ballots Cast", "Turnout (%)"])
+        values.extend(choice_names)
         self.write_row(values)
 
-    def write_totals_row(self, area_precinct_ids, first_fields, reporting_indices):
+
+    def write_totals_row(self, area_precinct_ids, area_name, area_label, reporting_indices):
         """
         Write a row for a contest, for a participating district or area.
 
@@ -124,21 +135,16 @@ class ContestWriter(Writer):
             totals[1] += registered[precinct_id]
             precinct_voted = voted[precinct_id]
             for r_index in reporting_indices:
-                try:
-                    totals[2] += precinct_voted[r_index]
-                except KeyError:
-                    raise Exception("foo: %r" % voted)
+                totals[2] += precinct_voted[r_index]
 
                 for i, choice_id in enumerate(choice_ids, start=extra_columns):
-                    try:
-                        totals[i] += precinct_results[r_index][choice_id]
-                    except KeyError:
-                        raise Exception("foo: %r" % precinct_results)
+                    totals[i] += precinct_results[r_index][choice_id]
 
         assert totals[0] > 0
         # Prevent division by zero.
         totals[3] = "0.00" if totals[1] == 0 else "{:.2%}".format(totals[2] / totals[1])[:-1]
-        values = list(first_fields) + totals
+        values = list(self.make_first_fields(area_name, area_label, reporting_indices))
+        values.extend(totals)
         self.write_row(values)
 
     def write_grand_totals_row(self, header):
@@ -149,7 +155,7 @@ class ContestWriter(Writer):
         all_precinct_ids = self.areas_info.city
         # The area ID "City:0" is just a placeholder value so the column
         # value can have the same format as other rows in the summary.
-        self.write_totals_row(all_precinct_ids, (header, "City:0"), self.reporting_indices)
+        self.write_totals_row(all_precinct_ids, header, "City:0", self.reporting_indices)
 
     def write_precincts(self):
         """Write the rows for all precincts."""
@@ -157,7 +163,6 @@ class ContestWriter(Writer):
         for precinct_id in sorted(self.precinct_ids):
             precinct_name = precincts[precinct_id]
             self.write_precinct(precinct_id, precinct_name)
-        self.write_grand_totals_row(GRAND_TOTALS_HEADER)
 
     def write_area_rows(self, area_type, area_type_name, make_area_name, area_ids):
         contest_precinct_ids = self.precinct_ids
@@ -171,7 +176,7 @@ class ContestWriter(Writer):
                 log.info("  skipping area: contest has no precincts in: %s" % (area_name, ))
                 continue
             try:
-                self.write_totals_row(area_precinct_ids, [area_name, area_label], self.reporting_indices)
+                self.write_totals_row(area_precinct_ids, area_name, area_label, self.reporting_indices)
             except:
                 raise Exception("while processing area: %s" % area_name)
 
@@ -224,6 +229,7 @@ class ContestWriter(Writer):
         self.write_ln("*** %s - %s" % (contest_name, self.contest_info.district_name))
         self.write_totals_row_header("PrecinctName", "PrecinctID")
         self.write_precincts()
+        self.write_grand_totals_row(GRAND_TOTALS_HEADER)
         self.write_ln()
         self.write_contest_summary()
 
@@ -234,17 +240,30 @@ class SimpleContestWriter(ContestWriter):
         """Write the row or rows for a single precinct."""
         # Convert precinct_id into an iterable with one element in order
         # to use write_totals_row().
-        self.write_totals_row((precinct_id, ), (precinct_name, precinct_id),
-                              REPORTING_INDICES_SIMPLE)
+        self.write_totals_row((precinct_id, ), precinct_name, precinct_id, REPORTING_INDICES_SIMPLE)
 
 
 class CompleteContestWriter(ContestWriter):
 
+    headers = {
+        REPORTING_INDICES[utils.REPORTING_TYPE_ELD]: "Election Day",
+        REPORTING_INDICES[utils.REPORTING_TYPE_VBM]: "VBM",
+    }
+
+    def extra_header_names(self):
+        return ("ReportingType", )
+
+    def make_first_fields(self, area_name, area_label, reporting_indices):
+        if len(reporting_indices) > 1:
+            r_header = ""
+        else:
+            r_header = self.headers[reporting_indices[0]]
+        return (area_name, r_header, area_label)
+
     def write_precinct(self, precinct_id, precinct_name):
         """Write the row or rows for a single precinct."""
         for r_index in REPORTING_INDICES_COMPLETE:
-            self.write_totals_row((precinct_id, ), (precinct_name, precinct_id),
-                                  (r_index, ))
+            self.write_totals_row((precinct_id, ), precinct_name, precinct_id, (r_index, ))
 
 
 class ResultsWriter(Writer):
