@@ -3,23 +3,39 @@ WinEDS Converter
 
 [![Build Status](https://travis-ci.org/cjerdonek/wineds-converter.svg?branch=master)][travis-ci-project-page]
 
-This repository contains an open-source Python 3 script to convert
-WinEDS 4.0 output into a simpler format.  WinEDS is an election
-management system owned by [Dominion Voting Systems][dominion].
+This repository contains an open-source Python 3 script to generate
+a machine-readable Statement of Vote for elections using WinEDS 4.0.
 
-The script is tailored for use in elections held in San Francisco by the
-[San Francisco Department of Elections][sf-elections].  However,
-it wouldn't be too hard to modify the code for other jurisdictions.
+WinEDS is an election management system owned by [Dominion Voting Systems][dominion].
+Out of the box, WinEDS only makes it easy to generate a PDF.
 
-The new (target) output format is a single tab-delimited file that
-resembles the format of the PDF Statements of Vote released by the
-SF Department of Elections.  In particular, it includes a
-"District Grand Totals" section for each contest, which reports totals
-broken down by various districts and neighborhoods.
+See the [License](#license) section for open-source license information.
+
+
+More Background
+---------------
+
+The script in this repository is tailored for use in elections held in
+San Francisco by the [San Francisco Department of Elections][sf-elections].
+However, it wouldn't be too hard to modify the code for other jurisdictions.
+
+The input is the raw TEXT output from the WinEDS Reporting Tool.
+Preferably, the input file should include undervotes, overvotes, and
+the Election Day & VBM breakdown.
+
+The script output is a single tab-delimited file that resembles the format
+of the PDF Statements of Vote released by the SF Department of Elections.
+In particular, the output includes the following for each contest:
+
+* A Precinct Report with Election Day & VBM subtotals,
+* Overvote and undervote totals,
+* Percent turnout, and
+* District and neighborhood subtotals.
 
 The new file format is also smaller in size.  For example, for the
-June 3, 2014 election, an 8.5 MB WinEDS file converted to a file with
-size 487 KB.
+June 3, 2014 election, a 30.7 MB WinEDS TEXT file converted to a file of
+size 1.2 MB.  In contrast, the PDF Statement of Vote was 8.1 MB.
+On an old Macbook Pro, the script ran in under 5 seconds.
 
 
 Setting up
@@ -39,6 +55,13 @@ Usage
 To run the script, run the following from the repo root--
 
     $ python3.4 parse.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
+
+For convenience, the precinct file for the June 2014 and November 2014
+elections is contained in this repository inside the folder
+`data/election-2014-06-03`.  So you can type the following, for example:
+
+    $ python3.4 parse.py "November 4, 2014 Election" \
+       data/election-2014-06-03/precincts_20140321.csv WINEDS.txt OUTPUT.tsv
 
 For additional usage notes, see the docstring of the main
 [`parse.py`](parse.py#L7) file.
@@ -62,7 +85,7 @@ New Format
 
 To see an example of what the new output format looks like, see the
 "expected" output file of the end-to-end test located at
-[`data/test/output.tsv`](data/test/output.tsv).
+[`test_data/complete/output.tsv`](test_data/complete/output.tsv).
 
 The format is largely self-explanatory.
 
