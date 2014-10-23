@@ -719,8 +719,6 @@ def digest_input_files(precinct_index_path, wineds_path):
     init_results(election_info, results)
 
     # Pass #2
-    # cls = (CompleteResultsParser if election_info.has_reporting_type else
-    #        SimpleResultsParser)
     parser = ResultsParser(results)
     parser.parse_path(wineds_path)
 
