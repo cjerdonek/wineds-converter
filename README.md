@@ -75,10 +75,10 @@ To test the script, run the following from the repo root--
 
     $ python3.4 -m pywineds.test_parser
 
-This runs an end-to-end test whose input and expected output files are
-located in the [`data/test`](data/test) directory.
+This runs some unit tests, as well as some end-to-end tests whose input and
+expected output files are located in the [`test_data/`](test_data) directory.
 
-Tests are also run automatically on [Travis CI][travis-ci].
+These tests are also run automatically on [Travis CI][travis-ci].
 
 
 New Format
