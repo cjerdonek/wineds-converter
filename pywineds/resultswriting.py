@@ -197,8 +197,15 @@ class ContestWriter(Writer):
         area_ids = sorted(area_type.keys())
         self.write_area_rows(area_type, district_type_name, make_area_name, area_ids)
 
-    def write_contest_summary(self):
-        self.write_ln("District Grand Totals")
+    def write_precinct_report(self):
+        self.write_ln("Precinct Totals")
+        self.write_totals_row_header("PrecinctName", "PrecinctID")
+        self.write_precincts()
+        self.write_post_precincts(GRAND_TOTALS_HEADER)
+        self.write_grand_totals_row(GRAND_TOTALS_HEADER)
+
+    def write_district_report(self):
+        self.write_ln("District and Neighborhood Totals")
         self.write_totals_row_header("DistrictName", "DistrictLabel")
         for district_type_name in self.district_type_names:
             self.write_district_type_rows(district_type_name)
@@ -225,18 +232,19 @@ class ContestWriter(Writer):
                  (contest_name, len(self.precinct_ids)))
         # TODO: move this assertion earlier in the script?
         assert type(self.precinct_ids) is set
+        contest_title = "%s - %s" % (contest_name, self.contest_info.district_name)
         # Begin each contest with a distinctive string.  We use 3 stars.
         # Doing this makes it easier for people to both (1) search through
         # the CSV (e.g. by using COMMAND+F or CTRL+F), and (2) parse the
         # file with a script (since it gives people an easy way to find
         # where the lines for each contest start).
-        self.write_ln("*** %s - %s" % (contest_name, self.contest_info.district_name))
-        self.write_totals_row_header("PrecinctName", "PrecinctID")
-        self.write_precincts()
-        self.write_post_precincts(GRAND_TOTALS_HEADER)
-        self.write_grand_totals_row(GRAND_TOTALS_HEADER)
+        self.write_ln("*** %s" % contest_title)
+        self.write_precinct_report()
         self.write_ln()
-        self.write_contest_summary()
+        # Repeat the contest title for the convenience of people looking
+        # at the district summary.
+        self.write_ln(contest_title)
+        self.write_district_report()
 
 
 class SimpleContestWriter(ContestWriter):
