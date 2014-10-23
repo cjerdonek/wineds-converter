@@ -4,10 +4,10 @@ WinEDS Converter
 [![Build Status](https://travis-ci.org/cjerdonek/wineds-converter.svg?branch=master)][travis-ci-project-page]
 
 This repository contains an open-source Python 3 script to generate
-a machine-readable Statement of Vote for elections using WinEDS 4.0.
+a machine-readable Statement of Vote for elections run using WinEDS 4.0.
 
 WinEDS is an election management system owned by [Dominion Voting Systems][dominion].
-Out of the box, WinEDS only makes it easy to generate a PDF.
+Out of the box, the system only makes it easy to generate a PDF.
 
 See the [License](#license) section for open-source license information.
 
@@ -15,8 +15,8 @@ See the [License](#license) section for open-source license information.
 More Background
 ---------------
 
-The script in this repository is tailored for use in elections held in
-San Francisco by the [San Francisco Department of Elections][sf-elections].
+The script in this repository is tailored for use in San Francisco elections
+held by the [San Francisco Department of Elections][sf-elections].
 However, it wouldn't be too hard to modify the code for other jurisdictions.
 
 The input is the raw TEXT output from the WinEDS Reporting Tool.
@@ -27,15 +27,16 @@ The script output is a single tab-delimited file that resembles the format
 of the PDF Statements of Vote released by the SF Department of Elections.
 In particular, the output includes the following for each contest:
 
-* A Precinct Report with Election Day & VBM subtotals,
-* Overvote and undervote totals,
-* Percent turnout, and
-* District and neighborhood subtotals.
+* a Precinct Report with Election Day & VBM subtotals,
+* overvote and undervote totals,
+* percent turnout, and
+* district and neighborhood subtotals.
 
 The new file format is also smaller in size.  For example, for the
 June 3, 2014 election, a 30.7 MB WinEDS TEXT file converted to a file of
 size 1.2 MB.  In contrast, the PDF Statement of Vote was 8.1 MB.
-On an old Macbook Pro, the script ran in under 5 seconds.
+In addition, on an old Macbook Pro, the script processed the input for
+the June 2014 election in under 5 seconds.
 
 
 Setting up
