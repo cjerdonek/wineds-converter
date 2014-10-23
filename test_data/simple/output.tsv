@@ -4,6 +4,7 @@ Report generated on: Monday, September 22, 2014 at 10:30:13 PM
 
 
 *** State Treasurer - CALIFORNIA
+Precinct Totals
 PrecinctName	PrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	ELLEN H. BROWN	GREG CONLON	JOHN CHIANG
 Pct 1108	1108	1	827	252	30.47	23	15	191
 Pct 1127	1127	1	791	233	29.46	24	31	158
@@ -55,7 +56,8 @@ Pct 9741	9741	1	631	3	0.48	0	0	3
 Pct 9900 MB	9900	1	0	0	0.00	0	0	0
 Grand Totals	City:0	48	34558	10299	29.80	996	1157	6961
 
-District Grand Totals
+State Treasurer - CALIFORNIA
+District and Neighborhood Totals
 DistrictName	DistrictLabel	Precincts	Registration	Ballots Cast	Turnout (%)	ELLEN H. BROWN	GREG CONLON	JOHN CHIANG
 12TH CONGRESSIONAL DISTRICT	Congressional:12	43	31637	9614	30.39	932	1072	6485
 13TH CONGRESSIONAL DISTRICT	Congressional:13	1	0	0	0.00	0	0	0
@@ -109,6 +111,7 @@ Grand Totals	City:0	48	34558	10299	29.80	996	1157	6961
 
 
 *** US Representative, District 14 - 14TH CONGRESSIONAL DISTRI
+Precinct Totals
 PrecinctName	PrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	ROBIN CHEW	JACKIE SPEIER
 Pct 1108	1108	1	827	252	30.47	25	213
 Pct 1127	1127	1	791	233	29.46	45	171
@@ -116,7 +119,8 @@ Pct 9738	9738	1	672	197	29.32	32	161
 Pct 9741	9741	1	631	3	0.48	0	3
 Grand Totals	City:0	4	2921	685	23.45	102	548
 
-District Grand Totals
+US Representative, District 14 - 14TH CONGRESSIONAL DISTRI
+District and Neighborhood Totals
 DistrictName	DistrictLabel	Precincts	Registration	Ballots Cast	Turnout (%)	ROBIN CHEW	JACKIE SPEIER
 14TH CONGRESSIONAL DISTRICT	Congressional:14	4	2921	685	23.45	102	548
 11TH SENATORIAL DISTRICT	Senatorial:11	4	2921	685	23.45	102	548
@@ -132,6 +136,7 @@ Grand Totals	City:0	4	2921	685	23.45	102	548
 
 
 *** State Assembly, District 17 - 17TH ASSEMBLY DISTRICT
+Precinct Totals
 PrecinctName	PrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	DAVID CHIU	DAVID CAMPOS	DAVID CARLOS SALAVERRY
 Pct 1151 MB	1151	1	0	0	0.00	0	0	0
 Pct 1152	1152	1	764	247	32.33	125	89	21
@@ -166,7 +171,8 @@ Pct 7956	7956	1	628	201	32.01	110	56	24
 Pct 9900 MB	9900	1	0	0	0.00	0	0	0
 Grand Totals	City:0	31	21582	6704	31.06	3087	2726	541
 
-District Grand Totals
+State Assembly, District 17 - 17TH ASSEMBLY DISTRICT
+District and Neighborhood Totals
 DistrictName	DistrictLabel	Precincts	Registration	Ballots Cast	Turnout (%)	DAVID CHIU	DAVID CAMPOS	DAVID CARLOS SALAVERRY
 12TH CONGRESSIONAL DISTRICT	Congressional:12	30	21582	6704	31.06	3087	2726	541
 13TH CONGRESSIONAL DISTRICT	Congressional:13	1	0	0	0.00	0	0	0
@@ -207,6 +213,7 @@ Grand Totals	City:0	31	21582	6704	31.06	3087	2726	541
 
 
 *** Local Measure A - CITY/COUNTY OF SAN FRANCI
+Precinct Totals
 PrecinctName	PrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	Yes	No
 Pct 1108	1108	1	827	252	30.47	189	53
 Pct 1127	1127	1	791	233	29.46	147	64
@@ -258,7 +265,8 @@ Pct 9741	9741	1	631	3	0.48	2	0
 Pct 9900 MB	9900	1	0	0	0.00	0	0
 Grand Totals	City:0	48	34558	10299	29.80	7705	1935
 
-District Grand Totals
+Local Measure A - CITY/COUNTY OF SAN FRANCI
+District and Neighborhood Totals
 DistrictName	DistrictLabel	Precincts	Registration	Ballots Cast	Turnout (%)	Yes	No
 12TH CONGRESSIONAL DISTRICT	Congressional:12	43	31637	9614	30.39	7211	1785
 13TH CONGRESSIONAL DISTRICT	Congressional:13	1	0	0	0.00	0	0

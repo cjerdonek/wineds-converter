@@ -4,6 +4,7 @@ Report generated on: Monday, September 22, 2014 at 10:30:13 PM
 
 
 *** State Treasurer - CALIFORNIA
+Precinct Totals
 PrecinctName	ReportingType	PrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	ELLEN H. BROWN	GREG CONLON	JOHN CHIANG	WRITE-IN	Under Vote	Over Vote
 Pct 1108	Election Day	1108	1	827	57	6.89	7	1	36	0	13	0
 Pct 1108	VBM	1108	1	827	195	23.58	16	14	155	2	8	0
@@ -105,7 +106,8 @@ Grand Totals	Election Day	City:0	48	34558	3172	9.18	424	303	2030	4	409	2
 Grand Totals	VBM	City:0	48	34558	7127	20.62	572	854	4931	17	745	8
 Grand Totals		City:0	48	34558	10299	29.80	996	1157	6961	21	1154	10
 
-District Grand Totals
+State Treasurer - CALIFORNIA
+District and Neighborhood Totals
 DistrictName	ReportingType	DistrictLabel	Precincts	Registration	Ballots Cast	Turnout (%)	ELLEN H. BROWN	GREG CONLON	JOHN CHIANG	WRITE-IN	Under Vote	Over Vote
 12TH CONGRESSIONAL DISTRICT		Congressional:12	43	31637	9614	30.39	932	1072	6485	18	1098	9
 13TH CONGRESSIONAL DISTRICT		Congressional:13	1	0	0	0.00	0	0	0	0	0	0
@@ -159,6 +161,7 @@ Grand Totals		City:0	48	34558	10299	29.80	996	1157	6961	21	1154	10
 
 
 *** US Representative, District 14 - 14TH CONGRESSIONAL DISTRI
+Precinct Totals
 PrecinctName	ReportingType	PrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	ROBIN CHEW	JACKIE SPEIER	WRITE-IN	Under Vote	Over Vote
 Pct 1108	Election Day	1108	1	827	57	6.89	2	47	0	8	0
 Pct 1108	VBM	1108	1	827	195	23.58	23	166	3	7	0
@@ -172,7 +175,8 @@ Grand Totals	Election Day	City:0	4	2921	177	6.06	19	142	1	15	0
 Grand Totals	VBM	City:0	4	2921	508	17.39	83	406	4	20	0
 Grand Totals		City:0	4	2921	685	23.45	102	548	5	35	0
 
-District Grand Totals
+US Representative, District 14 - 14TH CONGRESSIONAL DISTRI
+District and Neighborhood Totals
 DistrictName	ReportingType	DistrictLabel	Precincts	Registration	Ballots Cast	Turnout (%)	ROBIN CHEW	JACKIE SPEIER	WRITE-IN	Under Vote	Over Vote
 14TH CONGRESSIONAL DISTRICT		Congressional:14	4	2921	685	23.45	102	548	5	35	0
 11TH SENATORIAL DISTRICT		Senatorial:11	4	2921	685	23.45	102	548	5	35	0
@@ -188,6 +192,7 @@ Grand Totals		City:0	4	2921	685	23.45	102	548	5	35	0
 
 
 *** State Assembly, District 17 - 17TH ASSEMBLY DISTRICT
+Precinct Totals
 PrecinctName	ReportingType	PrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	DAVID CHIU	DAVID CAMPOS	DAVID CARLOS SALAVERRY	WRITE-IN	Under Vote	Over Vote
 Pct 1151 MB	Election Day	1151	1	0	0	0.00	0	0	0	0	0	0
 Pct 1151 MB	VBM	1151	1	0	0	0.00	0	0	0	0	0	0
@@ -255,7 +260,8 @@ Grand Totals	Election Day	City:0	31	21582	2089	9.68	844	1019	120	6	95	4
 Grand Totals	VBM	City:0	31	21582	4615	21.38	2243	1707	421	13	228	15
 Grand Totals		City:0	31	21582	6704	31.06	3087	2726	541	19	323	19
 
-District Grand Totals
+State Assembly, District 17 - 17TH ASSEMBLY DISTRICT
+District and Neighborhood Totals
 DistrictName	ReportingType	DistrictLabel	Precincts	Registration	Ballots Cast	Turnout (%)	DAVID CHIU	DAVID CAMPOS	DAVID CARLOS SALAVERRY	WRITE-IN	Under Vote	Over Vote
 12TH CONGRESSIONAL DISTRICT		Congressional:12	30	21582	6704	31.06	3087	2726	541	19	323	19
 13TH CONGRESSIONAL DISTRICT		Congressional:13	1	0	0	0.00	0	0	0	0	0	0
@@ -296,6 +302,7 @@ Grand Totals		City:0	31	21582	6704	31.06	3087	2726	541	19	323	19
 
 
 *** Local Measure A - CITY/COUNTY OF SAN FRANCI
+Precinct Totals
 PrecinctName	ReportingType	PrecinctID	Precincts	Registration	Ballots Cast	Turnout (%)	Yes	No	Under Vote	Over Vote
 Pct 1108	Election Day	1108	1	827	57	6.89	44	8	5	0
 Pct 1108	VBM	1108	1	827	195	23.58	145	45	9	0
@@ -397,7 +404,8 @@ Grand Totals	Election Day	City:0	48	34558	3172	9.18	2387	577	204	2
 Grand Totals	VBM	City:0	48	34558	7127	20.62	5318	1358	471	6
 Grand Totals		City:0	48	34558	10299	29.80	7705	1935	675	8
 
-District Grand Totals
+Local Measure A - CITY/COUNTY OF SAN FRANCI
+District and Neighborhood Totals
 DistrictName	ReportingType	DistrictLabel	Precincts	Registration	Ballots Cast	Turnout (%)	Yes	No	Under Vote	Over Vote
 12TH CONGRESSIONAL DISTRICT		Congressional:12	43	31637	9614	30.39	7211	1785	629	8
 13TH CONGRESSIONAL DISTRICT		Congressional:13	1	0	0	0.00	0	0	0	0
