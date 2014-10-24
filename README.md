@@ -42,12 +42,16 @@ the June 2014 election in under 5 seconds.
 Setting up
 ----------
 
-The script was written for Python 3.4.
+The script was written for Python 3.4.  You can download and install
+Python 3.4 [from here][python-download].
 
-You can download Python [from here][python-download].
+Then clone this repo.
 
-Then just clone this repo and follow the usage instructions below.
-Currently, there are no third-party dependencies.
+And install third-party requirements:
+
+    $ pip install XlsxWriter
+
+And follow the usage instructions below.
 
 
 Usage
