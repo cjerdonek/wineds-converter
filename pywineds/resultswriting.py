@@ -7,6 +7,12 @@ Supports writing results files.
 from datetime import datetime
 import logging
 
+try:
+    import xlsxwriter
+except ImportError:
+    raise Exception("XlsxWriter does not seem to be installed. "
+                    "Please follow the setup instructions.")
+
 from pywineds import utils
 from pywineds.utils import (time_it, REPORTING_INDICES, REPORTING_INDICES_SIMPLE,
                             REPORTING_INDICES_COMPLETE)
