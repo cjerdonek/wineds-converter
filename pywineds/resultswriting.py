@@ -290,6 +290,17 @@ class ResultsWriter(object):
                 self.write_start(info)
                 self.write_contests(info)
 
+    def write_header(self, info):
+        self.write_ln(info.name)
+        self.write_ln()
+        now = self.now
+        # This looks like the following, for example:
+        #   Report generated on: Friday, September 12, 2014 at 09:06:26 PM
+        self.write_ln("Report generated on: %s %d, %s" %
+                      (now.strftime("%A, %B"),
+                       now.day,  # strftime lacks an option not to zero-pad the month.
+                       now.strftime("%Y at %I:%M:%S %p")))
+
     def write_contests(self, info):
         contests_info = info.meta.contests
         contests_results = info.results.contests
@@ -345,15 +356,7 @@ class TSVWriter(ResultsWriter, TSVMixin):
             yield
 
     def write_start(self, info):
-        self.write_ln(info.name)
-        self.write_ln()
-        now = self.now
-        # This looks like the following, for example:
-        #   Report generated on: Friday, September 12, 2014 at 09:06:26 PM
-        self.write_ln("Report generated on: %s %d, %s" %
-                      (now.strftime("%A, %B"),
-                       now.day,  # strftime lacks an option not to zero-pad the month.
-                       now.strftime("%Y at %I:%M:%S %p")))
+        self.write_header(info)
 
     def write_contest(self, contest_writer):
         self.write_ln()
@@ -401,7 +404,20 @@ class ExcelWriter(ResultsWriter, ExcelMixin):
         workbook.close()
 
     def write_start(self, info):
-        pass
+        workbook = self.workbook
+        contests_info = info.meta.contests
+        worksheet = workbook.add_worksheet("Contents")
+        self.worksheet = worksheet
+
+        self.write_header(info)
+
+        self.write_ln()
+        self.write_ln("Table of Contents - Worksheets")
+        self.write_ln()
+
+        for i, contest_id in enumerate(sorted(contests_info.keys())):
+            contest_info = contests_info[contest_id]
+            self.write_row((contest_info.id, contest_info.name))
 
     def write_contest(self, contest_writer):
         workbook = self.workbook
