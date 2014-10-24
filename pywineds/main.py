@@ -4,7 +4,7 @@ import random
 import re
 import sys
 
-from pywineds.resultswriting import ResultsWriter
+from pywineds.resultswriting import ExcelWriter, TSVWriter
 from pywineds import utils
 from pywineds.utils import time_it, REPORTING_INDICES
 
@@ -199,8 +199,7 @@ class AreasInfo(object):
         return lambda area_id: format_str % area_id
 
 
-# TODO: rename to ContestsInfo?
-class ElectionInfo(object):
+class ElectionMeta(object):
 
     """
     Encapsulates election metadata (but not results).
@@ -227,7 +226,7 @@ class ElectionInfo(object):
         self.precincts = {}
 
     def __repr__(self):
-        return ("<ElectionInfo object: %d contests, %d choices, %d precincts>" %
+        return ("<ElectionMeta object: %d contests, %d choices, %d precincts>" %
                 (len(self.contests), len(self.choices), len(self.precincts)))
 
 
@@ -264,12 +263,21 @@ class ElectionResults(object):
         self.voted = {}
 
 
+class ElectionInfo(object):
+
+    def __init__(self, areas_info, meta, name, results):
+        self.areas_info = areas_info
+        self.meta = meta
+        self.results = results
+        self.name = name
+
+
 def init_results(info, results):
     """
     Initialize the results object by modifying it in place.
 
     Arguments:
-      info: an ElectionInfo object.
+      info: an ElectionMeta object.
       results: an ElectionResults object.
 
     """
@@ -422,7 +430,7 @@ class PrecinctIndexParser(Parser):
         self.areas_info.city.add(precinct_id)
 
 
-class ElectionInfoParser(Parser):
+class ElectionMetaParser(Parser):
 
     """
     Parser for a TEXT report from the WinEDS Reporting Tool.
@@ -440,7 +448,7 @@ class ElectionInfoParser(Parser):
     def __init__(self, info):
         """
         Arguments:
-          info: an ElectionInfo object.
+          info: an ElectionMeta object.
 
         """
         self.election_info = info
@@ -482,7 +490,7 @@ class ElectionInfoParser(Parser):
         """
         This function parses a single line, validates our assumptions
         about the file format, and then stores any new election metadata
-        in the ElectionInfo object associated with the current
+        in the ElectionMeta object associated with the current
         parser instance.
 
         This function populates election_info.choices but does not
@@ -572,7 +580,7 @@ class ResultsParser(Parser):
 
     """
     When parsing, this class does not validate the file in the same way
-    that the ElectionInfoParser does.
+    that the ElectionMetaParser does.
 
     """
 
@@ -634,11 +642,11 @@ class ResultsParser(Parser):
 
 def parse_export_file(path):
     """
-    Parse a WinEDS export file, and return an ElectionInfo object.
+    Parse a WinEDS export file, and return an ElectionMeta object.
 
     """
-    election_info = ElectionInfo()
-    parser = ElectionInfoParser(election_info)
+    election_info = ElectionMeta()
+    parser = ElectionMetaParser(election_info)
     parser.parse_path(path)
 
     choices = election_info.choices
@@ -682,7 +690,7 @@ def parse_export_file_with_check(areas_info, wineds_path):
 def digest_input_files(precinct_index_path, wineds_path):
     """
     Read the input files and return a 3-tuple of objects of the following
-    classes: ElectionInfo, AreasInfo, ElectionResults.
+    classes: ElectionMeta, AreasInfo, ElectionResults.
 
     """
     areas_info = parse_precinct_file(precinct_index_path)
@@ -725,13 +733,19 @@ def digest_input_files(precinct_index_path, wineds_path):
     return election_info, areas_info, results
 
 
-def convert(election_name, precincts_path, export_path, output_path, now=None):
-    # TODO: consider combining these three things into a master object.
-    election_info, areas_info, results = digest_input_files(precincts_path, export_path)
+def convert(election_name, precincts_path, export_path, output_base, now=None):
+    election_meta, areas_info, results = digest_input_files(precincts_path, export_path)
+    election_info = ElectionInfo(areas_info, election_meta, election_name, results)
 
-    with open(output_path, "w", encoding=FILE_ENCODING) as f:
-        writer = ResultsWriter(file=f, election_name=election_name, now=now)
-        writer.write(election_info, areas_info, results)
+    tsv_path = "%s.tsv" % output_base
+    writer = TSVWriter(path=tsv_path, now=now)
+    writer.write(election_info)
+
+    excel_path = "%s.xlsx" % output_base
+    writer = ExcelWriter(path=excel_path, now=now)
+    writer.write(election_info)
+
+    return tsv_path, excel_path
 
 def inner_main(docstr, argv):
     try:

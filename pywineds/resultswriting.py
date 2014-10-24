@@ -15,7 +15,7 @@ from pywineds.utils import (time_it, REPORTING_INDICES, REPORTING_INDICES_SIMPLE
 GRAND_TOTALS_HEADER = "Grand Totals"
 WRITER_DELIMITER = "\t"
 
-log = logging.getLogger("wineds")
+log = logging.getLogger(__name__)
 
 
 class Writer(object):
@@ -285,18 +285,35 @@ class CompleteContestWriter(ContestWriter):
 
 class ResultsWriter(Writer):
 
-    def __init__(self, file, election_name, now=None):
+    def __init__(self, path, now=None):
         if now is None:
             now = datetime.now()
-        self.election_name = election_name
-        self.file = file
+        self.path = path
         self.now = now
 
-    def write_inner(self, election_info, areas_info, results):
-        info_contests = election_info.contests
+    def write(self, info):
+        with time_it("writing output file: %s" % self.name):
+            self.write_inner(info)
+
+
+class TSVWriter(ResultsWriter):
+
+    name = "TSV"
+
+    def write_inner(self, info):
+        with open(self.path, "w", encoding='utf-8') as f:
+            self.file = f
+            self._write_inner(info)
+
+    def _write_inner(self, info):
+        areas_info = info.areas_info
+        meta = info.meta
+        results = info.results
+
+        info_contests = meta.contests
         results_contests = results.contests
 
-        self.write_ln(self.election_name)
+        self.write_ln(info.name)
         self.write_ln()
         # This looks like the following, for example:
         #   Report generated on: Friday, September 12, 2014 at 09:06:26 PM
@@ -306,7 +323,7 @@ class ResultsWriter(Writer):
                        now.day,  # strftime lacks an option not to zero-pad the month.
                        now.strftime("%Y at %I:%M:%S %p")))
 
-        writer_cls = (CompleteContestWriter if election_info.has_reporting_type else
+        writer_cls = (CompleteContestWriter if meta.has_reporting_type else
                       SimpleContestWriter)
 
         for contest_id in sorted(info_contests.keys()):
@@ -315,13 +332,16 @@ class ResultsWriter(Writer):
             contest_info = info_contests[contest_id]
             contest_results = results_contests[contest_id]
             try:
-                contest_writer = writer_cls(self.file, election_info, areas_info,
+                contest_writer = writer_cls(self.file, meta, areas_info,
                                             results, contest_info, contest_results)
                 contest_writer.write()
             except:
                 raise Exception("while processing contest: %s" % contest_info.name)
 
-    def write(self, election_info, areas_info, results):
-        """Write the election results to the given file."""
-        with time_it("writing output file"):
-            self.write_inner(election_info, areas_info, results)
+
+class ExcelWriter(ResultsWriter):
+
+    name = "Excel"
+
+    def write_inner(self, info):
+        pass

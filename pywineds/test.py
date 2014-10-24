@@ -44,12 +44,13 @@ def parse_test_file(label, name, now=None):
     input_name = "wineds_%s.txt" % label
     exports_path, expected_path = (str(test_dir / name) for name in (input_name, "output.tsv"))
 
-    output_path = "temp.txt"
+    output_base = "temp"
 
-    convert(election_name=name, precincts_path=precincts_path,
-            export_path=exports_path, output_path=output_path, now=now)
+    tsv_path, excel_path = convert(election_name=name, precincts_path=precincts_path,
+                                   export_path=exports_path, output_base=output_base,
+                                   now=now)
 
-    return output_path, expected_path
+    return tsv_path, expected_path
 
 
 class EndToEndTest(unittest.TestCase):
