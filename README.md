@@ -55,17 +55,17 @@ Usage
 
 To run the script, run the following from the repo root--
 
-    $ python3.4 parse.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
+    $ python3.4 convert.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
 
 For convenience, the precinct file for the June 2014 and November 2014
 elections is contained in this repository inside the folder
 `data/election-2014-06-03`.  So you can type the following, for example:
 
-    $ python3.4 parse.py "November 4, 2014 Election" \
+    $ python3.4 convert.py "November 4, 2014 Election" \
        data/election-2014-06-03/precincts_20140321.csv WINEDS.txt OUTPUT.tsv
 
 For additional usage notes, see the docstring of the main
-[`parse.py`](parse.py#L7) file.
+[`convert.py`](convert.py#L7) file.
 
 
 Testing
@@ -73,7 +73,7 @@ Testing
 
 To test the script, run the following from the repo root--
 
-    $ python3.4 -m pywineds.test_parser
+    $ python3.4 -m pywineds.test
 
 This runs some unit tests, as well as some end-to-end tests whose input and
 expected output files are located in the [`test_data/`](test_data) directory.

@@ -4,7 +4,7 @@
 #
 
 """
-Usage: python3.4 parse.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
+Usage: python3.4 convert.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
 
 Parses the given files and writes a new output file to stdout.
 
@@ -32,7 +32,7 @@ current working directory.
 
 import sys
 
-from pywineds.parser import main
+from pywineds.main import main
 
 if __name__ == "__main__":
     main(__doc__, sys.argv)
