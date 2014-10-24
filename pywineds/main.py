@@ -130,9 +130,9 @@ class ContestInfo(object):
 
     """
 
-    # TODO: include ID?
-    def __init__(self, name, district_name):
+    def __init__(self, id_, name, district_name):
         self.choice_ids = set()
+        self.id = id_
         self.precinct_ids = set()
         self.name = name
         self.district_name = district_name
@@ -548,7 +548,8 @@ class ElectionMetaParser(Parser):
         try:
             contest = contests[contest_id]
         except KeyError:
-            contest = ContestInfo(name=contest_name, district_name=district_name)
+            contest = ContestInfo(id_=contest_id, name=contest_name,
+                                  district_name=district_name)
             contests[contest_id] = contest
         else:
             assert contest_name == contest.name

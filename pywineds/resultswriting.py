@@ -4,6 +4,7 @@ Supports writing results files.
 
 """
 
+from contextlib import contextmanager
 from datetime import datetime
 import logging
 
@@ -24,13 +25,7 @@ WRITER_DELIMITER = "\t"
 log = logging.getLogger(__name__)
 
 
-class Writer(object):
-
-    def write_ln(self, s=""):
-        print(s, file=self.file)
-
-
-class ContestWriter(Writer):
+class ContestWriter(object):
 
     district_type_names = (
         'Congressional',
@@ -40,7 +35,7 @@ class ContestWriter(Writer):
         'Supervisorial'
     )
 
-    def __init__(self, file, election_info, areas_info, results, contest_info, contest_results):
+    def __init__(self, info, contest_info, contest_results):
         """
         Arguments:
 
@@ -50,12 +45,11 @@ class ContestWriter(Writer):
             of these values.
 
         """
-        self.file = file
-        self.areas_info = areas_info
+        self.areas_info = info.areas_info
         self.contest_info = contest_info
         self.contest_results = contest_results
-        self.election_info = election_info
-        self.results = results
+        self.election_info = info.meta
+        self.results = info.results
         self.sorted_choice_ids = sorted(contest_info.choice_ids)
 
     @property
@@ -75,9 +69,6 @@ class ContestWriter(Writer):
 
     def make_first_fields(self, area_name, area_label, reporting_indices):
         return (area_name, area_label)
-
-    def write_row(self, values):
-        self.write_ln(WRITER_DELIMITER.join([str(v) for v in values]))
 
     def write_totals_row_header(self, name_header, id_header):
         """
@@ -233,18 +224,14 @@ class ContestWriter(Writer):
         self.write_grand_totals_row(GRAND_TOTALS_HEADER)
 
     def write(self):
-        contest_name = self.contest_info.name
+        contest_info = self.contest_info
+        contest_name = contest_info.name
         log.info("writing contest: %s (%d precincts)" %
                  (contest_name, len(self.precinct_ids)))
         # TODO: move this assertion earlier in the script?
         assert type(self.precinct_ids) is set
-        contest_title = "%s - %s" % (contest_name, self.contest_info.district_name)
-        # Begin each contest with a distinctive string.  We use 3 stars.
-        # Doing this makes it easier for people to both (1) search through
-        # the CSV (e.g. by using COMMAND+F or CTRL+F), and (2) parse the
-        # file with a script (since it gives people an easy way to find
-        # where the lines for each contest start).
-        self.write_ln("*** %s" % contest_title)
+        contest_title = "%s - %s (%d)" % (contest_name, contest_info.district_name, contest_info.id)
+        self.write_contest_start(contest_title)
         self.write_precinct_report()
         self.write_ln()
         # Repeat the contest title for the convenience of people looking
@@ -289,7 +276,7 @@ class CompleteContestWriter(ContestWriter):
             self.write_grand_totals_row(GRAND_TOTALS_HEADER, (r_index, ))
 
 
-class ResultsWriter(Writer):
+class ResultsWriter(object):
 
     def __init__(self, path, now=None):
         if now is None:
@@ -299,55 +286,131 @@ class ResultsWriter(Writer):
 
     def write(self, info):
         with time_it("writing output file: %s" % self.name):
-            self.write_inner(info)
+            with self.writer():
+                self.write_start(info)
+                self.write_contests(info)
+
+    def write_contests(self, info):
+        contests_info = info.meta.contests
+        contests_results = info.results.contests
+
+        for contest_id in sorted(contests_info.keys()):
+            contest_info = contests_info[contest_id]
+            contest_results = contests_results[contest_id]
+
+            writer_cls = self.get_writer_class(info)
+            try:
+                contest_writer = writer_cls(info, contest_info, contest_results)
+                self.write_contest(contest_writer)
+            except:
+                raise Exception("while processing contest: %s" % contest_info.name)
 
 
-class TSVWriter(ResultsWriter):
+class TSVMixin(object):
+
+    def write_ln(self, s=""):
+        print(s, file=self.file)
+
+    def write_row(self, values):
+        self.write_ln(WRITER_DELIMITER.join([str(v) for v in values]))
+
+    def write_contest_start(self, contest_title):
+        # Begin each contest with a distinctive string.  We use 3 stars.
+        # Doing this makes it easier for people to both (1) search through
+        # the CSV (e.g. by using COMMAND+F or CTRL+F), and (2) parse the
+        # file with a script (since it gives people an easy way to find
+        # where the lines for each contest start).
+        self.write_ln("*** %s" % contest_title)
+
+
+class TSVSimpleContestWriter(SimpleContestWriter, TSVMixin):
+    pass
+
+
+class TSVCompleteContestWriter(CompleteContestWriter, TSVMixin):
+    pass
+
+
+class TSVWriter(ResultsWriter, TSVMixin):
 
     name = "TSV"
 
-    def write_inner(self, info):
+    def get_writer_class(self, info):
+        return TSVCompleteContestWriter if info.meta.has_reporting_type else TSVSimpleContestWriter
+
+    @contextmanager
+    def writer(self):
         with open(self.path, "w", encoding='utf-8') as f:
             self.file = f
-            self._write_inner(info)
+            yield
 
-    def _write_inner(self, info):
-        areas_info = info.areas_info
-        meta = info.meta
-        results = info.results
-
-        info_contests = meta.contests
-        results_contests = results.contests
-
+    def write_start(self, info):
         self.write_ln(info.name)
         self.write_ln()
+        now = self.now
         # This looks like the following, for example:
         #   Report generated on: Friday, September 12, 2014 at 09:06:26 PM
-        now = self.now
         self.write_ln("Report generated on: %s %d, %s" %
                       (now.strftime("%A, %B"),
                        now.day,  # strftime lacks an option not to zero-pad the month.
                        now.strftime("%Y at %I:%M:%S %p")))
 
-        writer_cls = (CompleteContestWriter if meta.has_reporting_type else
-                      SimpleContestWriter)
-
-        for contest_id in sorted(info_contests.keys()):
-            self.write_ln()
-            self.write_ln()
-            contest_info = info_contests[contest_id]
-            contest_results = results_contests[contest_id]
-            try:
-                contest_writer = writer_cls(self.file, meta, areas_info,
-                                            results, contest_info, contest_results)
-                contest_writer.write()
-            except:
-                raise Exception("while processing contest: %s" % contest_info.name)
+    def write_contest(self, contest_writer):
+        self.write_ln()
+        self.write_ln()
+        contest_writer.file = self.file
+        contest_writer.write()
 
 
-class ExcelWriter(ResultsWriter):
+class ExcelMixin(object):
+
+    row_index = 0
+
+    def write_row(self, values):
+        self.worksheet.write_row(self.row_index, 0, values)
+        self.row_index += 1
+
+    def write_ln(self, s=""):
+        self.write_row((s, ))
+
+    def write_contest_start(self, contest_title):
+        self.write_ln(contest_title)
+        self.write_ln()
+
+
+class ExcelSimpleContestWriter(SimpleContestWriter, ExcelMixin):
+    pass
+
+
+class ExcelCompleteContestWriter(CompleteContestWriter, ExcelMixin):
+    pass
+
+
+class ExcelWriter(ResultsWriter, ExcelMixin):
 
     name = "Excel"
 
-    def write_inner(self, info):
+    def get_writer_class(self, info):
+        return ExcelCompleteContestWriter if info.meta.has_reporting_type else ExcelSimpleContestWriter
+
+    @contextmanager
+    def writer(self):
+        workbook = xlsxwriter.Workbook(self.path)
+        self.workbook = workbook
+        yield
+        workbook.close()
+
+    def write_start(self, info):
         pass
+
+    def write_contest(self, contest_writer):
+        workbook = self.workbook
+        contest_info = contest_writer.contest_info
+
+        name = "%d - %s" % (contest_info.id, contest_info.name)
+        # Worksheet names must be 31 characters or less.
+        name = name[:31]
+        worksheet = workbook.add_worksheet(name)
+
+        contest_writer.worksheet = worksheet
+        contest_writer.write()

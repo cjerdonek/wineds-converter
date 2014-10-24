@@ -44,7 +44,7 @@ def parse_test_file(label, name, now=None):
     input_name = "wineds_%s.txt" % label
     exports_path, expected_path = (str(test_dir / name) for name in (input_name, "output.tsv"))
 
-    output_base = "temp"
+    output_base = "temp_%s" % label
 
     tsv_path, excel_path = convert(election_name=name, precincts_path=precincts_path,
                                    export_path=exports_path, output_base=output_base,
@@ -66,7 +66,7 @@ class EndToEndTest(unittest.TestCase):
 
     def check_end_to_end(self, label, name):
         now = datetime(2014, 9, 22, 22, 30, 13)
-        actual_path, expected_path = parse_test_file(label, name, now)
+        actual_path, expected_path = parse_test_file(label, name, now=now)
         def read(path):
             return open(path, "r", encoding="utf-8")
 
