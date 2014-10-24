@@ -5,8 +5,8 @@ WinEDS Converter
 
 This repository contains an open-source Python 3 script to generate
 Statement of Votes for elections run using WinEDS 4.0.  It creates both
-a open-format machine-readable file (TSV, or tab-separated value),
-as well as Excel `.xlsx`
+a machine-readable file using an open format (specifically tab-separated
+value, aka TSV), as well as Excel with the `.xlsx` extension.
 
 WinEDS is an election management system owned by [Dominion Voting Systems][dominion].
 Out of the box, the system only makes it easy to generate a PDF.
@@ -14,8 +14,8 @@ Out of the box, the system only makes it easy to generate a PDF.
 See the [License](#license) section for open-source license information.
 
 
-More Background
----------------
+Features
+--------
 
 The script in this repository is tailored for use in San Francisco elections
 held by the [San Francisco Department of Elections][sf-elections].
@@ -25,8 +25,8 @@ The input is the raw TEXT output from the WinEDS Reporting Tool.
 Preferably, the input file should include undervotes, overvotes, and
 the Election Day & VBM breakdown.
 
-The script output is a single tab-delimited file that resembles the format
-of the PDF Statements of Vote released by the SF Department of Elections.
+The TSV and Excel output files both have formats resembling the PDF
+Statements of Vote released by the SF Department of Elections.
 In particular, the output includes the following for each contest:
 
 * a Precinct Report with Election Day & VBM subtotals,
@@ -34,11 +34,15 @@ In particular, the output includes the following for each contest:
 * percent turnout, and
 * district and neighborhood subtotals.
 
-The new file format is also smaller in size.  For example, for the
-June 3, 2014 election, a 30.7 MB WinEDS TEXT file converted to a file of
-size 1.2 MB.  In contrast, the PDF Statement of Vote was 8.1 MB.
-In addition, on an old Macbook Pro, the script processed the input for
-the June 2014 election in under 5 seconds.
+In addition, the Excel file has a table of contents, and each contest
+is in its own Excel worksheet.
+
+Here is information on the running time of the script and the sizes of
+the output files.  For the June 3, 2014 election in San Francisco, the
+WinEDS input TEXT file was 30.7 MB.  On this file using an old Macbook Pro,
+the script took about 15 seconds to generate both files.  The TSV and
+Excel output files were both 1.2 MB.  In contrast, the PDF Statement of
+Vote was 8.1 MB.
 
 
 Setting up
