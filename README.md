@@ -4,7 +4,9 @@ WinEDS Converter
 [![Build Status](https://travis-ci.org/cjerdonek/wineds-converter.svg?branch=master)][travis-ci-project-page]
 
 This repository contains an open-source Python 3 script to generate
-a machine-readable Statement of Vote for elections run using WinEDS 4.0.
+Statement of Votes for elections run using WinEDS 4.0.  It creates both
+a open-format machine-readable file (TSV, or tab-separated value),
+as well as Excel `.xlsx`
 
 WinEDS is an election management system owned by [Dominion Voting Systems][dominion].
 Out of the box, the system only makes it easy to generate a PDF.
@@ -59,7 +61,10 @@ Usage
 
 To run the script, run the following from the repo root--
 
-    $ python3.4 convert.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
+    $ python3.4 convert.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT_BASE
+
+This creates two files by adding the `.tsv` and `.xlsx` extensions:
+`OUTPUT_BASE.tsv` and `OUTPUT_BASE.xlsx`.
 
 For convenience, the precinct file for the June 2014 and November 2014
 elections is contained in this repository inside the folder
