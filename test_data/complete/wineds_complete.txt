@@ -4,6 +4,7 @@
 0001001115200764          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1152                                                                             
 0001001115300788          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1153                                                                             
 0001001700300792          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7003                                                                             
+0001001701500066          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7015 MB                                                                          
 0001001702200888          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7022                                                                             
 0001001703400767          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7034                                                                             
 0001001720800525          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7208                                                                             
@@ -58,6 +59,8 @@
 0002001115300154          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 1153                                               TC-VBM Reporting              
 0002001700300105          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7003                                               TC-Election Day Reporting     
 0002001700300162          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7003                                               TC-VBM Reporting              
+0002001701500000          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7015 MB                                            TC-Election Day Reporting     
+0002001701500013          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7015 MB                                            TC-VBM Reporting              
 0002001702200045          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7022                                               TC-Election Day Reporting     
 0002001702200152          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7022                                               TC-VBM Reporting              
 0002001703400013          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7034                                               TC-Election Day Reporting     
@@ -154,6 +157,8 @@
 0120045115300014GRN       State Treasurer                                         ELLEN H. BROWN                        Pct 1153                      CALIFORNIA               TC-VBM Reporting              
 0120045700300014GRN       State Treasurer                                         ELLEN H. BROWN                        Pct 7003                      CALIFORNIA               TC-Election Day Reporting     
 0120045700300010GRN       State Treasurer                                         ELLEN H. BROWN                        Pct 7003                      CALIFORNIA               TC-VBM Reporting              
+0120045701500000GRN       State Treasurer                                         ELLEN H. BROWN                        Pct 7015 MB                   CALIFORNIA               TC-Election Day Reporting     
+0120045701500001GRN       State Treasurer                                         ELLEN H. BROWN                        Pct 7015 MB                   CALIFORNIA               TC-VBM Reporting              
 0120045702200008GRN       State Treasurer                                         ELLEN H. BROWN                        Pct 7022                      CALIFORNIA               TC-Election Day Reporting     
 0120045702200009GRN       State Treasurer                                         ELLEN H. BROWN                        Pct 7022                      CALIFORNIA               TC-VBM Reporting              
 0120045703400003GRN       State Treasurer                                         ELLEN H. BROWN                        Pct 7034                      CALIFORNIA               TC-Election Day Reporting     
@@ -250,6 +255,8 @@
 0120046115300029REP       State Treasurer                                         GREG CONLON                           Pct 1153                      CALIFORNIA               TC-VBM Reporting              
 0120046700300006REP       State Treasurer                                         GREG CONLON                           Pct 7003                      CALIFORNIA               TC-Election Day Reporting     
 0120046700300015REP       State Treasurer                                         GREG CONLON                           Pct 7003                      CALIFORNIA               TC-VBM Reporting              
+0120046701500000REP       State Treasurer                                         GREG CONLON                           Pct 7015 MB                   CALIFORNIA               TC-Election Day Reporting     
+0120046701500001REP       State Treasurer                                         GREG CONLON                           Pct 7015 MB                   CALIFORNIA               TC-VBM Reporting              
 0120046702200002REP       State Treasurer                                         GREG CONLON                           Pct 7022                      CALIFORNIA               TC-Election Day Reporting     
 0120046702200012REP       State Treasurer                                         GREG CONLON                           Pct 7022                      CALIFORNIA               TC-VBM Reporting              
 0120046703400002REP       State Treasurer                                         GREG CONLON                           Pct 7034                      CALIFORNIA               TC-Election Day Reporting     
@@ -346,6 +353,8 @@
 0120047115300105DEM       State Treasurer                                         JOHN CHIANG                           Pct 1153                      CALIFORNIA               TC-VBM Reporting              
 0120047700300065DEM       State Treasurer                                         JOHN CHIANG                           Pct 7003                      CALIFORNIA               TC-Election Day Reporting     
 0120047700300120DEM       State Treasurer                                         JOHN CHIANG                           Pct 7003                      CALIFORNIA               TC-VBM Reporting              
+0120047701500000DEM       State Treasurer                                         JOHN CHIANG                           Pct 7015 MB                   CALIFORNIA               TC-Election Day Reporting     
+0120047701500009DEM       State Treasurer                                         JOHN CHIANG                           Pct 7015 MB                   CALIFORNIA               TC-VBM Reporting              
 0120047702200029DEM       State Treasurer                                         JOHN CHIANG                           Pct 7022                      CALIFORNIA               TC-Election Day Reporting     
 0120047702200117DEM       State Treasurer                                         JOHN CHIANG                           Pct 7022                      CALIFORNIA               TC-VBM Reporting              
 0120047703400006DEM       State Treasurer                                         JOHN CHIANG                           Pct 7034                      CALIFORNIA               TC-Election Day Reporting     
@@ -442,6 +451,8 @@
 0120048115300000NON       State Treasurer                                         WRITE-IN                              Pct 1153                      CALIFORNIA               TC-VBM Reporting              
 0120048700300000NON       State Treasurer                                         WRITE-IN                              Pct 7003                      CALIFORNIA               TC-Election Day Reporting     
 0120048700300000NON       State Treasurer                                         WRITE-IN                              Pct 7003                      CALIFORNIA               TC-VBM Reporting              
+0120048701500000NON       State Treasurer                                         WRITE-IN                              Pct 7015 MB                   CALIFORNIA               TC-Election Day Reporting     
+0120048701500000NON       State Treasurer                                         WRITE-IN                              Pct 7015 MB                   CALIFORNIA               TC-VBM Reporting              
 0120048702200001NON       State Treasurer                                         WRITE-IN                              Pct 7022                      CALIFORNIA               TC-Election Day Reporting     
 0120048702200000NON       State Treasurer                                         WRITE-IN                              Pct 7022                      CALIFORNIA               TC-VBM Reporting              
 0120048703400000NON       State Treasurer                                         WRITE-IN                              Pct 7034                      CALIFORNIA               TC-Election Day Reporting     
@@ -538,6 +549,8 @@
 0120998115300006          State Treasurer                                         Under Vote                            Pct 1153                      CALIFORNIA               TC-VBM Reporting              
 0120998700300020          State Treasurer                                         Under Vote                            Pct 7003                      CALIFORNIA               TC-Election Day Reporting     
 0120998700300017          State Treasurer                                         Under Vote                            Pct 7003                      CALIFORNIA               TC-VBM Reporting              
+0120998701500000          State Treasurer                                         Under Vote                            Pct 7015 MB                   CALIFORNIA               TC-Election Day Reporting     
+0120998701500002          State Treasurer                                         Under Vote                            Pct 7015 MB                   CALIFORNIA               TC-VBM Reporting              
 0120998702200005          State Treasurer                                         Under Vote                            Pct 7022                      CALIFORNIA               TC-Election Day Reporting     
 0120998702200014          State Treasurer                                         Under Vote                            Pct 7022                      CALIFORNIA               TC-VBM Reporting              
 0120998703400002          State Treasurer                                         Under Vote                            Pct 7034                      CALIFORNIA               TC-Election Day Reporting     
@@ -634,6 +647,8 @@
 0120999115300000          State Treasurer                                         Over Vote                             Pct 1153                      CALIFORNIA               TC-VBM Reporting              
 0120999700300000          State Treasurer                                         Over Vote                             Pct 7003                      CALIFORNIA               TC-Election Day Reporting     
 0120999700300000          State Treasurer                                         Over Vote                             Pct 7003                      CALIFORNIA               TC-VBM Reporting              
+0120999701500000          State Treasurer                                         Over Vote                             Pct 7015 MB                   CALIFORNIA               TC-Election Day Reporting     
+0120999701500000          State Treasurer                                         Over Vote                             Pct 7015 MB                   CALIFORNIA               TC-VBM Reporting              
 0120999702200000          State Treasurer                                         Over Vote                             Pct 7022                      CALIFORNIA               TC-Election Day Reporting     
 0120999702200000          State Treasurer                                         Over Vote                             Pct 7022                      CALIFORNIA               TC-VBM Reporting              
 0120999703400000          State Treasurer                                         Over Vote                             Pct 7034                      CALIFORNIA               TC-Election Day Reporting     
@@ -766,6 +781,8 @@
 0150081115300073DEM       State Assembly, District 17                             DAVID CHIU                            Pct 1153                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150081700300036DEM       State Assembly, District 17                             DAVID CHIU                            Pct 7003                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
 0150081700300071DEM       State Assembly, District 17                             DAVID CHIU                            Pct 7003                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
+0150081701500000DEM       State Assembly, District 17                             DAVID CHIU                            Pct 7015 MB                   17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
+0150081701500003DEM       State Assembly, District 17                             DAVID CHIU                            Pct 7015 MB                   17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150081702200021DEM       State Assembly, District 17                             DAVID CHIU                            Pct 7022                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
 0150081702200077DEM       State Assembly, District 17                             DAVID CHIU                            Pct 7022                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150081703400005DEM       State Assembly, District 17                             DAVID CHIU                            Pct 7034                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
@@ -828,6 +845,8 @@
 0150082115300048DEM       State Assembly, District 17                             DAVID CAMPOS                          Pct 1153                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150082700300059DEM       State Assembly, District 17                             DAVID CAMPOS                          Pct 7003                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
 0150082700300072DEM       State Assembly, District 17                             DAVID CAMPOS                          Pct 7003                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
+0150082701500000DEM       State Assembly, District 17                             DAVID CAMPOS                          Pct 7015 MB                   17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
+0150082701500008DEM       State Assembly, District 17                             DAVID CAMPOS                          Pct 7015 MB                   17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150082702200023DEM       State Assembly, District 17                             DAVID CAMPOS                          Pct 7022                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
 0150082702200060DEM       State Assembly, District 17                             DAVID CAMPOS                          Pct 7022                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150082703400007DEM       State Assembly, District 17                             DAVID CAMPOS                          Pct 7034                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
@@ -890,6 +909,8 @@
 0150083115300031REP       State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 1153                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150083700300005REP       State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7003                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
 0150083700300012REP       State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7003                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
+0150083701500000REP       State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7015 MB                   17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
+0150083701500002REP       State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7015 MB                   17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150083702200000REP       State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7022                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
 0150083702200010REP       State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7022                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150083703400000REP       State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7034                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
@@ -952,6 +973,8 @@
 0150084115300000NON       State Assembly, District 17                             WRITE-IN                              Pct 1153                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150084700300000NON       State Assembly, District 17                             WRITE-IN                              Pct 7003                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
 0150084700300001NON       State Assembly, District 17                             WRITE-IN                              Pct 7003                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
+0150084701500000NON       State Assembly, District 17                             WRITE-IN                              Pct 7015 MB                   17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
+0150084701500000NON       State Assembly, District 17                             WRITE-IN                              Pct 7015 MB                   17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150084702200000NON       State Assembly, District 17                             WRITE-IN                              Pct 7022                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
 0150084702200000NON       State Assembly, District 17                             WRITE-IN                              Pct 7022                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150084703400000NON       State Assembly, District 17                             WRITE-IN                              Pct 7034                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
@@ -1014,6 +1037,8 @@
 0150998115300002          State Assembly, District 17                             Under Vote                            Pct 1153                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150998700300005          State Assembly, District 17                             Under Vote                            Pct 7003                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
 0150998700300008          State Assembly, District 17                             Under Vote                            Pct 7003                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
+0150998701500000          State Assembly, District 17                             Under Vote                            Pct 7015 MB                   17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
+0150998701500000          State Assembly, District 17                             Under Vote                            Pct 7015 MB                   17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150998702200001          State Assembly, District 17                             Under Vote                            Pct 7022                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
 0150998702200007          State Assembly, District 17                             Under Vote                            Pct 7022                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150998703400001          State Assembly, District 17                             Under Vote                            Pct 7034                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
@@ -1076,6 +1101,8 @@
 0150999115300000          State Assembly, District 17                             Over Vote                             Pct 1153                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150999700300000          State Assembly, District 17                             Over Vote                             Pct 7003                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
 0150999700300000          State Assembly, District 17                             Over Vote                             Pct 7003                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
+0150999701500000          State Assembly, District 17                             Over Vote                             Pct 7015 MB                   17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
+0150999701500000          State Assembly, District 17                             Over Vote                             Pct 7015 MB                   17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150999702200000          State Assembly, District 17                             Over Vote                             Pct 7022                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
 0150999702200000          State Assembly, District 17                             Over Vote                             Pct 7022                      17TH ASSEMBLY DISTRICT   TC-VBM Reporting              
 0150999703400000          State Assembly, District 17                             Over Vote                             Pct 7034                      17TH ASSEMBLY DISTRICT   TC-Election Day Reporting     
@@ -1142,6 +1169,8 @@
 0180100115300101NON       Local Measure A                                         Yes                                   Pct 1153                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0180100700300077NON       Local Measure A                                         Yes                                   Pct 7003                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0180100700300135NON       Local Measure A                                         Yes                                   Pct 7003                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
+0180100701500000NON       Local Measure A                                         Yes                                   Pct 7015 MB                   CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
+0180100701500008NON       Local Measure A                                         Yes                                   Pct 7015 MB                   CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0180100702200038NON       Local Measure A                                         Yes                                   Pct 7022                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0180100702200107NON       Local Measure A                                         Yes                                   Pct 7022                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0180100703400011NON       Local Measure A                                         Yes                                   Pct 7034                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
@@ -1238,6 +1267,8 @@
 0180101115300047NON       Local Measure A                                         No                                    Pct 1153                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0180101700300021NON       Local Measure A                                         No                                    Pct 7003                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0180101700300018NON       Local Measure A                                         No                                    Pct 7003                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
+0180101701500000NON       Local Measure A                                         No                                    Pct 7015 MB                   CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
+0180101701500005NON       Local Measure A                                         No                                    Pct 7015 MB                   CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0180101702200006NON       Local Measure A                                         No                                    Pct 7022                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0180101702200035NON       Local Measure A                                         No                                    Pct 7022                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0180101703400001NON       Local Measure A                                         No                                    Pct 7034                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
@@ -1334,6 +1365,8 @@
 0180998115300006          Local Measure A                                         Under Vote                            Pct 1153                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0180998700300007          Local Measure A                                         Under Vote                            Pct 7003                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0180998700300011          Local Measure A                                         Under Vote                            Pct 7003                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
+0180998701500000          Local Measure A                                         Under Vote                            Pct 7015 MB                   CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
+0180998701500000          Local Measure A                                         Under Vote                            Pct 7015 MB                   CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0180998702200001          Local Measure A                                         Under Vote                            Pct 7022                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0180998702200012          Local Measure A                                         Under Vote                            Pct 7022                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0180998703400001          Local Measure A                                         Under Vote                            Pct 7034                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
@@ -1430,6 +1463,8 @@
 0180999115300000          Local Measure A                                         Over Vote                             Pct 1153                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0180999700300000          Local Measure A                                         Over Vote                             Pct 7003                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0180999700300000          Local Measure A                                         Over Vote                             Pct 7003                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
+0180999701500000          Local Measure A                                         Over Vote                             Pct 7015 MB                   CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
+0180999701500000          Local Measure A                                         Over Vote                             Pct 7015 MB                   CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0180999702200000          Local Measure A                                         Over Vote                             Pct 7022                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0180999702200000          Local Measure A                                         Over Vote                             Pct 7022                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0180999703400000          Local Measure A                                         Over Vote                             Pct 7034                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     

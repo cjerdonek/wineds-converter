@@ -4,6 +4,7 @@
 0001001115200775          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1152                                                                             
 0001001115300799          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1153                                                                             
 0001001700300789          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7003                                                                             
+0001001701500069          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7015 MB                                                                          
 0001001702200894          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7022                                                                             
 0001001703400781          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7034                                                                             
 0001001720800542          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7208                                                                             
@@ -56,6 +57,7 @@
 0002001115300226          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 1153                                               TC-VBM Reporting              
 0002001700300195          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7003                                               TC-Election Day Reporting     
 0002001700300244          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7003                                               TC-VBM Reporting              
+0002001701500025          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7015 MB                                            TC-VBM Reporting              
 0002001702200152          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7022                                               TC-Election Day Reporting     
 0002001702200236          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7022                                               TC-VBM Reporting              
 0002001703400094          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7034                                               TC-Election Day Reporting     
@@ -148,6 +150,7 @@
 0255027115300103NON       Superior Court Judge, Seat 20                           DANIEL FLORES                         Pct 1153                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0255027700300072NON       Superior Court Judge, Seat 20                           DANIEL FLORES                         Pct 7003                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0255027700300084NON       Superior Court Judge, Seat 20                           DANIEL FLORES                         Pct 7003                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
+0255027701500008NON       Superior Court Judge, Seat 20                           DANIEL FLORES                         Pct 7015 MB                   CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0255027702200084NON       Superior Court Judge, Seat 20                           DANIEL FLORES                         Pct 7022                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0255027702200112NON       Superior Court Judge, Seat 20                           DANIEL FLORES                         Pct 7022                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0255027703400036NON       Superior Court Judge, Seat 20                           DANIEL FLORES                         Pct 7034                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
@@ -240,6 +243,7 @@
 0255028115300064NON       Superior Court Judge, Seat 20                           CAROL KINGSLEY                        Pct 1153                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0255028700300039NON       Superior Court Judge, Seat 20                           CAROL KINGSLEY                        Pct 7003                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0255028700300075NON       Superior Court Judge, Seat 20                           CAROL KINGSLEY                        Pct 7003                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
+0255028701500005NON       Superior Court Judge, Seat 20                           CAROL KINGSLEY                        Pct 7015 MB                   CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0255028702200035NON       Superior Court Judge, Seat 20                           CAROL KINGSLEY                        Pct 7022                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0255028702200058NON       Superior Court Judge, Seat 20                           CAROL KINGSLEY                        Pct 7022                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0255028703400013NON       Superior Court Judge, Seat 20                           CAROL KINGSLEY                        Pct 7034                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
@@ -332,6 +336,7 @@
 0255124115300163NON       State Proposition 1                                     Yes                                   Pct 1153                      CALIFORNIA               TC-VBM Reporting              
 0255124700300138NON       State Proposition 1                                     Yes                                   Pct 7003                      CALIFORNIA               TC-Election Day Reporting     
 0255124700300179NON       State Proposition 1                                     Yes                                   Pct 7003                      CALIFORNIA               TC-VBM Reporting              
+0255124701500015NON       State Proposition 1                                     Yes                                   Pct 7015 MB                   CALIFORNIA               TC-VBM Reporting              
 0255124702200116NON       State Proposition 1                                     Yes                                   Pct 7022                      CALIFORNIA               TC-Election Day Reporting     
 0255124702200168NON       State Proposition 1                                     Yes                                   Pct 7022                      CALIFORNIA               TC-VBM Reporting              
 0255124703400076NON       State Proposition 1                                     Yes                                   Pct 7034                      CALIFORNIA               TC-Election Day Reporting     
@@ -424,6 +429,7 @@
 0255125115300058NON       State Proposition 1                                     No                                    Pct 1153                      CALIFORNIA               TC-VBM Reporting              
 0255125700300049NON       State Proposition 1                                     No                                    Pct 7003                      CALIFORNIA               TC-Election Day Reporting     
 0255125700300054NON       State Proposition 1                                     No                                    Pct 7003                      CALIFORNIA               TC-VBM Reporting              
+0255125701500008NON       State Proposition 1                                     No                                    Pct 7015 MB                   CALIFORNIA               TC-VBM Reporting              
 0255125702200027NON       State Proposition 1                                     No                                    Pct 7022                      CALIFORNIA               TC-Election Day Reporting     
 0255125702200054NON       State Proposition 1                                     No                                    Pct 7022                      CALIFORNIA               TC-VBM Reporting              
 0255125703400011NON       State Proposition 1                                     No                                    Pct 7034                      CALIFORNIA               TC-Election Day Reporting     
@@ -526,6 +532,8 @@
 0255998700300008          State Proposition 1                                     Under Vote                            Pct 7003                      CALIFORNIA               TC-Election Day Reporting     
 0255998700300009          State Proposition 1                                     Under Vote                            Pct 7003                      CALIFORNIA               TC-VBM Reporting              
 0255998700300085          Superior Court Judge, Seat 20                           Under Vote                            Pct 7003                      CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
+0255998701500002          State Proposition 1                                     Under Vote                            Pct 7015 MB                   CALIFORNIA               TC-VBM Reporting              
+0255998701500012          Superior Court Judge, Seat 20                           Under Vote                            Pct 7015 MB                   CITY/COUNTY OF SAN FRANCITC-VBM Reporting              
 0255998702200031          Superior Court Judge, Seat 20                           Under Vote                            Pct 7022                      CITY/COUNTY OF SAN FRANCITC-Election Day Reporting     
 0255998702200011          State Proposition 1                                     Under Vote                            Pct 7022                      CALIFORNIA               TC-Election Day Reporting     
 0255998702200014          State Proposition 1                                     Under Vote                            Pct 7022                      CALIFORNIA               TC-VBM Reporting              
