@@ -369,7 +369,7 @@ class TSVWriter(ResultsWriter, TSVMixin):
     def writer(self):
         with open(self.path, "w", encoding='utf-8') as f:
             self.file = f
-            yield
+            yield self
 
     def write_start(self, info):
         self.write_header(info)
@@ -416,8 +416,9 @@ class ExcelWriter(ResultsWriter, ExcelMixin):
     def writer(self):
         workbook = xlsxwriter.Workbook(self.path)
         self.workbook = workbook
-        yield
-        workbook.close()
+        yield self
+        with time_it("cleaning up Excel file"):
+            workbook.close()
 
     def write_start(self, info):
         workbook = self.workbook
