@@ -84,6 +84,20 @@ class ContestWriter(object):
         values.extend(choice_names)
         self.write_row(values)
 
+    def get_total(self, mapping, key):
+        try:
+            total = mapping[key]
+        except KeyError:
+            # Then the precinct had no total listed for this choice.
+            # So we interpret this as zero.
+            #    Background to this: in June 2014, the results file included
+            # a total for every choice (even if 0), so there was no need for
+            # this except clause.  However, the file provided for November 2014
+            # did not include zero totals (except for "REGISTERED VOTERS - TOTAL"),
+            # which necessitated the logic in this except clause.
+            total = 0
+        return total
+
     def write_totals_row(self, area_precinct_ids, area_name, area_label, reporting_indices):
         """
         Write a row for a contest, for a participating district or area.
@@ -130,21 +144,12 @@ class ContestWriter(object):
             totals[1] += registered[precinct_id]
             precinct_voted = voted[precinct_id]
             for r_index in reporting_indices:
-                totals[2] += precinct_voted[r_index]
+                voted_total = self.get_total(precinct_voted, r_index)
+                totals[2] += voted_total
 
                 for i, choice_id in enumerate(choice_ids, start=extra_columns):
                     precinct_type_results = precinct_results[r_index]
-                    try:
-                        choice_total = precinct_type_results[choice_id]
-                    except KeyError:
-                        # Then the precinct had no total listed for this choice.
-                        # So we interpret this as zero.
-                        #    Background to this: in June 2014, the results file included
-                        # a total for every choice (even if 0), so this code
-                        # branch never came up.  In November 2014 though, zero
-                        # totals weren't included (except for "REGISTERED VOTERS - TOTAL"),
-                        # which necessitated the logic in this except clause.
-                        choice_total = 0
+                    choice_total = self.get_total(precinct_type_results, choice_id)
                     totals[i] += choice_total
 
         assert totals[0] > 0
