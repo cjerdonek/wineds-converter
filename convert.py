@@ -4,7 +4,7 @@
 #
 
 """
-Usage: python3.4 convert.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT.tsv
+Usage: python3.4 convert.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT_BASE
 
 Parses the given files and writes a new output file to stdout.
 
@@ -24,7 +24,9 @@ Arguments:
     The report contains vote totals for each precinct in each contest,
     along with "registered voters" and "ballots cast" totals.
 
-  OUTPUT.tsv: desired output path.
+  OUTPUT_BASE: desired output path base.  The file extension will be
+    appended to the argument provided, so the output paths will have the
+    form "OUTPUT_BASE.tsv" and "OUTPUT_BASE.xlsx".
 
 In the above, relative paths will be interpreted as relative to the
 current working directory.
