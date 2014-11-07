@@ -679,7 +679,8 @@ def parse_export_file(path):
     contest_map = election_info.contests
 
     # Add the available choices to each contest.
-    for choice_id, (contest_id, choice_name) in choices.items():
+    for item in choices.items():
+        choice_id, (contest_id, choice_name) = item
         if contest_id is None:
             # Then the choice is an undervote or overvote and applies
             # to all contests.
