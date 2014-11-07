@@ -822,8 +822,10 @@ class ExportFilterParser(FilterParser):
         self.precinct_ids = precinct_ids
 
     def should_write(self, line):
-        data = split_line_fixed(line)[0]
-        choice_id, contest_id, precinct_id, vote_total, party = parse_data_chunk(data)
+        fields = split_line_fixed(line)
+        data_field, contest_id = fields[:2]
+        data_parts = parse_data_chunk(data_field)
+        precinct_id, vote_total = data_parts[2:4]
         if vote_total < 0:
             log.warning("negative vote total %r: contest=%r, precinct=%r" %
                         (vote_total, contest_id, precinct_id))
@@ -876,6 +878,8 @@ def make_test_export(args):
 
     precinct_ids = set(areas_info.precincts.keys())
 
+    # San Francisco June 2014:
+    #
     # We include the following contests because they provide a mixture
     # of full-city and partial-city contests:
     #
@@ -886,7 +890,25 @@ def make_test_export(args):
     # 150: State Assembly, District 17 - 17TH ASSEMBLY DISTRICT (3 choices)
     # 180: Local Measure A - CITY/COUNTY OF SAN FRANCI (2 choices)
     #
-    contest_ids = set((1, 2, 120, 145, 150, 180))
+    # contest_ids = set((1, 2, 120, 145, 150, 180))
+
+    # San Francisco November 2014:
+    #
+    # These contests test the case of multiple contests sharing the same
+    # integer ID.
+    #
+    #   1: Registered voters
+    #   2: Ballots cast
+    # 255: Superior Court Judge, Seat 20
+    # 255: State Proposition 1
+    #
+    contest_ids = [
+        'REGISTERED VOTERS - TOTAL',
+        'BALLOTS CAST - TOTAL',
+        'Superior Court Judge, Seat 20',
+        'State Proposition 1',
+    ]
+    contest_ids = set(contest_ids)
 
     parser = ExportFilterParser(precinct_ids=precinct_ids, contest_ids=contest_ids,
                                 output_file=sys.stdout)
@@ -895,6 +917,7 @@ def make_test_export(args):
 
 def main(docstr, argv):
     configure_log()
+    logging.debug("argv: %r" % argv)
     # Check length of argv to avoid the following when accessing argv[1]:
     # IndexError: list index out of range
     # TODO: use argparse.
