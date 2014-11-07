@@ -134,7 +134,9 @@ class ContestWriter(object):
                 totals[2] += precinct_voted[r_index]
 
                 for i, choice_id in enumerate(choice_ids, start=extra_columns):
-                    totals[i] += precinct_results[r_index][choice_id]
+                    precinct_type_results = precinct_results[r_index]
+                    choice_total = precinct_type_results[choice_id]
+                    totals[i] += choice_total
 
         assert totals[0] > 0
         # Prevent division by zero.
@@ -230,7 +232,7 @@ class ContestWriter(object):
                  (contest_name, len(self.precinct_ids)))
         # TODO: move this assertion earlier in the script?
         assert type(self.precinct_ids) is set
-        contest_title = "%s - %s (%d)" % (contest_name, contest_info.district_name, contest_info.id)
+        contest_title = "%s - %s (%d)" % (contest_name, contest_info.district_name, contest_info.number)
         self.write_contest_start(contest_title)
         self.write_precinct_report()
         self.write_ln()
@@ -417,13 +419,13 @@ class ExcelWriter(ResultsWriter, ExcelMixin):
 
         for i, contest_id in enumerate(sorted(contests_info.keys())):
             contest_info = contests_info[contest_id]
-            self.write_row((contest_info.id, contest_info.name))
+            self.write_row((contest_info.number, contest_info.name))
 
     def write_contest(self, contest_writer):
         workbook = self.workbook
         contest_info = contest_writer.contest_info
 
-        name = "%d - %s" % (contest_info.id, contest_info.name)
+        name = "%d - %s" % (contest_info.number, contest_info.name)
         # Worksheet names must be 31 characters or less.
         name = name[:31]
         worksheet = workbook.add_worksheet(name)
