@@ -84,6 +84,20 @@ class ContestWriter(object):
         values.extend(choice_names)
         self.write_row(values)
 
+    def get_total(self, mapping, key):
+        try:
+            total = mapping[key]
+        except KeyError:
+            # Then the precinct had no total listed for this choice.
+            # So we interpret this as zero.
+            #    Background to this: in June 2014, the results file included
+            # a total for every choice (even if 0), so there was no need for
+            # this except clause.  However, the file provided for November 2014
+            # did not include zero totals (except for "REGISTERED VOTERS - TOTAL"),
+            # which necessitated the logic in this except clause.
+            total = 0
+        return total
+
     def write_totals_row(self, area_precinct_ids, area_name, area_label, reporting_indices):
         """
         Write a row for a contest, for a participating district or area.
@@ -126,15 +140,17 @@ class ContestWriter(object):
                 # Then this precinct in the district did not
                 # participate in the contest.
                 continue
-
             totals[0] += 1
             totals[1] += registered[precinct_id]
             precinct_voted = voted[precinct_id]
             for r_index in reporting_indices:
-                totals[2] += precinct_voted[r_index]
+                voted_total = self.get_total(precinct_voted, r_index)
+                totals[2] += voted_total
 
                 for i, choice_id in enumerate(choice_ids, start=extra_columns):
-                    totals[i] += precinct_results[r_index][choice_id]
+                    precinct_type_results = precinct_results[r_index]
+                    choice_total = self.get_total(precinct_type_results, choice_id)
+                    totals[i] += choice_total
 
         assert totals[0] > 0
         # Prevent division by zero.
@@ -230,7 +246,7 @@ class ContestWriter(object):
                  (contest_name, len(self.precinct_ids)))
         # TODO: move this assertion earlier in the script?
         assert type(self.precinct_ids) is set
-        contest_title = "%s - %s (%d)" % (contest_name, contest_info.district_name, contest_info.id)
+        contest_title = "%s - %s (%d)" % (contest_name, contest_info.district_name, contest_info.number)
         self.write_contest_start(contest_title)
         self.write_precinct_report()
         self.write_ln()
@@ -353,7 +369,7 @@ class TSVWriter(ResultsWriter, TSVMixin):
     def writer(self):
         with open(self.path, "w", encoding='utf-8') as f:
             self.file = f
-            yield
+            yield self
 
     def write_start(self, info):
         self.write_header(info)
@@ -400,8 +416,9 @@ class ExcelWriter(ResultsWriter, ExcelMixin):
     def writer(self):
         workbook = xlsxwriter.Workbook(self.path)
         self.workbook = workbook
-        yield
-        workbook.close()
+        yield self
+        with time_it("cleaning up Excel file"):
+            workbook.close()
 
     def write_start(self, info):
         workbook = self.workbook
@@ -417,13 +434,13 @@ class ExcelWriter(ResultsWriter, ExcelMixin):
 
         for i, contest_id in enumerate(sorted(contests_info.keys())):
             contest_info = contests_info[contest_id]
-            self.write_row((contest_info.id, contest_info.name))
+            self.write_row((contest_info.number, contest_info.name))
 
     def write_contest(self, contest_writer):
         workbook = self.workbook
         contest_info = contest_writer.contest_info
 
-        name = "%d - %s" % (contest_info.id, contest_info.name)
+        name = "%d - %s" % (contest_info.number, contest_info.name)
         # Worksheet names must be 31 characters or less.
         name = name[:31]
         worksheet = workbook.add_worksheet(name)

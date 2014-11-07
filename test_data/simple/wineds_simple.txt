@@ -4,6 +4,7 @@
 0001001115200764          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1152                                               
 0001001115300788          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 1153                                               
 0001001700300792          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7003                                               
+0001001701500066          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7015 MB                                            
 0001001702200888          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7022                                               
 0001001703400767          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7034                                               
 0001001720800525          REGISTERED VOTERS - TOTAL                               VOTERS                                Pct 7208                                               
@@ -52,6 +53,7 @@
 0002001115200247          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 1152                                               
 0002001115300219          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 1153                                               
 0002001700300267          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7003                                               
+0002001701500013          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7015 MB                                            
 0002001702200197          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7022                                               
 0002001703400072          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7034                                               
 0002001720800166          BALLOTS CAST - TOTAL                                    BALLOTS CAST                          Pct 7208                                               
@@ -100,6 +102,7 @@
 0120045115200032          State Treasurer                                         ELLEN H. BROWN                        Pct 1152                      CALIFORNIA               
 0120045115300021          State Treasurer                                         ELLEN H. BROWN                        Pct 1153                      CALIFORNIA               
 0120045700300024          State Treasurer                                         ELLEN H. BROWN                        Pct 7003                      CALIFORNIA               
+0120045701500001          State Treasurer                                         ELLEN H. BROWN                        Pct 7015 MB                   CALIFORNIA               
 0120045702200017          State Treasurer                                         ELLEN H. BROWN                        Pct 7022                      CALIFORNIA               
 0120045703400009          State Treasurer                                         ELLEN H. BROWN                        Pct 7034                      CALIFORNIA               
 0120045720800013          State Treasurer                                         ELLEN H. BROWN                        Pct 7208                      CALIFORNIA               
@@ -148,6 +151,7 @@
 0120046115200026          State Treasurer                                         GREG CONLON                           Pct 1152                      CALIFORNIA               
 0120046115300042          State Treasurer                                         GREG CONLON                           Pct 1153                      CALIFORNIA               
 0120046700300021          State Treasurer                                         GREG CONLON                           Pct 7003                      CALIFORNIA               
+0120046701500001          State Treasurer                                         GREG CONLON                           Pct 7015 MB                   CALIFORNIA               
 0120046702200014          State Treasurer                                         GREG CONLON                           Pct 7022                      CALIFORNIA               
 0120046703400003          State Treasurer                                         GREG CONLON                           Pct 7034                      CALIFORNIA               
 0120046720800022          State Treasurer                                         GREG CONLON                           Pct 7208                      CALIFORNIA               
@@ -196,6 +200,7 @@
 0120047115200169          State Treasurer                                         JOHN CHIANG                           Pct 1152                      CALIFORNIA               
 0120047115300141          State Treasurer                                         JOHN CHIANG                           Pct 1153                      CALIFORNIA               
 0120047700300185          State Treasurer                                         JOHN CHIANG                           Pct 7003                      CALIFORNIA               
+0120047701500009          State Treasurer                                         JOHN CHIANG                           Pct 7015 MB                   CALIFORNIA               
 0120047702200146          State Treasurer                                         JOHN CHIANG                           Pct 7022                      CALIFORNIA               
 0120047703400056          State Treasurer                                         JOHN CHIANG                           Pct 7034                      CALIFORNIA               
 0120047720800113          State Treasurer                                         JOHN CHIANG                           Pct 7208                      CALIFORNIA               
@@ -250,6 +255,7 @@
 0150081115200125          State Assembly, District 17                             DAVID CHIU                            Pct 1152                      17TH ASSEMBLY DISTRICT   
 0150081115300101          State Assembly, District 17                             DAVID CHIU                            Pct 1153                      17TH ASSEMBLY DISTRICT   
 0150081700300107          State Assembly, District 17                             DAVID CHIU                            Pct 7003                      17TH ASSEMBLY DISTRICT   
+0150081701500003          State Assembly, District 17                             DAVID CHIU                            Pct 7015 MB                   17TH ASSEMBLY DISTRICT   
 0150081702200098          State Assembly, District 17                             DAVID CHIU                            Pct 7022                      17TH ASSEMBLY DISTRICT   
 0150081703400042          State Assembly, District 17                             DAVID CHIU                            Pct 7034                      17TH ASSEMBLY DISTRICT   
 0150081720800084          State Assembly, District 17                             DAVID CHIU                            Pct 7208                      17TH ASSEMBLY DISTRICT   
@@ -281,6 +287,7 @@
 0150082115200089          State Assembly, District 17                             DAVID CAMPOS                          Pct 1152                      17TH ASSEMBLY DISTRICT   
 0150082115300074          State Assembly, District 17                             DAVID CAMPOS                          Pct 1153                      17TH ASSEMBLY DISTRICT   
 0150082700300131          State Assembly, District 17                             DAVID CAMPOS                          Pct 7003                      17TH ASSEMBLY DISTRICT   
+0150082701500008          State Assembly, District 17                             DAVID CAMPOS                          Pct 7015 MB                   17TH ASSEMBLY DISTRICT   
 0150082702200083          State Assembly, District 17                             DAVID CAMPOS                          Pct 7022                      17TH ASSEMBLY DISTRICT   
 0150082703400024          State Assembly, District 17                             DAVID CAMPOS                          Pct 7034                      17TH ASSEMBLY DISTRICT   
 0150082720800053          State Assembly, District 17                             DAVID CAMPOS                          Pct 7208                      17TH ASSEMBLY DISTRICT   
@@ -312,6 +319,7 @@
 0150083115200021          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 1152                      17TH ASSEMBLY DISTRICT   
 0150083115300039          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 1153                      17TH ASSEMBLY DISTRICT   
 0150083700300017          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7003                      17TH ASSEMBLY DISTRICT   
+0150083701500002          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7015 MB                   17TH ASSEMBLY DISTRICT   
 0150083702200010          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7022                      17TH ASSEMBLY DISTRICT   
 0150083703400002          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7034                      17TH ASSEMBLY DISTRICT   
 0150083720800019          State Assembly, District 17                             DAVID CARLOS SALAVERRY                Pct 7208                      17TH ASSEMBLY DISTRICT   
@@ -345,6 +353,7 @@
 0180100115200161          Local Measure A                                         Yes                                   Pct 1152                      CITY/COUNTY OF SAN FRANCI
 0180100115300137          Local Measure A                                         Yes                                   Pct 1153                      CITY/COUNTY OF SAN FRANCI
 0180100700300212          Local Measure A                                         Yes                                   Pct 7003                      CITY/COUNTY OF SAN FRANCI
+0180100701500008          Local Measure A                                         Yes                                   Pct 7015 MB                   CITY/COUNTY OF SAN FRANCI
 0180100702200145          Local Measure A                                         Yes                                   Pct 7022                      CITY/COUNTY OF SAN FRANCI
 0180100703400057          Local Measure A                                         Yes                                   Pct 7034                      CITY/COUNTY OF SAN FRANCI
 0180100720800127          Local Measure A                                         Yes                                   Pct 7208                      CITY/COUNTY OF SAN FRANCI
@@ -393,6 +402,7 @@
 0180101115200073          Local Measure A                                         No                                    Pct 1152                      CITY/COUNTY OF SAN FRANCI
 0180101115300071          Local Measure A                                         No                                    Pct 1153                      CITY/COUNTY OF SAN FRANCI
 0180101700300039          Local Measure A                                         No                                    Pct 7003                      CITY/COUNTY OF SAN FRANCI
+0180101701500005          Local Measure A                                         No                                    Pct 7015 MB                   CITY/COUNTY OF SAN FRANCI
 0180101702200041          Local Measure A                                         No                                    Pct 7022                      CITY/COUNTY OF SAN FRANCI
 0180101703400011          Local Measure A                                         No                                    Pct 7034                      CITY/COUNTY OF SAN FRANCI
 0180101720800025          Local Measure A                                         No                                    Pct 7208                      CITY/COUNTY OF SAN FRANCI
