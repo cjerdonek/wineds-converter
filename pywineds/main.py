@@ -836,21 +836,21 @@ class ExportFilterParser(FilterParser):
 
     name = "Results Export File (filtering)"
 
-    def __init__(self, precinct_ids, contest_ids, output_file):
+    def __init__(self, precinct_ids, contest_names, output_file):
         super().__init__(output_file)
-        self.contest_ids = contest_ids
+        self.contest_names = contest_names
         self.precinct_ids = precinct_ids
 
     def should_write(self, line):
         fields = split_line_fixed(line)
-        data_field, contest_id = fields.data_field, fields.contest_id
+        data_field, contest_name = fields.data_field, fields.contest_name
         data_field = parse_data_chunk(data_field)
         precinct_id, vote_total = data_field.precinct_id, data_field.vote_total
         if vote_total < 0:
             log.warning("negative vote total %r: contest=%r, precinct=%r" %
-                        (vote_total, contest_id, precinct_id))
+                        (vote_total, contest_name, precinct_id))
         return ((precinct_id in self.precinct_ids) and
-                (contest_id in self.contest_ids))
+                (contest_name in self.contest_names))
 
 
 def make_test_precincts(args):
@@ -910,7 +910,14 @@ def make_test_export(args):
     # 150: State Assembly, District 17 - 17TH ASSEMBLY DISTRICT (3 choices)
     # 180: Local Measure A - CITY/COUNTY OF SAN FRANCI (2 choices)
     #
-    # contest_ids = set((1, 2, 120, 145, 150, 180))
+    contest_names_june = [
+        'REGISTERED VOTERS - TOTAL',
+        'BALLOTS CAST - TOTAL',
+        'State Treasurer',
+        'US Representative, District 14',
+        'State Assembly, District 17',
+        'Local Measure A',
+    ]
 
     # San Francisco November 2014:
     #
@@ -922,15 +929,16 @@ def make_test_export(args):
     # 255: Superior Court Judge, Seat 20
     # 255: State Proposition 1
     #
-    contest_ids = [
+    contest_names_nov = [
         'REGISTERED VOTERS - TOTAL',
         'BALLOTS CAST - TOTAL',
         'Superior Court Judge, Seat 20',
         'State Proposition 1',
     ]
-    contest_ids = set(contest_ids)
 
-    parser = ExportFilterParser(precinct_ids=precinct_ids, contest_ids=contest_ids,
+    contest_names = contest_names_june
+    contest_names = set(contest_names)
+    parser = ExportFilterParser(precinct_ids=precinct_ids, contest_names=contest_names,
                                 output_file=sys.stdout)
     parser.parse_path(export_path)
 
