@@ -548,11 +548,16 @@ class ElectionMetaParser(Parser):
         try:
             contest = contests[contest_id]
         except KeyError:
+            logging.debug("adding contest_id %r: %s" % (contest_id, contest_name))
             contest = ContestInfo(id_=contest_id, name=contest_name,
                                   district_name=district_name)
             contests[contest_id] = contest
         else:
-            assert contest_name == contest.name
+            try:
+                assert contest_name == contest.name
+            except AssertionError:
+                raise Exception("contest_id=%r, contest_name=%r, contest.name=%s" %
+                                (contest_id, contest_name, contest.name))
             try:
                 assert district_name == contest.district_name
             except AssertionError:
@@ -566,6 +571,7 @@ class ElectionMetaParser(Parser):
         try:
             prior_choice = self.choices[choice_id]
         except KeyError:
+            logging.debug("adding choice_id %r: %s" % (choice_id, choice_name))
             self.save_choice(choice_id, contest_id, choice_name)
         else:
             new_choice = self.make_choice(contest_id, choice_name)
