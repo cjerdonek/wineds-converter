@@ -153,9 +153,22 @@ integers rather than strings.
 * `[PTY]` = Party abbreviation of the candidate (optional and variable-length,
   e.g. "DEM", "REP", "NON, "PF", etc.)
 
-There are also some lines with initial fields of the form--
+
+### Warning: Negative vote totals
+
+It is possible that the file may have negative vote totals, for example
+lines with initial fields of the form--
 
     01000167208000-1NON       Governor
+
+
+### Warning: Duplicate contest IDs
+
+It turns out WinEDS can assign the same integer contest ID to multiple
+contests.  It seems to do this once the contest ID hits 255.
+This happened, for example, in the November 2014 election in San Francisco.
+Thus, we chose to use the string contest name for the contest ID
+(instead of the integer).
 
 
 Developing
