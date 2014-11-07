@@ -80,6 +80,8 @@ class EndToEndTest(unittest.TestCase):
     def test_end_to_end__complete(self):
         self.check_end_to_end("complete", "Test Election (Complete Data)")
 
+    def test_end_to_end__dupe_contest_id(self):
+        self.check_end_to_end("dupe_contest_id", "Test Election (Dupe Contest ID)")
 
 if __name__ == "__main__":
     unittest.main()

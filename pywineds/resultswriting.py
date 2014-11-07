@@ -126,7 +126,6 @@ class ContestWriter(object):
                 # Then this precinct in the district did not
                 # participate in the contest.
                 continue
-
             totals[0] += 1
             totals[1] += registered[precinct_id]
             precinct_voted = voted[precinct_id]
@@ -135,7 +134,17 @@ class ContestWriter(object):
 
                 for i, choice_id in enumerate(choice_ids, start=extra_columns):
                     precinct_type_results = precinct_results[r_index]
-                    choice_total = precinct_type_results[choice_id]
+                    try:
+                        choice_total = precinct_type_results[choice_id]
+                    except KeyError:
+                        # Then the precinct had no total listed for this choice.
+                        # So we interpret this as zero.
+                        #    Background to this: in June 2014, the results file included
+                        # a total for every choice (even if 0), so this code
+                        # branch never came up.  In November 2014 though, zero
+                        # totals weren't included (except for "REGISTERED VOTERS - TOTAL"),
+                        # which necessitated the logic in this except clause.
+                        choice_total = 0
                     totals[i] += choice_total
 
         assert totals[0] > 0
