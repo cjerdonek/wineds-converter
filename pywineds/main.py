@@ -862,7 +862,7 @@ def make_test_precincts(args):
     """
     log.info("making test precinct file")
     assert not args
-    precincts_path = "data/election-2014-06-03/precincts_20140321.csv"
+    precincts_path = "data/2014/precincts_20140321.csv"
 
     areas_info = parse_precinct_file(precincts_path)
     all_precincts = areas_info.city

@@ -82,10 +82,10 @@ This creates two files by adding the `.tsv` and `.xlsx` extensions:
 
 For convenience, the precinct file for the June 2014 and November 2014
 elections is contained in this repository inside the folder
-`data/election-2014-06-03`.  So you can type the following, for example:
+`data/2014`.  So you can type the following, for example:
 
     $ python3.4 convert.py "November 4, 2014 Election" \
-       data/election-2014-06-03/precincts_20140321.csv WINEDS.txt OUTPUT_BASE
+       data/2014/precincts_20140321.csv WINEDS.txt OUTPUT_BASE
 
 For additional usage notes, see the docstring of the main
 [`convert.py`](convert.py#L7) file.
