@@ -83,5 +83,9 @@ class EndToEndTest(unittest.TestCase):
     def test_end_to_end__dupe_contest_id(self):
         self.check_end_to_end("dupe_contest_id", "Test Election (Dupe Contest ID)")
 
+    def test_end_to_end__reporting_type(self):
+        self.check_end_to_end("reporting_type", "Test Election (Reporting Type)")
+
+
 if __name__ == "__main__":
     unittest.main()
