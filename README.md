@@ -5,7 +5,8 @@ WinEDS Converter
 
 This repository contains an open-source Python 3 script to parse the
 raw text output from WinEDS 4.0, the election management system used by
-San Francisco and Alameda counties.
+the [San Francisco][sf-elections] and [Alameda][ac-elections]
+County Election Departments.
 
 After parsing, the script generates a tab-delimited Statement of Vote
 (aka tab-separated value, or TSV) that resembles the large PDF Statements
@@ -196,6 +197,7 @@ Author
 Chris Jerdonek (<chris.jerdonek@gmail.com>)
 
 
+[ac-elections]: http://www.acgov.org/rov/elections/
 [dominion]: http://www.dominionvoting.com/
 [python-download]: https://www.python.org/downloads/
 [sf-elections]: http://sfelections.org
