@@ -14,10 +14,6 @@ FILE_ENCODING = "utf-8"
 DATA_PART_NAMES = ['choice_id', 'contest_number', 'precinct_id', 'vote_total', 'party']
 FIELD_NAMES = ['data_field', 'contest_name', 'choice_name', 'precinct_name', 'district_name', 'reporting_type']
 
-# We split on strings of whitespace having 2 or more characters.  This is
-# necessary since field values can contain spaces (e.g. candidate names).
-SPLITTER = re.compile(r'\s{2,}')
-
 # This string contains a mapping from neighborhood labels in the
 # precinct-to-neighborhood file to the more human-friendly names that
 # appear in the Statement of Vote.
@@ -96,12 +92,6 @@ def parse_data_chunk(chunk):
     vote_total = -1 if chunk[11:16] == "000-1" else int(chunk[11:16])
     party = chunk[16:]
     return DataField(choice_id, contest_number, precinct_id, vote_total, party)
-
-
-# We do not currently need this function for anything.
-def split_line(line):
-    """Return a list of field values in the line."""
-    return SPLITTER.split(line.strip())
 
 
 def split_line_fixed(line):
