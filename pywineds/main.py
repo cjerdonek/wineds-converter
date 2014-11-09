@@ -7,7 +7,7 @@ import sys
 
 from pywineds.resultswriting import ExcelWriter, TSVWriter
 from pywineds import utils
-from pywineds.utils import time_it, REPORTING_INDICES
+from pywineds.utils import get_reporting_index, time_it
 
 
 FILE_ENCODING = "utf-8"
@@ -334,6 +334,8 @@ class Parser(object):
         Each iteration sets self.line and self.line_no but yields nothing.
 
         """
+        line = None
+        line_no = 0
         for line_no, line in enumerate(iter(f), start=1):
             self.line = line
             self.line_no = line_no
@@ -641,7 +643,7 @@ class ResultsParser(Parser):
         fields = split_line_fixed(line)
         data_field = fields.data_field
         reporting_type = fields.reporting_type
-        r_index = REPORTING_INDICES[reporting_type]
+        r_index = get_reporting_index(reporting_type)
 
         choice_id, contest_number, precinct_id, vote_total, party = parse_data_chunk(data_field)
         contest_id = contest_number, fields.contest_name
@@ -936,7 +938,7 @@ def make_test_export(args):
         'State Proposition 1',
     ]
 
-    contest_names = contest_names_june
+    contest_names = contest_names_nov
     contest_names = set(contest_names)
     parser = ExportFilterParser(precinct_ids=precinct_ids, contest_names=contest_names,
                                 output_file=sys.stdout)

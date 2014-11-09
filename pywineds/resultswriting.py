@@ -15,8 +15,8 @@ except ImportError:
                     "Please follow the setup instructions.")
 
 from pywineds import utils
-from pywineds.utils import (time_it, REPORTING_INDICES, REPORTING_INDICES_SIMPLE,
-                            REPORTING_INDICES_COMPLETE)
+from pywineds.utils import (time_it, REPORTING_INDICES_SIMPLE, REPORTING_INDICES_COMPLETE,
+                            REPORTING_INDEX_ELD, REPORTING_INDEX_VBM)
 
 
 GRAND_TOTALS_HEADER = "Grand Totals"
@@ -268,8 +268,8 @@ class SimpleContestWriter(ContestWriter):
 class CompleteContestWriter(ContestWriter):
 
     headers = {
-        REPORTING_INDICES[utils.REPORTING_TYPE_ELD]: "Election Day",
-        REPORTING_INDICES[utils.REPORTING_TYPE_VBM]: "VBM",
+        REPORTING_INDEX_ELD: "Election Day",
+        REPORTING_INDEX_VBM: "VBM",
     }
 
     def extra_header_names(self):
