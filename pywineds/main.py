@@ -57,7 +57,7 @@ Fields = namedtuple('Fields', FIELD_NAMES)
 
 
 def configure_log():
-    level = logging.DEBUG
+    level = logging.INFO
     fmt = "%(name)s: [%(levelname)s] %(message)s"
     logging.basicConfig(format=fmt, level=level)
     log.info("logging configured: level=%s" % logging.getLevelName(level))

@@ -190,7 +190,7 @@ class ContestWriter(object):
             assert type(area_precinct_ids) is set
             if area_precinct_ids.isdisjoint(contest_precinct_ids):
                 # Then no precincts in the district overlapped the contest, so skip it.
-                log.info("  skipping area: contest has no precincts in: %s" % (area_name, ))
+                log.debug("  skipping area: contest has no precincts in: %s" % (area_name, ))
                 continue
             try:
                 self.write_totals_row(area_precinct_ids, area_name, area_label, self.reporting_indices)
