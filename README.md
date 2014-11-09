@@ -3,13 +3,17 @@ WinEDS Converter
 
 [![Build Status](https://travis-ci.org/cjerdonek/wineds-converter.svg?branch=master)][travis-ci-project-page]
 
-This repository contains an open-source Python 3 script to generate
-Statement of Votes for elections run using WinEDS 4.0.  It creates both
-a machine-readable file using an open format (specifically tab-separated
-value, aka TSV), as well as Excel with the `.xlsx` extension.
+This repository contains an open-source Python 3 script to parse the
+raw text output from WinEDS 4.0, the election management system used by
+San Francisco and Alameda counties.
 
-WinEDS is an election management system owned by [Dominion Voting Systems][dominion].
-Out of the box, the system only makes it easy to generate a PDF.
+After parsing, the script generates a tab-delimited Statement of Vote
+(aka tab-separated value, or TSV) that resembles the large PDF Statements
+of Vote normally released on election night.  It also creates an `.xlsx`
+Excel file of this information.
+
+This script is useful because WinEDS 4.0 has limited output formats,
+and its only machine-readable format is not straightforward to parse.
 
 See the [License](#license) section for open-source license information.
 
