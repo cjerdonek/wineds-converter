@@ -2,6 +2,6 @@ language: python
 python:
   - "3.4"
 # command to install dependencies
-install: "pip install XlsxWriter"
+install: "pip install PyYAML XlsxWriter"
 # command to run tests
 script: python -m pywineds.test
