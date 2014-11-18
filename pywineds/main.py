@@ -1,9 +1,11 @@
 
+
 from collections import namedtuple
 import logging
 import random
 import re
 import sys
+import yaml
 
 from pywineds.resultswriting import ExcelWriter, TSVWriter
 from pywineds import utils
@@ -852,7 +854,7 @@ def make_test_precincts(args):
     """
     log.info("making test precinct file")
     assert not args
-    precincts_path = "data/2014/precincts_20140321.csv"
+    precincts_path = "data/precincts_2014.csv"
 
     areas_info = parse_precinct_file(precincts_path)
     all_precincts = areas_info.city
@@ -935,6 +937,88 @@ def make_test_export(args):
     parser.parse_path(export_path)
 
 
+def generate_audited(precinct_names, audit_config):
+    for info in audit_config:
+        precinct_id = info['precinct_id']
+        district = info.get('district')
+        precinct_name = precinct_names[precinct_id]
+        yield precinct_id, precinct_name, district
+
+
+def audit_contest(tsv, out, precincts, first_line):
+    districts = set(precincts.keys())
+    for district in districts:
+        if district is None:
+            continue
+        if district in first_line:
+            break
+    else:
+        district = None
+    precinct_names = precincts[district]
+
+    out.write(first_line)
+    out.write(next(tsv))
+    out.write(next(tsv))
+    for line in tsv:
+        if line.startswith("***"):
+            break
+        parts = line.split("\t")
+        precinct_name = parts[0]
+        if precinct_name in precinct_names:
+            out.write(line)
+    else:
+        # Then we reached the end of the file.
+        line = None
+    return line
+
+
+def make_audit(precinct_index_path, tsv_path, yaml_path):
+    """
+    Create a filtered SOV to audit certain precincts.
+    """
+    log.info("making audit file")
+
+    areas_info = parse_precinct_file(precinct_index_path)
+    precinct_names = areas_info.precincts
+
+    with open(yaml_path, "r", encoding="utf8") as f:
+        audit_config = yaml.load(f)
+
+    precincts = {}
+    for precinct_id, precinct_name, district in generate_audited(precinct_names, audit_config):
+        try:
+            sub_precincts = precincts[district]
+        except KeyError:
+            sub_precincts = []
+            precincts[district] = sub_precincts
+        sub_precincts.append(precinct_name)
+
+    out = sys.stdout
+
+    out.write("AUDIT FILE\n\n")
+    out.write("Selected precincts:\n\n")
+    for n, info in enumerate(generate_audited(precinct_names, audit_config), start=1):
+        precinct_id, precinct_name, district = info
+        out.write("{0:2}. {1!s} ({2:d})".format(n, precinct_name, precinct_id))
+        if district is not None:
+            out.write(", %s" % district)
+        out.write("\n")
+    out.write("\n")
+
+    with open(tsv_path, "r", encoding="utf8") as f:
+        for line in f:
+            if line.startswith("***"):
+                # Then we are at a new contest.
+                break
+            out.write(line)
+        # Iterate through all the contests.
+        while True:
+            line = audit_contest(f, out, precincts, line)
+            out.write("\n")
+            if not line:
+                break
+
+
 def main(docstr, argv):
     configure_log()
     logging.debug("argv: %r" % argv)
@@ -942,12 +1026,15 @@ def main(docstr, argv):
     # IndexError: list index out of range
     # TODO: use argparse.
     if len(argv) > 1:
-        arg = argv[1]
-        if arg == "make_test_precincts":
-            make_test_precincts(argv[2:])
+        command, args = argv[1], argv[2:]
+        if command == "make_test_precincts":
+            make_test_precincts(args)
             return
-        elif arg == "make_test_export":
-            make_test_export(argv[2:])
+        elif command == "make_test_export":
+            make_test_export(args)
+            return
+        elif command == "audit":
+            make_audit(*args)
             return
 
     with time_it("full program"):
