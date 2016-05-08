@@ -1,10 +1,5 @@
-#!/usr/bin/env python
-#
-# **THIS SCRIPT IS WRITTEN FOR PYTHON 3.5.**
-#
-
 """
-Usage: python3.5 convert.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT_BASE
+Usage: wineds-convert ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT_BASE
 
 Parses the given files and writes a new output file to stdout.
 
@@ -34,7 +29,11 @@ current working directory.
 
 import sys
 
-from pywineds.main import main
+import pywineds.main
 
-if __name__ == "__main__":
-    main(__doc__, sys.argv)
+
+def main():
+    """
+    The main console_script setup.py entry point.
+    """
+    pywineds.main.main(__doc__, sys.argv)

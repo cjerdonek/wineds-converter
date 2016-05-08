@@ -7,3 +7,4 @@
 
 PyYAML==3.11
 XlsxWriter==0.8.6
+-e .
