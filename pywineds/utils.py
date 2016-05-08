@@ -5,6 +5,7 @@ Exposes utility functions.
 """
 
 from contextlib import contextmanager
+import json
 import logging
 import timeit
 
@@ -31,6 +32,10 @@ def get_reporting_index(reporting_field):
     else:
         raise Exception("unrecognized reporting-type field: %r" % reporting_field)
     return reporting_index
+
+
+def prettify(obj):
+    return json.dumps(obj, sort_keys=True, indent=4)
 
 
 @contextmanager

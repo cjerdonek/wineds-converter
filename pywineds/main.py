@@ -9,7 +9,7 @@ import yaml
 
 from pywineds.resultswriting import ExcelWriter, TSVWriter
 from pywineds import utils
-from pywineds.utils import get_reporting_index, time_it
+from pywineds.utils import get_reporting_index, prettify, time_it
 
 
 FILE_ENCODING = "utf-8"
@@ -353,8 +353,7 @@ class Parser(object):
             self.parse_line(self.line)
 
     def parse_file(self, f):
-        with time_it("parsing %r" % self.name):
-            log.info("parsing: %r" % self.name)
+        with time_it("parsing {0}".format(self.name)):
             try:
                 with f:
                     lines = self.iter_lines(f)
@@ -365,7 +364,11 @@ class Parser(object):
         return self.get_parse_return_value()
 
     def parse_path(self, path):
-        log.info("opening: %s" % path)
+        info = {
+            "name": self.name,
+            "path": path,
+        }
+        log.info("parsing file:\n{0}".format(prettify(info)))
         return self.parse_file(open(path, "r", encoding=FILE_ENCODING))
 
 
@@ -551,7 +554,13 @@ class ElectionMetaParser(Parser):
                 # Then contest_id is 2.
                 expected_contest_name = "BALLOTS CAST - TOTAL"
                 expected_choice_name = "BALLOTS CAST"
-            assert contest_name == expected_contest_name
+            if contest_name != expected_contest_name:
+                info = {
+                    "actual": contest_name,
+                    "expected": expected_contest_name,
+                }
+                msg = "contest name does not match expected: {0}".format(prettify(info))
+                raise AssertionError(msg)
             assert choice_name == expected_choice_name
             return
         # Otherwise, the line corresponds to a real contest.
