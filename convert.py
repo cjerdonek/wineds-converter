@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #
-# **THIS SCRIPT IS WRITTEN FOR PYTHON 3.4.**
+# **THIS SCRIPT IS WRITTEN FOR PYTHON 3.5.**
 #
 
 """
-Usage: python3.4 convert.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT_BASE
+Usage: python3.5 convert.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT_BASE
 
 Parses the given files and writes a new output file to stdout.
 

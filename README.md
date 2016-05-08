@@ -58,14 +58,14 @@ Vote was 8.1 MB.
 Setting up
 ----------
 
-The script was written for Python 3.4.  You can download and install
-Python 3.4 [from here][python-download].
+The script was written for Python 3.5.  You can download and install
+Python 3.5 [from here][python-download].
 
 Then clone this repo.
 
 And install third-party requirements:
 
-    $ pip install PyYAML XlsxWriter
+    $ pip install -r requirements.txt
 
 And follow the usage instructions below.
 
@@ -75,7 +75,7 @@ Usage
 
 To run the script, run the following from the repo root--
 
-    $ python3.4 convert.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT_BASE
+    $ python3.5 convert.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT_BASE
 
 This creates two files by adding the `.tsv` and `.xlsx` extensions:
 `OUTPUT_BASE.tsv` and `OUTPUT_BASE.xlsx`.
@@ -84,7 +84,7 @@ For convenience, the precinct file for the June 2014 and November 2014
 elections is contained in this repository inside the folder `data`.  So you
 can type the following, for example:
 
-    $ python3.4 convert.py "November 4, 2014 Election" \
+    $ python3.5 convert.py "November 4, 2014 Election" \
        data/precincts_2014.csv WINEDS.txt OUTPUT_BASE
 
 For additional usage notes, see the docstring of the main
@@ -96,7 +96,7 @@ Testing
 
 To test the script, run the following from the repo root--
 
-    $ python3.4 -m pywineds.test
+    $ python3.5 -m pywineds.test
 
 This runs some unit tests, as well as some end-to-end tests whose input and
 expected output files are located in the [`test_data/`](test_data) directory.
