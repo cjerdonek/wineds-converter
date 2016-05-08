@@ -75,7 +75,7 @@ Usage
 
 To run the script, run the following from the repo root--
 
-    $ python3.5 convert.py ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT_BASE
+    $ wineds-convert ELECTION_NAME PRECINCTS.csv WINEDS.txt OUTPUT_BASE
 
 This creates two files by adding the `.tsv` and `.xlsx` extensions:
 `OUTPUT_BASE.tsv` and `OUTPUT_BASE.xlsx`.
@@ -84,11 +84,14 @@ For convenience, the precinct file for the June 2014 and November 2014
 elections is contained in this repository inside the folder `data`.  So you
 can type the following, for example:
 
-    $ python3.5 convert.py "November 4, 2014 Election" \
+    $ wineds-convert "November 4, 2014 Election" \
        data/precincts_2014.csv WINEDS.txt OUTPUT_BASE
 
-For additional usage notes, see the docstring of the main
-[`convert.py`](convert.py#L7) file.
+For additional usage notes, run:
+
+    $ wineds-convert
+
+Or see the docstring of the main [`pywineds/run.py`](pywineds/run.py) file.
 
 
 Testing
