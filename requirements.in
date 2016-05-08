@@ -1,0 +1,8 @@
+# This file is for updating our requirements.txt file.
+#
+# It contains abstract (i.e. non-versioned) dependencies. To generate a
+# new requirements.txt file from this file, use pip-tool's pip-compile
+# command: https://github.com/nvie/pip-tools
+#
+PyYAML
+XlsxWriter
