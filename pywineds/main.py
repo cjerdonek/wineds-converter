@@ -11,7 +11,7 @@ from pywineds.utils import assert_equal, get_reporting_index, prettify, time_it,
 
 
 FILE_ENCODING = "utf-8"
-DATA_PART_NAMES = ['choice_id', 'contest_number', 'precinct_id', 'vote_total', 'party']
+DATA_PART_NAMES = ['choice_id', 'contest_number', 'precinct_id', 'vote_total', 'party_code']
 FIELD_NAMES = ['data_field', 'contest_name', 'choice_name', 'precinct_name', 'district_name', 'reporting_type']
 
 # This string contains a mapping from neighborhood labels in the
@@ -56,7 +56,7 @@ def configure_log():
     level = logging.INFO
     fmt = "%(name)s: [%(levelname)s] %(message)s"
     logging.basicConfig(format=fmt, level=level)
-    _log.info("logging configured: level=%s" % logging.getLevelName(level))
+    _log.info("logging configured: level={0}".format(logging.getLevelName(level)))
 
 
 def make_nbhd_names():
@@ -84,14 +84,16 @@ def parse_data_chunk(chunk):
     # CCC   = choice_id
     # PPPP  = precinct_id
     # TTTTT = choice_total
+    # PTY   = party_code
     #
     # **Warning**: the contest number need not be a unique identifier!
     contest_number = int(chunk[1:4])
     choice_id = int(chunk[4:7])
     precinct_id = int(chunk[7:11])
     vote_total = -1 if chunk[11:16] == "000-1" else int(chunk[11:16])
-    party = chunk[16:]
-    return DataField(choice_id, contest_number, precinct_id, vote_total, party)
+    party_code = chunk[16:]
+
+    return DataField(choice_id, contest_number, precinct_id, vote_total, party_code)
 
 
 def split_line_fixed(line):
@@ -135,6 +137,14 @@ class Party(EqualityMixin):
                 .format(self.id, self.code, self.name))
 
 
+def make_contest_id(number, name):
+    # Since the contest number need not be unique across contests, we
+    # disambiguate using the contest name.  Including the contest number
+    # in the 2-tuple as opposed to using the name alone lets us preserve
+    # the numeric ordering by contest number.
+    return (number, name)
+
+
 class ContestInfo:
 
     """
@@ -142,20 +152,29 @@ class ContestInfo:
 
     """
 
-    def __init__(self, contest_id, district_name):
+    def __init__(self, name, number, district_name, party_code):
         self.choice_ids = set()
         self.precinct_ids = set()
 
-        contest_number, contest_name = contest_id
-
-        self.id = contest_id
-        self.number = contest_number
-        self.name = contest_name
+        self.raw_name = name
+        self.number = number
         self.district_name = district_name
+        self.party_code = party_code
+
+        # This can change later.
+        self.name = name
+
+    @property
+    def id(self):
+        """Return the unique ID we use as the key in the contest dict."""
+        return make_contest_id(self.number, self.name)
 
     def __repr__(self):
-        return ("<ContestInfo object: name=%r, district_name=%r, %d precincts, %d choices)" %
-                (self.name, self.district_name, len(self.precinct_ids), len(self.choice_ids)))
+        return ("<ContestInfo object: id={0}, district={1!r}, "
+                "{precinct_count} precincts, {choice_count} choices)"
+                .format(self.id, self.district_name,
+                        precinct_count=len(self.precinct_ids),
+                        choice_count=len(self.choice_ids)))
 
 
 class AreasInfo:
@@ -243,6 +262,9 @@ class ElectionMeta:
         self.parties = {}
         self.precincts = {}
 
+        # This is for debugging:
+        self.raw_contests = set()
+
     def __repr__(self):
         return ("<ElectionMeta object: {contests} contests, {choices} choices, "
                 "{precincts} precincts, {parties} parties>".format(
@@ -311,14 +333,16 @@ def init_results(info, results):
                          utils.REPORTING_INDICES_SIMPLE)
     results.reporting_indices = reporting_indices
 
-    for contest_id, contest_info in info.contests.items():
+    for contest_id, contest_info in sorted(info.contests.items()):
         contest_results = {}
         contests[contest_id] = contest_results
+        _log.info("precincts: {0}".format(sorted(contest_info.precinct_ids)))
         for precinct_id in contest_info.precinct_ids:
             # cp_results stands for contest_precinct_results
             # It is a dict of reporting-type index to: dict of
             # choice_id to vote total.
             cp_results = {k: dict() for k in reporting_indices}
+            _log.info("adding precinct to {0}: {1}".format(contest_id, precinct_id))
             contest_results[precinct_id] = cp_results
 
     # Initialize the election-wide result attributes.
@@ -484,6 +508,7 @@ class ElectionMetaParser(Parser):
         self.choices = info.choices
         self.parties = info.parties
         self.precincts = info.precincts
+        self.raw_contests = info.raw_contests
 
     def make_choice(self, contest_id, choice_name):
         """Create the "choice" object for a given choice name, etc."""
@@ -573,45 +598,40 @@ class ElectionMetaParser(Parser):
         # will be longer than 16.
         assert len(data) >= 16
         assert data[0] == '0'
-        choice_id, contest_number, precinct_id, vote_total, party = parse_data_chunk(data)
+        choice_id, contest_number, precinct_id, vote_total, party_code = parse_data_chunk(data)
         # We don't need to know the vote_total here.
         del vote_total
 
-        # Since the contest number need not be unique across contests,
-        # we use disambiguate using the contest name.  (Including the
-        # contest number in the 2-tuple lets us preserve the numeric
-        # ordering by contest number.)
-        contest_id = (contest_number, contest_name)
-
-        # Store the precinct_id if it is new, otherwise check that it
-        # matches the precinct name stored before.
-        precincts = self.precincts
-        try:
-            old_precinct_name = precincts[precinct_id]
-            assert precinct_name == old_precinct_name
-        except KeyError:
-            precincts[precinct_id] = precinct_name
+        # Store the precinct if it is new.
+        utils.add_to_dict(self.precincts, precinct_id, precinct_name, desc="precincts")
 
         if not district_name:
-            self.process_non_district_line(contest_number, contest_name, choice_id, choice_name, party_code=party)
+            self.process_non_district_line(contest_number, contest_name, choice_id,
+                                choice_name, party_code=party_code)
             return
         # Otherwise, the line corresponds to a real contest.
+
+        contest_id = make_contest_id(contest_number, contest_name)
+
+        value = "{0} {1} {2}".format(contest_number, contest_name, party_code)
+        utils.add_to_set(self.raw_contests, value, "raw_contests")
 
         contests = self.contests
         try:
             contest = contests[contest_id]
         except KeyError:
             logging.debug("adding contest_id: %r" % (contest_id, ))
-            contest = ContestInfo(contest_id=contest_id, district_name=district_name)
+            contest = ContestInfo(contest_name, number=contest_number, district_name=district_name,
+                                  party_code=party_code)
             contests[contest_id] = contest
         else:
             try:
-                assert contest_name == contest.name
+                assert contest.name == contest_name
             except AssertionError:
                 raise Exception("contest_id=%r, contest_name=%r, contest.name=%s" %
                                 (contest_id, contest_name, contest.name))
             try:
-                assert district_name == contest.district_name
+                assert contest.district_name == district_name
             except AssertionError:
                 raise Exception("district_name=%r, contest.district_name=%s" %
                                 (district_name, contest.district_name))
@@ -640,7 +660,6 @@ class ResultsParser(Parser):
     """
     When parsing, this class does not validate the file in the same way
     that the ElectionMetaParser does.
-
     """
 
     name = "Results File (pass #2, for vote totals)"
@@ -674,19 +693,25 @@ class ResultsParser(Parser):
 
     def parse_line(self, line):
         fields = split_line_fixed(line)
+
         data_field = fields.data_field
         reporting_type = fields.reporting_type
         r_index = get_reporting_index(reporting_type)
 
-        choice_id, contest_number, precinct_id, vote_total, party = parse_data_chunk(data_field)
+        choice_id, contest_number, precinct_id, vote_total, party_code = parse_data_chunk(data_field)
         contest_id = contest_number, fields.contest_name
-        # We do not use party yet.
-        del party
+
         if vote_total < 0:
             text = self.log_line("negative ballot total %d: choice_id=%d, "
                                  "contest_number=%d, precinct_id=%d" %
                                  (vote_total, choice_id, contest_number, precinct_id))
             _log.warning(text)
+
+        if contest_number in (1, 2) and party_code:
+            # For now we don't record totals broken down by party.
+            # TODO: change this?
+            return
+
         if contest_number == 1:
             totals = self.registered
             totals_key = precinct_id
@@ -695,7 +720,13 @@ class ResultsParser(Parser):
             totals_key = r_index
         else:
             # Otherwise, we have a normal contest with candidates.
-            totals = self.contests[contest_id][precinct_id][r_index]
+            contest_totals = self.contests[contest_id]
+            try:
+                precinct_totals = contest_totals[precinct_id]
+            except KeyError:
+                msg = contest_id
+                raise Exception(repr(contest_totals))
+            totals = precinct_totals[r_index]
             totals_key = choice_id
 
         self.add_vote_total(totals, totals_key, vote_total)
@@ -712,6 +743,20 @@ def parse_export_file(path):
 
     choices = election_info.choices
     contest_map = election_info.contests
+
+    # Prefix all contests whose name occurs more than once with its party.
+    contests = list(contest_map.values())
+    raw_name_counts = {}
+    for contest in contests:
+        raw_name = contest.raw_name
+        try:
+            raw_name_counts[raw_name] += 1
+        except KeyError:
+            raw_name_counts[raw_name] = 1
+    for contest in contests:
+        raw_name = contest.raw_name
+        if raw_name_counts[raw_name] > 1:
+            contest.name = "{0} - {1}".format(contest.party_code, raw_name)
 
     # Add the available choices to each contest.
     for item in choices.items():
@@ -778,11 +823,10 @@ def digest_input_files(precinct_index_path, wineds_path):
 
     # Log the contests parsed.
     contests = election_info.contests
-    _log.info("parsed %d contests:" % len(contests))
-    for contest_id in sorted(contests.keys()):
+    _log.info("parsed {0} contests:".format(len(contests)))
+    for i, contest_id in enumerate(sorted(contests.keys()), start=1):
         contest = contests[contest_id]
-        _log.info(" %r: district=%r, choices=%d" %
-                 (contest_id, contest.district_name, len(contest.choice_ids)))
+        _log.info("{0:>3}. {1}".format(i, contest.name))
 
     # Construct the results object.
     results = ElectionResults()
