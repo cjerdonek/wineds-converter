@@ -1,5 +1,4 @@
-WinEDS Converter
-================
+# WinEDS Converter
 
 [![Build Status](https://travis-ci.org/cjerdonek/wineds-converter.svg?branch=master)][travis-ci-project-page]
 
@@ -24,8 +23,7 @@ See the [License](#license) section for details on the open-source license
 for this project.
 
 
-Features
---------
+## Features
 
 The script in this repository is tailored for use in San Francisco elections
 held by the [San Francisco Department of Elections][sf-elections].
@@ -55,8 +53,7 @@ Excel output files were both 1.2 MB.  In contrast, the PDF Statement of
 Vote was 8.1 MB.
 
 
-Setting up
-----------
+## Setting up
 
 The script was written for Python 3.5.  You can download and install
 Python 3.5 [from here][python-download].
@@ -70,8 +67,7 @@ And install third-party requirements:
 And follow the usage instructions below.
 
 
-Usage
------
+## Usage
 
 To run the script, run the following from the repo root--
 
@@ -94,8 +90,7 @@ For additional usage notes, run:
 Or see the docstring of the main [`pywineds/run.py`](pywineds/run.py) file.
 
 
-Testing
--------
+## Testing
 
 To test the script, run the following from the repo root--
 
@@ -107,8 +102,7 @@ expected output files are located in the [`test_data/`](test_data) directory.
 These tests are also run automatically on [Travis CI][travis-ci].
 
 
-New Format
-----------
+## New Format
 
 To see an example of what the new output format looks like, see the
 "expected" output file of the end-to-end test located at
@@ -117,8 +111,7 @@ To see an example of what the new output format looks like, see the
 The format is largely self-explanatory.
 
 
-Source Format (WinEDS)
-----------------------
+## Source Format (WinEDS)
 
 This section contains information about the output format of a TXT
 export from the WinEDS Reporting Tool.
@@ -184,23 +177,28 @@ Thus, we chose to use the string contest name for the contest ID
 (instead of the integer).
 
 
-Developing
-----------
+## Developing
 
 There are some commands to assist with developing, for example to create
 smaller output files for testing purposes.  For a list of these, see the
 code and comments near the `main()` function, where `sys.argv` is parsed.
 
 
-License
--------
+## Changelog
+
+* 0.6
+  - Added support for parties
+* 0.5
+  - Pre-2016 elections
+
+
+## License
 
 This project is licensed under the permissive BSD 3-clause license.
 See the [`LICENSE`](LICENSE) file for details.
 
 
-Author
-------
+## Author
 
 Chris Jerdonek (<chris.jerdonek@gmail.com>)
 
