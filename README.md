@@ -186,9 +186,9 @@ code and comments near the `main()` function, where `sys.argv` is parsed.
 
 ## Changelog
 
-* 0.6
+* **TBD**
   - Added support for parties
-* 0.5
+* **v0.5**
   - Pre-2016 elections
 
 
