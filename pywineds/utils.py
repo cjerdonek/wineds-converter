@@ -4,6 +4,7 @@ Exposes utility functions.
 
 """
 
+from collections import OrderedDict
 from contextlib import contextmanager
 import json
 import logging
@@ -18,6 +19,22 @@ REPORTING_INDICES_SIMPLE = (REPORTING_INDEX_ALL, )
 REPORTING_INDICES_COMPLETE = (REPORTING_INDEX_ELD, REPORTING_INDEX_VBM)
 
 log = logging.getLogger("wineds")
+
+
+class EqualityMixin:
+
+    def __eq__(self, other):
+        if type(self) != type(other):
+            return False
+
+        for name in self.equality_attrs:
+            if getattr(self, name) != getattr(other, name):
+                return False
+
+        return True
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 # This method allows the reporting type field to be either
@@ -35,7 +52,34 @@ def get_reporting_index(reporting_field):
 
 
 def prettify(obj):
-    return json.dumps(obj, sort_keys=True, indent=4)
+    return json.dumps(obj, indent=4)
+
+
+def assert_equal(actual, expected, desc=None):
+    if actual == expected:
+        return
+    info = OrderedDict()
+    if desc is not None:
+        info['desc'] = desc
+    info.update([
+        ("actual", actual),
+        ("expected", expected),
+    ])
+    msg = "value does not match expected:\n>>> {0}".format(prettify(info))
+    raise AssertionError(msg)
+
+
+def add_to_dict(mapping, key, value, desc=None):
+    """Return whether a value was added."""
+    try:
+        old_value = mapping[key]
+    except KeyError:
+        mapping[key] = value
+        return True
+    # Otherwise, confirm that the new value matches the old.
+    assert_equal(value, old_value, desc=desc)
+
+    return False
 
 
 @contextmanager

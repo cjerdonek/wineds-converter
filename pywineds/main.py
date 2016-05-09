@@ -1,6 +1,4 @@
-
-
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import logging
 import random
 import re
@@ -9,7 +7,7 @@ import yaml
 
 from pywineds.resultswriting import ExcelWriter, TSVWriter
 from pywineds import utils
-from pywineds.utils import get_reporting_index, prettify, time_it
+from pywineds.utils import assert_equal, get_reporting_index, prettify, time_it, EqualityMixin
 
 
 FILE_ENCODING = "utf-8"
@@ -48,7 +46,7 @@ W TWIN PKS:WEST OF TWIN PEAKS
 WST ADDITION:WESTERN ADDITION
 """
 
-log = logging.getLogger("wineds")
+_log = logging.getLogger("wineds")
 
 DataField = namedtuple('DataField', DATA_PART_NAMES)
 Fields = namedtuple('Fields', FIELD_NAMES)
@@ -58,7 +56,7 @@ def configure_log():
     level = logging.INFO
     fmt = "%(name)s: [%(levelname)s] %(message)s"
     logging.basicConfig(format=fmt, level=level)
-    log.info("logging configured: level=%s" % logging.getLevelName(level))
+    _log.info("logging configured: level=%s" % logging.getLevelName(level))
 
 
 def make_nbhd_names():
@@ -74,7 +72,7 @@ def make_nbhd_names():
 
 
 def exit_with_error(msg):
-    log.info(msg)
+    _log.info(msg)
     exit(1)
 
 
@@ -123,7 +121,21 @@ def split_line_fixed(line):
                   district_name, reporting_type)
 
 
-class ContestInfo(object):
+class Party(EqualityMixin):
+
+    equality_attrs = ('code', 'id', 'name')
+
+    def __init__(self, id, code, name):
+        self.code = code
+        self.id = id
+        self.name = name
+
+    def __repr__(self):
+        return ("<Party object: id={0!r}, code={1!r}, name={2!r}>"
+                .format(self.id, self.code, self.name))
+
+
+class ContestInfo:
 
     """
     Encapsulates metadata about a contest (but not results).
@@ -146,7 +158,7 @@ class ContestInfo(object):
                 (self.name, self.district_name, len(self.precinct_ids), len(self.choice_ids)))
 
 
-class AreasInfo(object):
+class AreasInfo:
 
     """
     Encapsulates information about each area and district.
@@ -203,7 +215,7 @@ class AreasInfo(object):
         return lambda area_id: format_str % area_id
 
 
-class ElectionMeta(object):
+class ElectionMeta:
 
     """
     Encapsulates election metadata (but not results).
@@ -213,6 +225,7 @@ class ElectionMeta(object):
       choices: a dict of integer choice ID to a 2-tuple of
         (contest_id, choice_name).
       contests: a dict of contest_id to ContestInfo object.
+      parties: a dict of string ID to party name.
       precincts: a dict of integer precinct ID to precinct name.
 
     """
@@ -227,14 +240,19 @@ class ElectionMeta(object):
 
         self.choices = {}
         self.contests = {}
+        self.parties = {}
         self.precincts = {}
 
     def __repr__(self):
-        return ("<ElectionMeta object: %d contests, %d choices, %d precincts>" %
-                (len(self.contests), len(self.choices), len(self.precincts)))
+        return ("<ElectionMeta object: {contests} contests, {choices} choices, "
+                "{precincts} precincts, {parties} parties>".format(
+                    contests=len(self.contests),
+                    choices=len(self.choices),
+                    parties=len(self.parties),
+                    precincts=len(self.precincts)))
 
 
-class ElectionResults(object):
+class ElectionResults:
 
     """
     Encapsulates election results (i.e. vote totals).
@@ -267,7 +285,7 @@ class ElectionResults(object):
         self.voted = {}
 
 
-class ElectionInfo(object):
+class ElectionInfo:
 
     def __init__(self, areas_info, meta, name, results):
         self.areas_info = areas_info
@@ -311,7 +329,7 @@ def init_results(info, results):
     return results
 
 
-class Parser(object):
+class Parser:
 
     line_no = 0
     line = None
@@ -335,7 +353,7 @@ class Parser(object):
             # we need as instance attributes instead.  This is more
             # convenient for things like our Parser exception handler.
             yield
-        log.info("parsed: %d lines" % line_no)
+        _log.info("parsed: %d lines" % line_no)
 
     def get_parse_return_value(self):
         return None
@@ -368,14 +386,14 @@ class Parser(object):
             "name": self.name,
             "path": path,
         }
-        log.info("parsing file:\n{0}".format(prettify(info)))
+        _log.info("parsing file:\n{0}".format(prettify(info)))
         return self.parse_file(open(path, "r", encoding=FILE_ENCODING))
 
 
 def parse_precinct_file(path):
     parser = PrecinctIndexParser()
     areas_info = parser.parse_path(path)
-    log.info("parsed: %d precincts" % len(areas_info.city))
+    _log.info("parsed: %d precincts" % len(areas_info.city))
     return areas_info
 
 
@@ -422,7 +440,7 @@ class PrecinctIndexParser(Parser):
         precinct_name = values[1]
         if precinct_id in self.areas_info.precincts:
             text = self.log_line("precinct_id %d occurred again in line" % precinct_id)
-            log.warning(text)
+            _log.warning(text)
             return
 
         self.areas_info.precincts[precinct_id] = precinct_name
@@ -464,6 +482,7 @@ class ElectionMetaParser(Parser):
         # The following values are for convenience.
         self.contests = info.contests
         self.choices = info.choices
+        self.parties = info.parties
         self.precincts = info.precincts
 
     def make_choice(self, contest_id, choice_name):
@@ -481,7 +500,7 @@ class ElectionMetaParser(Parser):
                 self.election_info.overvote_id = choice_id
             else:
                 raise AssertionError("unexpected choice name for contest id None: %r" % choice_name)
-            log.info("setting id=%r for: %r" % (choice_id, choice_name))
+            _log.info("setting id=%r for: %r" % (choice_id, choice_name))
         self.choices[choice_id] = choice
 
     def parse_first_line(self, line):
@@ -491,9 +510,46 @@ class ElectionMetaParser(Parser):
         except AssertionError:
             raise Exception("unexpected number of characters in first line: %d" % char_count)
         has_reporting_type = (char_count == 205)
-        log.info("detected file format: has_reporting_type=%r" % has_reporting_type)
+        _log.info("detected file format: has_reporting_type=%r" % has_reporting_type)
         self.election_info.has_reporting_type = has_reporting_type
         super().parse_first_line(line)
+
+    def process_non_district_line(self, contest_number, contest_name, choice_id, choice_name, party_code):
+        """
+        Process a line that does not have a district name.
+
+        These lines are summary lines that do not correspond to a contest.
+        For example--
+
+          0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
+          0001001110100000NON  REGISTERED VOTERS - No Party Preference  VOTERS  Pct 1101
+          0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
+        """
+        # We validate our expectations about the line and skip storing any
+        # contest or choices, but we do store party/registration type.
+        assert contest_number in (1, 2)
+        total_type, group_name = contest_name.split(" - ")
+        if contest_number == 1:
+            expected_total_type = "REGISTERED VOTERS"
+            expected_choice_name = "VOTERS"
+        else:
+            # Then contest_id is 2.
+            expected_total_type = "BALLOTS CAST"
+            expected_choice_name = "BALLOTS CAST"
+        assert_equal(total_type, expected_total_type, desc="total_type")
+        assert_equal(choice_name, expected_choice_name, desc="choice_name")
+        if group_name == "TOTAL":
+            assert_equal(party_code, "", desc="party_code")
+            assert_equal(choice_id, 1, desc="choice_id")
+            return
+
+        party = Party(id=choice_id, code=party_code, name=group_name)
+        added = utils.add_to_dict(self.parties, choice_id, party)
+        if added:
+            msg = "added party: {0}".format(party)
+            _log.info(msg)
+
+        assert choice_name == expected_choice_name
 
     def parse_line(self, line):
         """
@@ -519,7 +575,7 @@ class ElectionMetaParser(Parser):
         assert data[0] == '0'
         choice_id, contest_number, precinct_id, vote_total, party = parse_data_chunk(data)
         # We don't need to know the vote_total here.
-        del vote_total, party
+        del vote_total
 
         # Since the contest number need not be unique across contests,
         # we use disambiguate using the contest name.  (Including the
@@ -537,31 +593,7 @@ class ElectionMetaParser(Parser):
             precincts[precinct_id] = precinct_name
 
         if not district_name:
-            # Then this line must be one of the summary lines that lack a
-            # final district_name column (since these rows have no contest
-            # associated with them):
-            #   0001001110100484  REGISTERED VOTERS - TOTAL  VOTERS  Pct 1101
-            #   0002001110100141  BALLOTS CAST - TOTAL  BALLOTS CAST  Pct 1101
-            #
-            # In this case, we validate our assumptions about the summary
-            # line and skip storing any contest or choices.
-            assert choice_id == 1
-            assert contest_number in (1, 2)
-            if contest_number == 1:
-                expected_contest_name = "REGISTERED VOTERS - TOTAL"
-                expected_choice_name = "VOTERS"
-            else:
-                # Then contest_id is 2.
-                expected_contest_name = "BALLOTS CAST - TOTAL"
-                expected_choice_name = "BALLOTS CAST"
-            if contest_name != expected_contest_name:
-                info = {
-                    "actual": contest_name,
-                    "expected": expected_contest_name,
-                }
-                msg = "contest name does not match expected: {0}".format(prettify(info))
-                raise AssertionError(msg)
-            assert choice_name == expected_choice_name
+            self.process_non_district_line(contest_number, contest_name, choice_id, choice_name, party_code=party)
             return
         # Otherwise, the line corresponds to a real contest.
 
@@ -654,7 +686,7 @@ class ResultsParser(Parser):
             text = self.log_line("negative ballot total %d: choice_id=%d, "
                                  "contest_number=%d, precinct_id=%d" %
                                  (vote_total, choice_id, contest_number, precinct_id))
-            log.warning(text)
+            _log.warning(text)
         if contest_number == 1:
             totals = self.registered
             totals_key = precinct_id
@@ -746,10 +778,10 @@ def digest_input_files(precinct_index_path, wineds_path):
 
     # Log the contests parsed.
     contests = election_info.contests
-    log.info("parsed %d contests:" % len(contests))
+    _log.info("parsed %d contests:" % len(contests))
     for contest_id in sorted(contests.keys()):
         contest = contests[contest_id]
-        log.info(" %r: district=%r, choices=%d" %
+        _log.info(" %r: district=%r, choices=%d" %
                  (contest_id, contest.district_name, len(contest.choice_ids)))
 
     # Construct the results object.
@@ -815,7 +847,7 @@ class FilterParser(Parser):
     def parse_lines(self, lines):
         # TODO: use the Hollywood principle instead of calling the base class method.
         super().parse_lines(lines)
-        log.info("wrote: %d lines" % self.write_line_count)
+        _log.info("wrote: %d lines" % self.write_line_count)
 
 
 class PrecinctFilterParser(FilterParser):
@@ -850,7 +882,7 @@ class ExportFilterParser(FilterParser):
         data_field = parse_data_chunk(data_field)
         precinct_id, vote_total = data_field.precinct_id, data_field.vote_total
         if vote_total < 0:
-            log.warning("negative vote total %r: contest=%r, precinct=%r" %
+            _log.warning("negative vote total %r: contest=%r, precinct=%r" %
                         (vote_total, contest_name, precinct_id))
         return ((precinct_id in self.precinct_ids) and
                 (contest_name in self.contest_names))
@@ -861,7 +893,7 @@ def make_test_precincts(args):
     Create a small precinct file for end-to-end testing purposes.
 
     """
-    log.info("making test precinct file")
+    _log.info("making test precinct file")
     assert not args
     precincts_path = "data/precincts_2014.csv"
 
@@ -882,7 +914,7 @@ def make_test_precincts(args):
         choose_from_area_type(area_type, precincts)
     choose_from_area_type(areas_info.neighborhoods, precincts)
 
-    log.info("randomly chose: %d precincts" % len(precincts))
+    _log.info("randomly chose: %d precincts" % len(precincts))
 
     parser = PrecinctFilterParser(precincts, output_file=sys.stdout)
     parser.parse_path(precincts_path)
@@ -895,7 +927,7 @@ def make_test_export(args):
     The test output file is written to stdout.
 
     """
-    log.info("making test export file")
+    _log.info("making test export file")
     precincts_path, export_path = args
     areas_info = parse_precinct_file(precincts_path)
 
@@ -985,7 +1017,7 @@ def make_audit(precinct_index_path, tsv_path, yaml_path):
     """
     Create a filtered SOV to audit certain precincts.
     """
-    log.info("making audit file")
+    _log.info("making audit file")
 
     areas_info = parse_precinct_file(precinct_index_path)
     precinct_names = areas_info.precincts
