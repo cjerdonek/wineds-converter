@@ -336,13 +336,11 @@ def init_results(info, results):
     for contest_id, contest_info in sorted(info.contests.items()):
         contest_results = {}
         contests[contest_id] = contest_results
-        _log.info("precincts: {0}".format(sorted(contest_info.precinct_ids)))
         for precinct_id in contest_info.precinct_ids:
             # cp_results stands for contest_precinct_results
             # It is a dict of reporting-type index to: dict of
             # choice_id to vote total.
             cp_results = {k: dict() for k in reporting_indices}
-            _log.info("adding precinct to {0}: {1}".format(contest_id, precinct_id))
             contest_results[precinct_id] = cp_results
 
     # Initialize the election-wide result attributes.
@@ -826,7 +824,8 @@ def digest_input_files(precinct_index_path, wineds_path):
     _log.info("parsed {0} contests:".format(len(contests)))
     for i, contest_id in enumerate(sorted(contests.keys()), start=1):
         contest = contests[contest_id]
-        _log.info("{0:>3}. {1}".format(i, contest.name))
+        number = "#{0}".format(i)
+        _log.info(" contest {0:>3}. {1}".format(number, contest.name))
 
     # Construct the results object.
     results = ElectionResults()
